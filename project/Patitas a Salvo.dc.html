@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Public Sans', system-ui, sans-serif; color: #1F2933; background: #D8CFBE; }
+  ::-webkit-scrollbar { width: 0px; height: 0px; }
+  .ps-scroll { scrollbar-width: none; }
+  @keyframes psFade { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: none; } }
+  @keyframes psToast { 0% { opacity:0; transform: transl(-50%, 12px);} 12%{opacity:1; transform: translateX(-50%);} 88%{opacity:1;transform:translateX(-50%);} 100%{opacity:0;} }
+  @keyframes psPulse { 0%,100%{ opacity:1;} 50%{ opacity:.35; } }
+</style>
+</helmet>
+
+<div style="min-height:100vh; width:100%; background:#D8CFBE; background-image: radial-gradient(circle at 20% 0%, #E2D9C8, #D2C8B5); display:flex; flex-direction:column; align-items:center;">
+
+  <!-- PROTOTYPE TOOLBAR -->
+  <div style="position:sticky; top:0; z-index:50; width:100%; display:flex; align-items:center; gap:14px; padding:10px 18px; background:rgba(31,77,58,.97); color:#F4EFE4; box-shadow:0 1px 0 rgba(0,0,0,.12);">
+    <div style="display:flex; align-items:center; gap:9px; font-family:'Archivo',sans-serif; font-weight:800; font-size:14px; letter-spacing:.2px;">
+      <span style="width:22px;height:22px;border-radius:7px;background:#FF6B2C;display:flex;align-items:center;justify-content:center;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.7 2 5.5 5.2 5.5c1.9 0 3.1 1 3.8 2 .3.4.7.6 1 .6s.7-.2 1-.6c.7-1 1.9-2 3.8-2 3.2 0 4.8 3.2 3.2 6.3C19.5 16.4 12 21 12 21z"/></svg>
+      </span>
+      Patitas a Salvo <span style="opacity:.6; font-weight:600;">· Prototipo</span>
+    </div>
+    <div style="flex:1;"></div>
+    <div style="display:flex; background:rgba(255,255,255,.12); border-radius:9px; padding:3px;">
+      <button onClick="{{ setMobile }}" style="{{ tab.m }}">Móvil</button>
+      <button onClick="{{ setDesktop }}" style="{{ tab.d }}">Escritorio</button>
+    </div>
+    <select value="{{ jump }}" onChange="{{ onJump }}" style="background:rgba(255,255,255,.12); color:#F4EFE4; border:1px solid rgba(255,255,255,.2); border-radius:9px; padding:8px 10px; font-size:12.5px; font-family:'Public Sans',sans-serif; font-weight:600; cursor:pointer; max-width:230px;">
+      <option value="m:home">Móvil · Inicio</option>
+      <option value="m:search">Móvil · Resultados de búsqueda</option>
+      <option value="m:center">Móvil · Detalle de centro</option>
+      <option value="m:deliver">Móvil · Acabo de entregar</option>
+      <option value="m:lost">Móvil · Reportar mascota perdida</option>
+      <option value="m:found">Móvil · Reportar mascota encontrada</option>
+      <option value="m:foster">Móvil · Ofrecer hogar temporal</option>
+      <option value="m:vets">Móvil · Veterinarias</option>
+      <option value="m:admin">Móvil · Panel del centro</option>
+      <option value="m:report">Móvil · Reportar (menú)</option>
+      <option value="m:map">Móvil · Mapa / lista</option>
+      <option value="m:trust">Móvil · Confianza y verificación</option>
+      <option value="d:national">Escritorio · Panel nacional</option>
+      <option value="d:center">Escritorio · Detalle de centro</option>
+      <option value="d:admin">Escritorio · Panel de administración</option>
+    </select>
+  </div>
+
+  <!-- STAGE -->
+  <div style="width:100%; flex:1; display:flex; justify-content:center; padding:26px 16px 40px;">
+
+    <!-- ============ MOBILE ============ -->
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}">
+    <div style="width:390px; height:812px; background:#0E1C16; border-radius:46px; padding:10px; box-shadow:0 30px 70px -20px rgba(20,40,30,.55), 0 0 0 2px rgba(0,0,0,.25); position:relative;">
+      <div style="width:100%; height:100%; background:#F8F3EA; border-radius:38px; overflow:hidden; display:flex; flex-direction:column; position:relative;">
+
+        <!-- status bar -->
+        <div style="height:30px; display:flex; align-items:center; justify-content:space-between; padding:6px 24px 0; font-size:12.5px; font-weight:700; color:#1F2933; flex:none;">
+          <span>9:41</span>
+          <div style="position:absolute; left:50%; transform:translateX(-50%); top:8px; width:104px; height:22px; background:#0E1C16; border-radius:14px;"></div>
+          <span style="display:flex; gap:5px; align-items:center;">
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="#1F2933"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2" width="3" height="10" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".35"/></svg>
+            <svg width="22" height="12" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="3" stroke="#1F2933" stroke-width="1.2"/><rect x="2.5" y="2.5" width="14" height="7" rx="1.5" fill="#1F2933"/><rect x="22" y="4" width="1.5" height="4" rx=".75" fill="#1F2933"/></svg>
+          </span>
+        </div>
+
+        <!-- app header (logo + emergency banner) -->
+        <div style="flex:none; background:#F8F3EA; padding:6px 18px 10px; border-bottom:1px solid #EFE7D6;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="width:34px;height:34px;border-radius:11px;background:#1F4D3A;display:flex;align-items:center;justify-content:center; flex:none;">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="#FF6B2C"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.7 2 5.5 5.2 5.5c1.9 0 3.1 1 3.8 2 .3.4.7.6 1 .6s.7-.2 1-.6c.7-1 1.9-2 3.8-2 3.2 0 4.8 3.2 3.2 6.3C19.5 16.4 12 21 12 21z"/></svg>
+            </span>
+            <div style="line-height:1.05;">
+              <div style="font-family:'Archivo',sans-serif; font-weight:800; font-size:16.5px; color:#1F2933; letter-spacing:-.2px;">Patitas a Salvo <span style="color:#1F4D3A;">Venezuela</span></div>
+              <div style="font-size:11.5px; color:#6B7280; font-weight:500; margin-top:1px;">Respuesta animal post-terremoto</div>
+            </div>
+          </div>
+          <div style="margin-top:9px; display:flex; gap:8px; background:#FCEFE4; border:1px solid #F6D9C2; border-radius:11px; padding:8px 10px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex:none; margin-top:1px;"><path d="M12 3l9 16H3L12 3z" stroke="#C2410C" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v4M12 16.5v.2" stroke="#C2410C" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <div style="font-size:11px; color:#9A4A1A; line-height:1.32; font-weight:500;">Información ciudadana en actualización. Verifica antes de movilizarte. No pongas tu vida en riesgo para rescatar animales en estructuras inestables.</div>
+          </div>
+        </div>
+
+        <!-- scroll content -->
+        <div class="ps-scroll" style="flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch;">
+
+          <!-- ============== HOME ============== -->
+          <sc-if value="{{ sc.home }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:16px 16px 24px;">
+            <h1 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:25px; line-height:1.12; letter-spacing:-.5px; margin:2px 0 8px; color:#1A2620;">¿Cómo puedes ayudar a una mascota hoy?</h1>
+            <p style="font-size:13.5px; color:#5C6670; line-height:1.4; margin:0 0 16px;">Encuentra necesidades reales de alimento, medicinas, refugio, traslado y atención veterinaria.</p>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <button onClick="{{ goDonate }}" style="display:flex; flex-direction:column; gap:8px; text-align:left; background:#1F4D3A; color:#fff; border:none; border-radius:16px; padding:14px; cursor:pointer; box-shadow:0 6px 16px -8px rgba(31,77,58,.7);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 8h16v11a1 1 0 01-1 1H5a1 1 0 01-1-1V8z" stroke="#FF6B2C" stroke-width="1.7"/><path d="M3 5h18v3H3z" stroke="#fff" stroke-width="1.7"/><path d="M10 12h4" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg>
+                <span style="font-weight:700; font-size:13.5px; line-height:1.2;">Quiero donar insumos</span>
+              </button>
+              <button onClick="{{ goFound }}" style="display:flex; flex-direction:column; gap:8px; text-align:left; background:#fff; color:#1F2933; border:1px solid #EBE2D2; border-radius:16px; padding:14px; cursor:pointer;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#1F4D3A" stroke-width="1.7"/><path d="M16 16l5 5" stroke="#1F4D3A" stroke-width="1.7" stroke-linecap="round"/></svg>
+                <span style="font-weight:700; font-size:13.5px; line-height:1.2;">Encontré una mascota</span>
+              </button>
+              <button onClick="{{ goLost }}" style="display:flex; flex-direction:column; gap:8px; text-align:left; background:#fff; color:#1F2933; border:1px solid #EBE2D2; border-radius:16px; padding:14px; cursor:pointer;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.3-9.3-8.5C1.3 9.9 2.7 7 5.6 7c1.7 0 2.8.9 3.5 1.8.3.4.6.5.9.5s.6-.1.9-.5C11.6 7.9 12.7 7 14.4 7c2.9 0 4.3 2.9 2.9 5.5C15 16.7 12 21 12 21z" stroke="#D62828" stroke-width="1.7" stroke-linejoin="round"/></svg>
+                <span style="font-weight:700; font-size:13.5px; line-height:1.2;">Perdí mi mascota</span>
+              </button>
+              <button onClick="{{ goFoster }}" style="display:flex; flex-direction:column; gap:8px; text-align:left; background:#fff; color:#1F2933; border:1px solid #EBE2D2; border-radius:16px; padding:14px; cursor:pointer;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 11l9-7 9 7" stroke="#1F4D3A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v9h14v-9" stroke="#1F4D3A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span style="font-weight:700; font-size:13.5px; line-height:1.2;">Puedo ser hogar temporal</span>
+              </button>
+            </div>
+
+            <!-- search -->
+            <div onClick="{{ goSearch }}" style="margin-top:16px; display:flex; align-items:center; gap:9px; background:#fff; border:1px solid #EBE2D2; border-radius:13px; padding:12px 13px; cursor:pointer;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#9AA3AD" stroke-width="1.8"/><path d="M16 16l5 5" stroke="#9AA3AD" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <span style="color:#9AA3AD; font-size:13.5px;">Buscar por ciudad, centro o insumo…</span>
+            </div>
+
+            <!-- chips -->
+            <div class="ps-scroll" style="margin-top:12px; display:flex; gap:8px; overflow-x:auto; padding-bottom:2px;">
+              <sc-for list="{{ chips }}" as="c" hint-placeholder-count="6">
+                <button onClick="{{ c.go }}" style="flex:none; background:#fff; border:1px solid #E7DECE; color:#3A4650; font-size:12.5px; font-weight:600; padding:8px 13px; border-radius:999px; cursor:pointer;">{{ c.label }}</button>
+              </sc-for>
+            </div>
+
+            <!-- urgent -->
+            <div style="margin-top:20px; display:flex; align-items:center; gap:7px;">
+              <span style="width:8px;height:8px;border-radius:50%;background:#D62828; animation:psPulse 1.4s infinite;"></span>
+              <h2 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:16px; margin:0; color:#1A2620;">Más urgente ahora</h2>
+            </div>
+            <div style="margin-top:11px; display:flex; flex-direction:column; gap:9px;">
+              <sc-for list="{{ urgent }}" as="u" hint-placeholder-count="4">
+                <button onClick="{{ u.go }}" style="display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #EBE2D2; border-left:4px solid {{ u.dot }}; border-radius:14px; padding:13px 14px; text-align:left; cursor:pointer;">
+                  <span style="width:42px;height:42px;border-radius:12px;background:{{ u.bg }};display:flex;align-items:center;justify-content:center; flex:none;">{{ u.icon }}</span>
+                  <span style="flex:1; min-width:0;">
+                    <span style="display:flex; align-items:center; gap:7px;">
+                      <span style="font-weight:700; font-size:14.5px; color:#1F2933;">{{ u.t }}</span>
+                      <span style="font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.4px; color:{{ u.fg }}; background:{{ u.bg }}; padding:2px 6px; border-radius:5px;">{{ u.level }}</span>
+                    </span>
+                    <span style="display:block; font-size:12.5px; color:#6B7280; margin-top:2px;">{{ u.m }}</span>
+                  </span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="flex:none;"><path d="M9 6l6 6-6 6" stroke="#C7CDD3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </sc-for>
+            </div>
+
+            <!-- recently updated -->
+            <div style="margin-top:22px; display:flex; align-items:center; justify-content:space-between;">
+              <h2 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:16px; margin:0; color:#1A2620;">Actualizado recién</h2>
+              <button onClick="{{ goMap }}" style="background:none; border:none; color:#1F4D3A; font-weight:700; font-size:12.5px; cursor:pointer;">Ver mapa</button>
+            </div>
+            <div style="margin-top:11px; display:flex; flex-direction:column; gap:9px;">
+              <sc-for list="{{ recent }}" as="r" hint-placeholder-count="3">
+                <button onClick="{{ r.go }}" style="display:flex; flex-direction:column; gap:5px; background:#fff; border:1px solid #EBE2D2; border-radius:14px; padding:13px 14px; text-align:left; cursor:pointer;">
+                  <span style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                    <span style="font-weight:700; font-size:14px; color:#1F2933;">{{ r.n }}</span>
+                    <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:#2A9D8F; font-weight:600; flex:none;"><span style="width:6px;height:6px;border-radius:50%;background:#2A9D8F;"></span>{{ r.t }}</span>
+                  </span>
+                  <span style="font-size:12.5px; color:#6B7280; line-height:1.35;">{{ r.d }}</span>
+                </button>
+              </sc-for>
+            </div>
+
+            <p style="margin:18px 2px 0; font-size:11.5px; color:#9AA3AD; line-height:1.4; text-align:center;">La información cambia rápido. Revisa la última actualización antes de movilizarte.</p>
+          </div>
+          </sc-if>
+
+          <!-- ============== SEARCH / CENTROS ============== -->
+          <sc-if value="{{ sc.search }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:14px 16px 26px;">
+            <div style="display:flex; align-items:center; gap:9px; background:#fff; border:1px solid #EBE2D2; border-radius:13px; padding:11px 13px;">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#9AA3AD" stroke-width="1.8"/><path d="M16 16l5 5" stroke="#9AA3AD" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input value="{{ q }}" onChange="{{ setQ }}" placeholder="Buscar por ciudad, centro o insumo…" style="flex:1; border:none; outline:none; background:transparent; font-size:14px; font-family:'Public Sans',sans-serif; color:#1F2933;" />
+            </div>
+            <div class="ps-scroll" style="margin-top:11px; display:flex; gap:8px; overflow-x:auto; padding-bottom:2px;">
+              <sc-for list="{{ chips }}" as="c" hint-placeholder-count="6">
+                <button onClick="{{ c.go }}" style="flex:none; background:#fff; border:1px solid #E7DECE; color:#3A4650; font-size:12.5px; font-weight:600; padding:7px 13px; border-radius:999px; cursor:pointer;">{{ c.label }}</button>
+              </sc-for>
+            </div>
+            <div style="margin:16px 2px 10px; display:flex; align-items:center; justify-content:space-between;">
+              <span style="font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; color:#1A2620;">{{ resultCount }} puntos activos</span>
+              <button onClick="{{ goMap }}" style="display:flex; align-items:center; gap:5px; background:#EAF3EC; border:none; color:#1F4D3A; font-weight:700; font-size:12px; padding:6px 11px; border-radius:8px; cursor:pointer;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Mapa
+              </button>
+            </div>
+            <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <sc-for list="{{ searchResults }}" as="c" hint-placeholder-count="5">
+                <button onClick="{{ c.open }}" style="display:block; width:100%; text-align:left; background:#fff; border:1px solid #EBE2D2; border-radius:15px; padding:14px; cursor:pointer;">
+                  <span style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+                    <span style="min-width:0;">
+                      <span style="display:block; font-weight:700; font-size:14.5px; color:#1F2933; line-height:1.2;">{{ c.name }}</span>
+                      <span style="display:block; font-size:12px; color:#6B7280; margin-top:2px;">{{ c.type }}</span>
+                    </span>
+                    <span style="flex:none; display:inline-flex; align-items:center; gap:5px; background:{{ c.stBg }}; color:{{ c.stFg }}; font-size:10.5px; font-weight:800; padding:4px 8px; border-radius:7px; white-space:nowrap;"><span style="width:6px;height:6px;border-radius:50%;background:{{ c.stDot }};"></span>{{ c.status }}</span>
+                  </span>
+                  <span style="display:flex; align-items:center; gap:6px; margin-top:9px; font-size:12.5px; color:#5C6670;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 21s-6-5-6-10a6 6 0 1112 0c0 5-6 10-6 10z" stroke="#9AA3AD" stroke-width="1.7"/><circle cx="12" cy="11" r="2.2" stroke="#9AA3AD" stroke-width="1.7"/></svg>{{ c.city }}
+                  </span>
+                  <span style="display:block; margin-top:8px; font-size:12.5px; color:#1F2933; background:#F8F3EA; border-radius:9px; padding:8px 10px; line-height:1.35;">{{ c.tagLine }}</span>
+                  <span style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;">
+                    <span style="display:inline-flex; align-items:center; gap:5px; background:{{ c.ugBg }}; color:{{ c.ugFg }}; font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:6px;">Urgencia {{ c.urgency }}</span>
+                    <span style="font-size:11.5px; color:#9AA3AD; font-weight:600;">Actualizado {{ c.updated }}</span>
+                  </span>
+                </button>
+              </sc-for>
+            </div>
+            </sc-if>
+            <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+              <div style="text-align:center; padding:40px 24px; background:#fff; border:1px dashed #E0D7C6; border-radius:16px;">
+                <div style="font-size:34px;">🔍</div>
+                <div style="font-family:'Archivo',sans-serif; font-weight:700; font-size:16px; color:#1A2620; margin-top:8px;">Sin resultados</div>
+                <div style="font-size:13px; color:#6B7280; margin-top:5px; line-height:1.4;">No encontramos puntos para “{{ q }}”. Prueba con una ciudad o un insumo.</div>
+                <button onClick="{{ goReport }}" style="margin-top:14px; background:#1F4D3A; color:#fff; border:none; border-radius:11px; padding:11px 16px; font-weight:700; font-size:13px; cursor:pointer;">Reportar un punto nuevo</button>
+              </div>
+            </sc-if>
+          </div>
+          </sc-if>
+
+          <!-- ============== CENTER DETAIL ============== -->
+          <sc-if value="{{ sc.center }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 0 26px;">
+            <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; position:sticky; top:0; background:#F8F3EA; z-index:5; border-bottom:1px solid #EFE7D6;">
+              <button onClick="{{ goSearch }}" style="width:34px;height:34px;border-radius:10px;border:1px solid #E7DECE;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#1F2933" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div style="font-weight:700; font-size:14.5px; color:#1F2933; line-height:1.15; min-width:0;">{{ cur.name }}</div>
+            </div>
+
+            <div style="padding:14px 16px 0;">
+              <div style="display:flex; flex-wrap:wrap; gap:7px; align-items:center;">
+                <span style="display:inline-flex; align-items:center; gap:5px; background:{{ cur.stBg }}; color:{{ cur.stFg }}; font-size:11px; font-weight:800; padding:5px 10px; border-radius:8px;"><span style="width:7px;height:7px;border-radius:50%;background:{{ cur.stFg }};"></span>{{ cur.status }}</span>
+                <span style="display:inline-flex; align-items:center; gap:5px; background:{{ cur.ugBg }}; color:{{ cur.ugFg }}; font-size:11px; font-weight:800; padding:5px 10px; border-radius:8px;">Urgencia {{ cur.urgency }}</span>
+              </div>
+              <div style="margin-top:9px; font-size:12.5px; color:#6B7280;">{{ cur.type }}</div>
+              <div style="margin-top:10px; display:flex; align-items:center; gap:7px; font-size:12px; color:#1F7A6D; font-weight:700;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v5c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V6l8-4z" stroke="#1F7A6D" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="#1F7A6D" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                {{ cur.trust }} · actualizado {{ cur.updated }}
+              </div>
+
+              <!-- map + address -->
+              <div style="margin-top:13px; border-radius:14px; overflow:hidden; border:1px solid #EBE2D2;">
+                <div style="height:108px; background:#E7EEE6; background-image:linear-gradient(#D9E4DA 1px, transparent 1px), linear-gradient(90deg, #D9E4DA 1px, transparent 1px); background-size:22px 22px; position:relative;">
+                  <span style="position:absolute; left:50%; top:46%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center;">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="#FF6B2C"><path d="M12 22s-7-6-7-12a7 7 0 1114 0c0 6-7 12-7 12z"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg>
+                  </span>
+                </div>
+                <div style="padding:10px 12px; background:#fff; font-size:12.5px; color:#5C6670; line-height:1.35;">{{ cur.addr }}</div>
+              </div>
+
+              <!-- top actions -->
+              <div style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+                <button style="display:flex; flex-direction:column; align-items:center; gap:5px; background:#25D366; color:#fff; border:none; border-radius:12px; padding:11px 6px; cursor:pointer; font-weight:700; font-size:11.5px;">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1012 2zm0 2a8 8 0 11-4.1 14.9l-.4-.2-2.8.7.8-2.7-.2-.4A8 8 0 0112 4zm-3 4c-.3 0-.6.1-.8.4-.3.3-1 1-1 2.3s1 2.7 1.2 2.9c.1.2 2 3.2 5 4.4 2.4 1 2.9.8 3.4.8.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.1-1.4-.1-.1-.3-.2-.6-.4l-2-1c-.3-.1-.5-.2-.7.1l-.7.9c-.1.2-.3.2-.5.1-.3-.1-1.2-.5-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.1-.2 0-.4.1-.5l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.5-.4-.4-.6-.5h-.5z"/></svg>
+                  WhatsApp
+                </button>
+                <button style="display:flex; flex-direction:column; align-items:center; gap:5px; background:#fff; color:#1F4D3A; border:1px solid #E7DECE; border-radius:12px; padding:11px 6px; cursor:pointer; font-weight:700; font-size:11.5px;">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 21s-6-5-6-10a6 6 0 1112 0c0 5-6 10-6 10z" stroke="#1F4D3A" stroke-width="1.8"/><circle cx="12" cy="11" r="2.2" stroke="#1F4D3A" stroke-width="1.8"/></svg>
+                  Cómo llegar
+                </button>
+                <button onClick="{{ goTrust }}" style="display:flex; flex-direction:column; align-items:center; gap:5px; background:#fff; color:#1F4D3A; border:1px solid #E7DECE; border-radius:12px; padding:11px 6px; cursor:pointer; font-weight:700; font-size:11.5px;">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M18 8a3 3 0 10-2.8-4M6 12a3 3 0 100 .1M18 16a3 3 0 10-2.8 4M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" stroke="#1F4D3A" stroke-width="1.8" stroke-linecap="round"/></svg>
+                  Compartir
+                </button>
+              </div>
+
+              <!-- needs -->
+              <div style="margin-top:20px; font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; color:#1A2620;">Necesitan ahora</div>
+              <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
+                <sc-for list="{{ curInv }}" as="n" hint-placeholder-count="5">
+                  <div style="background:#fff; border:1px solid #EBE2D2; border-radius:13px; padding:12px 13px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                      <span style="font-weight:700; font-size:13.5px; color:#1F2933;">{{ n.name }}</span>
+                      <span style="display:inline-flex; align-items:center; gap:5px; background:{{ n.sBg }}; color:{{ n.sFg }}; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.3px; padding:3px 7px; border-radius:6px;"><span style="width:5px;height:5px;border-radius:50%;background:{{ n.sDot }};"></span>{{ n.pr }}</span>
+                    </div>
+                    <div style="margin-top:9px; height:8px; background:#EFE7D6; border-radius:5px; overflow:hidden;">
+                      <div style="height:100%; width:{{ n.pct }}%; background:{{ n.sDot }}; border-radius:5px;"></div>
+                    </div>
+                    <div style="margin-top:6px; display:flex; justify-content:space-between; font-size:11.5px; color:#6B7280; font-weight:600;">
+                      <span>Faltan {{ n.faltan }} {{ n.unit }}</span>
+                      <span>Recibidos {{ n.got }} de {{ n.need }} {{ n.unit }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <!-- covered + no bring -->
+              <div style="margin-top:16px; display:grid; grid-template-columns:1fr; gap:10px;">
+                <div style="background:#EAF3EC; border:1px solid #D4E7D8; border-radius:13px; padding:12px 13px;">
+                  <div style="display:flex; align-items:center; gap:6px; font-weight:800; font-size:12.5px; color:#1F4D3A;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="#1F4D3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Ya cubierto</div>
+                  <div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;">
+                    <sc-for list="{{ cur.covered }}" as="x" hint-placeholder-count="3"><span style="background:#fff; color:#1F4D3A; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:8px;">{{ x }}</span></sc-for>
+                  </div>
+                </div>
+                <div style="background:#FCEFE4; border:1px solid #F6D9C2; border-radius:13px; padding:12px 13px;">
+                  <div style="display:flex; align-items:center; gap:6px; font-weight:800; font-size:12.5px; color:#C2410C;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#C2410C" stroke-width="1.8"/><path d="M8 8l8 8" stroke="#C2410C" stroke-width="1.8" stroke-linecap="round"/></svg>No traer por ahora</div>
+                  <div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;">
+                    <sc-for list="{{ cur.noBring }}" as="x" hint-placeholder-count="4"><span style="background:#fff; color:#9A4A1A; font-size:11.5px; font-weight:600; padding:5px 10px; border-radius:8px;">{{ x }}</span></sc-for>
+                  </div>
+                  <div style="margin-top:9px; font-size:11px; color:#9A4A1A; font-style:italic;">Trae solo lo que el centro necesita ahora.</div>
+                </div>
+              </div>
+
+              <!-- capacity -->
+              <div style="margin-top:16px; background:#fff; border:1px solid #EBE2D2; border-radius:13px; padding:13px;">
+                <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:700; color:#1F2933;"><span>Capacidad de recepción</span><span>{{ cur.capLabel }}</span></div>
+                <div style="margin-top:8px; height:9px; background:#EFE7D6; border-radius:5px; overflow:hidden;"><div style="height:100%; width:{{ cur.capLabel }}; background:#2A9D8F; border-radius:5px;"></div></div>
+                <div style="margin-top:9px; font-size:12px; color:#6B7280;">Cupo temporal para mascotas: <strong style="color:#1F2933;">{{ cur.slots }}</strong></div>
+              </div>
+
+              <!-- recent deliveries -->
+              <div style="margin-top:18px; font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; color:#1A2620;">Entregas recientes</div>
+              <div style="margin-top:9px; display:flex; flex-direction:column; gap:7px;">
+                <sc-for list="{{ delFeed }}" as="d" hint-placeholder-count="3">
+                  <div style="display:flex; align-items:center; gap:10px; background:#fff; border:1px solid #EBE2D2; border-radius:11px; padding:10px 12px;">
+                    <span style="width:30px;height:30px;border-radius:9px;background:#EAF3EC;display:flex;align-items:center;justify-content:center;flex:none;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="#1F4D3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span style="flex:1; font-size:12.5px; color:#1F2933; font-weight:600;">{{ d.txt }}</span>
+                    <span style="font-size:11px; color:#9AA3AD; font-weight:600;">{{ d.t }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <!-- QR -->
+              <div style="margin-top:18px; display:flex; gap:13px; align-items:center; background:#1F4D3A; border-radius:15px; padding:15px;">
+                <div style="width:74px;height:74px;border-radius:11px;background:#fff;padding:7px;flex:none;display:flex;align-items:center;justify-content:center;">
+                  <svg width="60" height="60" viewBox="0 0 60 60" shape-rendering="crispEdges"><rect width="60" height="60" fill="#fff"/><g fill="#1F4D3A"><rect x="4" y="4" width="16" height="16"/><rect x="8" y="8" width="8" height="8" fill="#fff"/><rect x="40" y="4" width="16" height="16"/><rect x="44" y="8" width="8" height="8" fill="#fff"/><rect x="4" y="40" width="16" height="16"/><rect x="8" y="44" width="8" height="8" fill="#fff"/><rect x="26" y="4" width="4" height="4"/><rect x="26" y="12" width="4" height="8"/><rect x="34" y="26" width="4" height="4"/><rect x="26" y="26" width="4" height="4"/><rect x="42" y="26" width="8" height="4"/><rect x="26" y="34" width="4" height="4"/><rect x="34" y="34" width="8" height="4"/><rect x="48" y="34" width="4" height="8"/><rect x="26" y="42" width="4" height="8"/><rect x="34" y="44" width="4" height="4"/><rect x="42" y="42" width="4" height="4"/><rect x="50" y="48" width="4" height="6"/><rect x="42" y="50" width="6" height="4"/></g></svg>
+                </div>
+                <div style="flex:1;">
+                  <div style="color:#fff; font-weight:700; font-size:13px; line-height:1.3;">Escanea este QR en el punto para registrar tu entrega</div>
+                  <div style="color:#A9C6B5; font-size:11.5px; margin-top:4px;">Así otros saben qué falta en tiempo real.</div>
+                </div>
+              </div>
+
+              <button onClick="{{ openCenterDeliver }}" style="margin-top:14px; width:100%; background:#FF6B2C; color:#fff; border:none; border-radius:14px; padding:16px; font-weight:800; font-size:15.5px; cursor:pointer; box-shadow:0 8px 18px -8px rgba(255,107,44,.7); display:flex; align-items:center; justify-content:center; gap:8px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Acabo de entregar
+              </button>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== ACABO DE ENTREGAR ============== -->
+          <sc-if value="{{ sc.deliver }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 0 28px;">
+            <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid #EFE7D6;">
+              <button onClick="{{ backToCenter }}" style="width:34px;height:34px;border-radius:10px;border:1px solid #E7DECE;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#1F2933" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <div style="font-weight:700; font-size:14.5px; color:#1F2933;">Acabo de entregar</div>
+            </div>
+            <div style="padding:16px;">
+              <div style="background:#1F4D3A; border-radius:16px; padding:18px; color:#fff;">
+                <div style="font-size:26px;">🐾</div>
+                <div style="font-family:'Archivo',sans-serif; font-weight:800; font-size:19px; margin-top:6px; line-height:1.2;">Gracias por ayudar a las mascotas</div>
+                <div style="font-size:12.5px; color:#A9C6B5; margin-top:6px;">{{ cur.name }} · {{ cur.city }}</div>
+              </div>
+
+              <div style="margin-top:18px; font-size:13px; font-weight:700; color:#3A4650; margin-bottom:9px;">¿Qué entregaste?</div>
+              <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <sc-for list="{{ deliver }}" as="d" hint-placeholder-count="7">
+                  <button onClick="{{ d.pick }}" style="{{ d.st }} padding:9px 14px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ d.label }}</button>
+                </sc-for>
+              </div>
+
+              <div style="margin-top:18px; font-size:13px; font-weight:700; color:#3A4650; margin-bottom:7px;">Cantidad (opcional)</div>
+              <input value="{{ delQty }}" onChange="{{ setDelQty }}" placeholder="Ej: 10 kg, 3 unidades, 24 botellas…" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+
+              <div style="margin-top:16px; display:flex; gap:11px;">
+                <div style="flex:1; border:1.5px dashed #D8CCB6; border-radius:12px; padding:16px; text-align:center; background:#fff; cursor:pointer;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="2.5" stroke="#9AA3AD" stroke-width="1.7"/><circle cx="12" cy="13" r="3.2" stroke="#9AA3AD" stroke-width="1.7"/><path d="M8 6l1.5-2h5L16 6" stroke="#9AA3AD" stroke-width="1.7"/></svg>
+                  <div style="font-size:11.5px; color:#6B7280; margin-top:6px; font-weight:600;">Foto (opcional)</div>
+                </div>
+              </div>
+
+              <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div><div style="font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Tu nombre (opcional)</div><input placeholder="Nombre" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:11px 12px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" /></div>
+                <div><div style="font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Teléfono (opcional)</div><input placeholder="0412…" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:11px 12px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" /></div>
+              </div>
+
+              <button onClick="{{ toggleDelConfirm }}" style="margin-top:16px; width:100%; display:flex; align-items:center; gap:11px; background:#fff; border:1px solid #E7DECE; border-radius:12px; padding:13px; cursor:pointer; text-align:left;">
+                <span style="{{ delBoxStyle }} width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none;">
+                  <sc-if value="{{ delConfirmed }}" hint-placeholder-val="{{ false }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></sc-if>
+                </span>
+                <span style="font-size:13px; color:#1F2933; font-weight:600; line-height:1.3;">Confirmo que esta entrega fue realizada en este punto.</span>
+              </button>
+
+              <button onClick="{{ submitDeliver }}" style="margin-top:16px; width:100%; background:#FF6B2C; color:#fff; border:none; border-radius:14px; padding:16px; font-weight:800; font-size:15.5px; cursor:pointer; box-shadow:0 8px 18px -8px rgba(255,107,44,.7);">Registrar entrega</button>
+              <p style="margin:12px 4px 0; font-size:11.5px; color:#9AA3AD; text-align:center; line-height:1.4;">¿Entregaste ayuda? Regístrala para que otros sepan qué falta.</p>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== SUCCESS ============== -->
+          <sc-if value="{{ sc.success }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:48px 22px 28px; display:flex; flex-direction:column; align-items:center; text-align:center; min-height:100%;">
+            <div style="width:84px;height:84px;border-radius:50%;background:#EAF3EC;display:flex;align-items:center;justify-content:center;">
+              <span style="width:60px;height:60px;border-radius:50%;background:#1F4D3A;display:flex;align-items:center;justify-content:center;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+            <h1 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:23px; color:#1A2620; margin:20px 0 0;">{{ successMsg }}</h1>
+            <p style="font-size:14px; color:#5C6670; line-height:1.45; margin:11px 0 0; max-width:300px;">{{ successSub }}</p>
+            <div style="width:100%; max-width:320px; margin-top:26px; display:flex; flex-direction:column; gap:10px;">
+              <button style="width:100%; background:#25D366; color:#fff; border:none; border-radius:13px; padding:14px; font-weight:700; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1012 2z"/></svg>Compartir por WhatsApp</button>
+              <button onClick="{{ goHome }}" style="width:100%; background:#fff; color:#1F4D3A; border:1px solid #E7DECE; border-radius:13px; padding:14px; font-weight:700; font-size:14px; cursor:pointer;">Volver al inicio</button>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== REPORT MENU ============== -->
+          <sc-if value="{{ sc.report }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:18px 16px 26px;">
+            <h1 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:23px; color:#1A2620; margin:0 0 5px;">¿Qué quieres reportar?</h1>
+            <p style="font-size:13.5px; color:#5C6670; margin:0 0 18px;">Un reporte claro puede salvar una mascota.</p>
+            <div style="display:flex; flex-direction:column; gap:11px;">
+              <sc-for list="{{ reportOptions }}" as="o" hint-placeholder-count="5">
+                <button onClick="{{ o.go }}" style="display:flex; align-items:center; gap:14px; background:#fff; border:1px solid #EBE2D2; border-left:4px solid {{ o.tone }}; border-radius:15px; padding:16px 15px; cursor:pointer; text-align:left;">
+                  <span style="font-size:24px; flex:none;">{{ o.icon }}</span>
+                  <span style="flex:1; min-width:0;">
+                    <span style="display:block; font-weight:700; font-size:15px; color:#1F2933;">{{ o.label }}</span>
+                    <span style="display:block; font-size:12.5px; color:#6B7280; margin-top:2px;">{{ o.sub }}</span>
+                  </span>
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" style="flex:none;"><path d="M9 6l6 6-6 6" stroke="#C7CDD3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== LOST PET FORM ============== -->
+          <sc-if value="{{ sc.lost }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 0 28px;">
+            <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid #EFE7D6;">
+              <button onClick="{{ goReport }}" style="width:34px;height:34px;border-radius:10px;border:1px solid #E7DECE;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#1F2933" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <div style="font-weight:700; font-size:14.5px; color:#1F2933;">Perdí mi mascota</div>
+            </div>
+            <div style="padding:16px;">
+              <div style="border:1.5px dashed #D8CCB6; border-radius:14px; padding:22px; text-align:center; background:#fff; cursor:pointer;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="2.5" stroke="#9AA3AD" stroke-width="1.7"/><circle cx="12" cy="13" r="3.2" stroke="#9AA3AD" stroke-width="1.7"/><path d="M8 6l1.5-2h5L16 6" stroke="#9AA3AD" stroke-width="1.7"/></svg>
+                <div style="font-size:13px; color:#3A4650; margin-top:8px; font-weight:700;">Agregar foto de tu mascota</div>
+                <div style="font-size:11.5px; color:#9AA3AD; margin-top:3px;">Una foto clara ayuda a reconocerla</div>
+              </div>
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">Tipo de animal</div>
+              <div style="display:flex; gap:8px;"><sc-for list="{{ animalOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="{{ o.st }} flex:1; padding:11px; border-radius:11px; font-size:13.5px; font-weight:600; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div>
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Nombre (si lo tiene)</div>
+              <input placeholder="Ej: Luna" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div><div style="font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">Sexo</div><div style="display:flex; gap:6px;"><sc-for list="{{ sexOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="{{ o.st }} flex:1; padding:9px 4px; border-radius:9px; font-size:11.5px; font-weight:600; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div></div>
+                <div><div style="font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">Tamaño</div><div style="display:flex; gap:6px;"><sc-for list="{{ sizeOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="{{ o.st }} flex:1; padding:9px 4px; border-radius:9px; font-size:11.5px; font-weight:600; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div></div>
+              </div>
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Color y señas particulares</div>
+              <input placeholder="Ej: Blanca con manchas marrones, collar rojo" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Última vez vista</div>
+              <input placeholder="Ej: Macuto, cerca de la plaza" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Tu WhatsApp</div>
+              <input placeholder="0412…" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <button onClick="{{ submitLost }}" style="margin-top:20px; width:100%; background:#D62828; color:#fff; border:none; border-radius:14px; padding:16px; font-weight:800; font-size:15.5px; cursor:pointer; box-shadow:0 8px 18px -8px rgba(214,40,40,.6);">Publicar búsqueda</button>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== FOUND PET FORM ============== -->
+          <sc-if value="{{ sc.found }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 0 28px;">
+            <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid #EFE7D6;">
+              <button onClick="{{ goReport }}" style="width:34px;height:34px;border-radius:10px;border:1px solid #E7DECE;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#1F2933" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <div style="font-weight:700; font-size:14.5px; color:#1F2933;">Encontré una mascota</div>
+            </div>
+            <div style="padding:16px;">
+              <div style="background:#EAF3EC; border:1px solid #D4E7D8; border-radius:12px; padding:11px 13px; font-size:12px; color:#1F4D3A; line-height:1.4;">No entres a estructuras dañadas para rescatar animales. Reporta la ubicación y deja que un equipo actúe con seguridad.</div>
+              <div style="margin-top:14px; border:1.5px dashed #D8CCB6; border-radius:14px; padding:22px; text-align:center; background:#fff; cursor:pointer;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="14" rx="2.5" stroke="#9AA3AD" stroke-width="1.7"/><circle cx="12" cy="13" r="3.2" stroke="#9AA3AD" stroke-width="1.7"/><path d="M8 6l1.5-2h5L16 6" stroke="#9AA3AD" stroke-width="1.7"/></svg>
+                <div style="font-size:13px; color:#3A4650; margin-top:8px; font-weight:700;">Agregar foto del animal</div>
+              </div>
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">Tipo de animal</div>
+              <div style="display:flex; gap:8px;"><sc-for list="{{ animalOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="{{ o.st }} flex:1; padding:11px; border-radius:11px; font-size:13.5px; font-weight:600; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div>
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">¿Dónde lo encontraste?</div>
+              <input placeholder="Ej: Los Palos Grandes, esquina con…" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Descripción y estado</div>
+              <input placeholder="Ej: Gato naranja adulto, asustado pero sin heridas visibles" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Tu WhatsApp</div>
+              <input placeholder="0412…" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <button onClick="{{ submitFound }}" style="margin-top:20px; width:100%; background:#1F4D3A; color:#fff; border:none; border-radius:14px; padding:16px; font-weight:800; font-size:15.5px; cursor:pointer; box-shadow:0 8px 18px -8px rgba(31,77,58,.6);">Publicar mascota encontrada</button>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== TRAPPED ANIMALS FORM ============== -->
+          <sc-if value="{{ sc.trapped }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 0 28px;">
+            <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid #EFE7D6;">
+              <button onClick="{{ goReport }}" style="width:34px;height:34px;border-radius:10px;border:1px solid #E7DECE;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#1F2933" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <div style="font-weight:700; font-size:14.5px; color:#1F2933;">Mascotas atrapadas</div>
+            </div>
+            <div style="padding:16px;">
+              <div style="background:#FBE3E1; border:1px solid #F3C6C2; border-radius:13px; padding:13px; display:flex; gap:10px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex:none; margin-top:1px;"><path d="M12 3l9 16H3L12 3z" stroke="#C81E1E" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v4M12 16.5v.2" stroke="#C81E1E" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <div style="font-size:12.5px; color:#A11D1D; line-height:1.4; font-weight:600;">No entres a estructuras dañadas para rescatar animales. Reporta la ubicación. Prioriza tu seguridad.</div>
+              </div>
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Ubicación exacta o referencia</div>
+              <input placeholder="Ej: Edificio en Caraballeda, planta baja" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Tipo y número de animales</div>
+              <input placeholder="Ej: 2 perros y 1 gato" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">Riesgo visible de la estructura</div>
+              <div style="display:flex; flex-direction:column; gap:7px;"><sc-for list="{{ riskOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="{{ o.st }} width:100%; text-align:left; padding:11px 13px; border-radius:11px; font-size:13px; font-weight:600; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div>
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Tu WhatsApp</div>
+              <input placeholder="0412…" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <button onClick="{{ submitTrapped }}" style="margin-top:20px; width:100%; background:#C2410C; color:#fff; border:none; border-radius:14px; padding:16px; font-weight:800; font-size:15.5px; cursor:pointer;">Reportar ubicación</button>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== CENTER NEED FORM ============== -->
+          <sc-if value="{{ sc.centerNeed }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 0 28px;">
+            <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid #EFE7D6;">
+              <button onClick="{{ goReport }}" style="width:34px;height:34px;border-radius:10px;border:1px solid #E7DECE;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#1F2933" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <div style="font-weight:700; font-size:14.5px; color:#1F2933;">Un centro necesita insumos</div>
+            </div>
+            <div style="padding:16px;">
+              <div style="font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Nombre del centro o punto</div>
+              <input placeholder="Ej: Punto Patitas La Guaira" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Ubicación</div>
+              <input placeholder="Ciudad / sector" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">¿Qué insumos necesita?</div>
+              <input placeholder="Ej: Perrarina, transportadoras, suero" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">Nivel de urgencia</div>
+              <div style="display:flex; gap:8px;"><sc-for list="{{ urgFormOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="{{ o.st }} flex:1; padding:11px; border-radius:11px; font-size:13px; font-weight:700; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div>
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">WhatsApp del centro</div>
+              <input placeholder="0412…" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <button onClick="{{ submitCenterNeed }}" style="margin-top:20px; width:100%; background:#1F4D3A; color:#fff; border:none; border-radius:14px; padding:16px; font-weight:800; font-size:15.5px; cursor:pointer;">Publicar necesidad</button>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== MAP / LISTA + LOST&FOUND ============== -->
+          <sc-if value="{{ sc.map }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:14px 16px 26px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <h1 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:21px; color:#1A2620; margin:0;">Mapa de ayuda</h1>
+              <div style="display:flex; background:#fff; border:1px solid #E7DECE; border-radius:10px; padding:3px;">
+                <button onClick="{{ setMapList }}" style="{{ listBtnSt }} border:none; border-radius:8px; padding:7px 13px; font-size:12.5px; font-weight:700; cursor:pointer; font-family:'Public Sans',sans-serif;">Lista</button>
+                <button onClick="{{ setMapMap }}" style="{{ mapBtnSt }} border:none; border-radius:8px; padding:7px 13px; font-size:12.5px; font-weight:700; cursor:pointer; font-family:'Public Sans',sans-serif;">Mapa</button>
+              </div>
+            </div>
+            <div class="ps-scroll" style="margin-top:12px; display:flex; gap:8px; overflow-x:auto; padding-bottom:2px;">
+              <sc-for list="{{ filterOpts }}" as="o" hint-placeholder-count="5"><button onClick="{{ o.pick }}" style="{{ o.st }} flex:none; font-size:12px; font-weight:600; padding:7px 13px; border-radius:999px; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for>
+            </div>
+
+            <sc-if value="{{ mapIsMap }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:14px; border-radius:16px; overflow:hidden; border:1px solid #E7DECE; position:relative; height:300px; background:#E7EEE6; background-image:linear-gradient(#DBE6DC 1px, transparent 1px), linear-gradient(90deg, #DBE6DC 1px, transparent 1px); background-size:26px 26px;">
+                <div style="position:absolute; left:8%; top:30%; width:46%; height:8px; background:#CBDDD9; border-radius:5px; transform:rotate(-8deg);"></div>
+                <div style="position:absolute; left:40%; top:58%; width:55%; height:8px; background:#CBDDD9; border-radius:5px; transform:rotate(6deg);"></div>
+                <sc-for list="{{ centersList }}" as="c" hint-placeholder-count="6">
+                  <button onClick="{{ c.open }}" style="position:absolute; left:{{ c.mx }}%; top:{{ c.my }}%; transform:translate(-50%,-100%); background:none; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center;">
+                    <span style="background:{{ c.stDot }}; color:#fff; font-size:9px; font-weight:800; padding:3px 6px; border-radius:6px; white-space:nowrap; box-shadow:0 3px 8px rgba(0,0,0,.2);">{{ c.city }}</span>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="{{ c.stDot }}" style="margin-top:-1px;"><path d="M12 22s-7-6-7-12a7 7 0 1114 0c0 6-7 12-7 12z"/><circle cx="12" cy="10" r="2.4" fill="#fff"/></svg>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="margin-top:9px; font-size:11.5px; color:#9AA3AD; text-align:center;">Toca un punto para ver sus necesidades.</div>
+            </sc-if>
+
+            <sc-if value="{{ mapIsList }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-top:14px; display:flex; flex-direction:column; gap:10px;">
+                <sc-for list="{{ centersList }}" as="c" hint-placeholder-count="6">
+                  <button onClick="{{ c.open }}" style="display:block; width:100%; text-align:left; background:#fff; border:1px solid #EBE2D2; border-radius:14px; padding:13px; cursor:pointer;">
+                    <span style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+                      <span style="min-width:0;"><span style="display:block; font-weight:700; font-size:14px; color:#1F2933;">{{ c.name }}</span><span style="display:block; font-size:12px; color:#6B7280; margin-top:2px;">{{ c.city }}</span></span>
+                      <span style="flex:none; display:inline-flex; align-items:center; gap:5px; background:{{ c.stBg }}; color:{{ c.stFg }}; font-size:10px; font-weight:800; padding:4px 8px; border-radius:7px;"><span style="width:6px;height:6px;border-radius:50%;background:{{ c.stDot }};"></span>{{ c.status }}</span>
+                    </span>
+                    <span style="display:block; margin-top:8px; font-size:12px; color:#1F2933; background:#F8F3EA; border-radius:8px; padding:7px 10px;">{{ c.tagLine }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <div style="margin-top:24px; display:flex; align-items:center; justify-content:space-between;">
+              <h2 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:16px; color:#1A2620; margin:0;">Perdidas y encontradas</h2>
+              <button onClick="{{ goReport }}" style="background:#FCEFE4; border:none; color:#C2410C; font-weight:700; font-size:12px; padding:6px 11px; border-radius:8px; cursor:pointer;">+ Reportar</button>
+            </div>
+            <div style="margin-top:11px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <sc-for list="{{ pets }}" as="p" hint-placeholder-count="4">
+                <div style="background:#fff; border:1px solid #EBE2D2; border-radius:14px; overflow:hidden;">
+                  <div style="height:96px; background:#F1EADE; display:flex; align-items:center; justify-content:center; position:relative;">
+                    <span style="font-size:40px;">{{ p.emoji }}</span>
+                    <span style="position:absolute; top:8px; left:8px; background:{{ p.pBg }}; color:{{ p.pFg }}; font-size:10px; font-weight:800; padding:3px 7px; border-radius:6px;">{{ p.status }}</span>
+                  </div>
+                  <div style="padding:10px 11px;">
+                    <div style="font-weight:700; font-size:13.5px; color:#1F2933;">{{ p.name }}</div>
+                    <div style="font-size:11.5px; color:#6B7280; margin-top:2px; line-height:1.3;">{{ p.desc }}</div>
+                    <div style="display:flex; align-items:center; gap:4px; margin-top:7px; font-size:11px; color:#5C6670;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 21s-6-5-6-10a6 6 0 1112 0c0 5-6 10-6 10z" stroke="#9AA3AD" stroke-width="1.8"/></svg>{{ p.loc }} · {{ p.when }}</div>
+                    <button style="margin-top:9px; width:100%; background:#1F4D3A; color:#fff; border:none; border-radius:9px; padding:8px; font-size:11.5px; font-weight:700; cursor:pointer;">Tengo información</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== VET DIRECTORY ============== -->
+          <sc-if value="{{ sc.vets }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:14px 16px 26px;">
+            <h1 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:21px; color:#1A2620; margin:0 0 4px;">Atención veterinaria</h1>
+            <p style="font-size:13px; color:#5C6670; margin:0 0 16px;">Puntos veterinarios y voluntarios activos ahora.</p>
+            <div style="display:flex; flex-direction:column; gap:11px;">
+              <sc-for list="{{ vets }}" as="v" hint-placeholder-count="4">
+                <div style="background:#fff; border:1px solid #EBE2D2; border-radius:15px; padding:14px;">
+                  <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+                    <div style="min-width:0;"><div style="font-weight:700; font-size:14.5px; color:#1F2933; line-height:1.2;">{{ v.name }}</div><div style="display:flex; align-items:center; gap:5px; margin-top:4px; font-size:12px; color:#6B7280;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 21s-6-5-6-10a6 6 0 1112 0c0 5-6 10-6 10z" stroke="#9AA3AD" stroke-width="1.8"/></svg>{{ v.loc }}</div></div>
+                    <span style="flex:none; display:inline-flex; align-items:center; gap:5px; background:{{ v.sBg }}; color:{{ v.sFg }}; font-size:10px; font-weight:800; padding:4px 8px; border-radius:7px; text-align:right;"><span style="width:6px;height:6px;border-radius:50%;background:{{ v.sDot }};"></span>{{ v.status }}</span>
+                  </div>
+                  <div style="margin-top:11px; font-size:11px; font-weight:700; color:#9AA3AD; text-transform:uppercase; letter-spacing:.4px;">Atiende</div>
+                  <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px;"><sc-for list="{{ v.accepts }}" as="a" hint-placeholder-count="3"><span style="background:#F1EADE; color:#3A4650; font-size:11.5px; font-weight:600; padding:4px 9px; border-radius:7px;">{{ a }}</span></sc-for></div>
+                  <sc-if value="{{ v.needs.length }}" hint-placeholder-val="{{ true }}">
+                  <div style="margin-top:11px; font-size:11px; font-weight:700; color:#9AA3AD; text-transform:uppercase; letter-spacing:.4px;">Necesita</div>
+                  <div style="margin-top:6px; display:flex; flex-wrap:wrap; gap:6px;"><sc-for list="{{ v.needs }}" as="n" hint-placeholder-count="2"><span style="background:#FCEFE4; color:#C2410C; font-size:11.5px; font-weight:600; padding:4px 9px; border-radius:7px;">{{ n }}</span></sc-for></div>
+                  </sc-if>
+                  <div style="margin-top:13px; display:flex; align-items:center; gap:9px;">
+                    <button style="flex:1; background:#25D366; color:#fff; border:none; border-radius:10px; padding:10px; font-weight:700; font-size:12.5px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1012 2z"/></svg>WhatsApp</button>
+                    <span style="font-size:11px; color:#9AA3AD; font-weight:600;">Act. {{ v.updated }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== FOSTER OFFER ============== -->
+          <sc-if value="{{ sc.foster }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 0 28px;">
+            <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid #EFE7D6;">
+              <button onClick="{{ goHome }}" style="width:34px;height:34px;border-radius:10px;border:1px solid #E7DECE;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#1F2933" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <div style="font-weight:700; font-size:14.5px; color:#1F2933;">Ofrecer hogar temporal</div>
+            </div>
+            <div style="padding:16px;">
+              <div style="background:#EAF3EC; border:1px solid #D4E7D8; border-radius:12px; padding:12px 13px; font-size:12.5px; color:#1F4D3A; line-height:1.4;">Un hogar temporal le da a una mascota un lugar seguro mientras encuentra a su familia o un refugio. Este punto necesita hogares hoy.</div>
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Tu ubicación</div>
+              <input placeholder="Ciudad / sector" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">¿Qué puedes recibir?</div>
+              <div style="display:flex; flex-wrap:wrap; gap:8px;"><sc-for list="{{ fosterCan }}" as="o" hint-placeholder-count="6"><button onClick="{{ o.toggle }}" style="{{ o.st }} padding:9px 13px; border-radius:10px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div>
+              <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div><div style="font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">Capacidad</div><div style="display:flex; gap:6px;"><sc-for list="{{ capOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="{{ o.st }} flex:1; padding:9px; border-radius:9px; font-size:12.5px; font-weight:700; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div></div>
+                <div><div style="font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">Tiempo disponible</div><div style="display:flex; gap:5px; flex-wrap:wrap;"><sc-for list="{{ timeOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="{{ o.st }} padding:8px 9px; border-radius:9px; font-size:11px; font-weight:600; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div></div>
+              </div>
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">Requisitos</div>
+              <div style="display:flex; flex-direction:column; gap:7px;"><sc-for list="{{ reqOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="{{ o.st }} width:100%; text-align:left; padding:11px 13px; border-radius:11px; font-size:13px; font-weight:600; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div>
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Tu WhatsApp</div>
+              <input placeholder="0412…" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+              <button onClick="{{ submitFoster }}" style="margin-top:20px; width:100%; background:#1F4D3A; color:#fff; border:none; border-radius:14px; padding:16px; font-weight:800; font-size:15.5px; cursor:pointer; box-shadow:0 8px 18px -8px rgba(31,77,58,.6);">Ofrecer mi hogar</button>
+              <p style="margin:11px 4px 0; font-size:11px; color:#9AA3AD; text-align:center; line-height:1.4;">Un coordinador verificará tu oferta antes de asignar una mascota.</p>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== VOLUNTEER ============== -->
+          <sc-if value="{{ sc.volunteer }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:16px 16px 26px;">
+            <h1 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:23px; color:#1A2620; margin:0 0 5px;">Quiero ayudar</h1>
+            <p style="font-size:13.5px; color:#5C6670; margin:0 0 18px;">Cada par de manos cuenta. Cuéntanos cómo puedes sumarte.</p>
+            <div style="display:flex; flex-direction:column; gap:9px;">
+              <sc-for list="{{ volOptions }}" as="o" hint-placeholder-count="7">
+                <button onClick="{{ o.pick }}" style="{{ o.st }} display:flex; align-items:center; gap:13px; border-radius:13px; padding:14px; cursor:pointer; text-align:left; font-family:'Public Sans',sans-serif;">
+                  <span style="font-size:22px; flex:none;">{{ o.icon }}</span>
+                  <span style="flex:1; font-weight:700; font-size:14.5px;">{{ o.label }}</span>
+                  <span style="width:22px;height:22px;border-radius:50%;border:2px solid currentColor;opacity:.45;flex:none;"></span>
+                </button>
+              </sc-for>
+            </div>
+            <div style="margin-top:18px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:7px;">Tu nombre y WhatsApp</div>
+            <input placeholder="Nombre" style="width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+            <input placeholder="0412…" style="margin-top:9px; width:100%; border:1px solid #E7DECE; border-radius:11px; padding:12px 13px; font-size:14px; font-family:'Public Sans',sans-serif; outline:none; background:#fff;" />
+            <button onClick="{{ submitVolunteer }}" style="margin-top:18px; width:100%; background:#FF6B2C; color:#fff; border:none; border-radius:14px; padding:16px; font-weight:800; font-size:15.5px; cursor:pointer; box-shadow:0 8px 18px -8px rgba(255,107,44,.7);">Sumarme como voluntario</button>
+            <button onClick="{{ goGuides }}" style="margin-top:11px; width:100%; background:#fff; color:#1F4D3A; border:1px solid #E7DECE; border-radius:13px; padding:13px; font-weight:700; font-size:13.5px; cursor:pointer;">Ver guías de seguridad</button>
+          </div>
+          </sc-if>
+
+          <!-- ============== GUIDES ============== -->
+          <sc-if value="{{ sc.guides }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:16px 16px 26px;">
+            <h1 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:23px; color:#1A2620; margin:0 0 5px;">Guías de seguridad</h1>
+            <p style="font-size:13.5px; color:#5C6670; margin:0 0 16px;">Pasos cortos y claros. Ante una emergencia médica, busca un veterinario.</p>
+            <div style="display:flex; flex-direction:column; gap:9px;">
+              <sc-for list="{{ guides }}" as="g" hint-placeholder-count="8">
+                <button style="display:flex; align-items:center; gap:13px; background:#fff; border:1px solid #EBE2D2; border-radius:13px; padding:13px 14px; cursor:pointer; text-align:left;">
+                  <span style="width:40px;height:40px;border-radius:11px;background:#F1EADE;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;">{{ g.emoji }}</span>
+                  <span style="flex:1; min-width:0;"><span style="display:block; font-size:10px; font-weight:800; color:#FF6B2C; text-transform:uppercase; letter-spacing:.5px;">{{ g.tag }}</span><span style="display:block; font-weight:700; font-size:13.5px; color:#1F2933; margin-top:2px; line-height:1.25;">{{ g.t }}</span></span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="flex:none;"><path d="M9 6l6 6-6 6" stroke="#C7CDD3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </sc-for>
+            </div>
+            <div style="margin-top:16px; background:#FCEFE4; border:1px solid #F6D9C2; border-radius:12px; padding:12px 13px; font-size:11.5px; color:#9A4A1A; line-height:1.4;">Estas guías son orientación general y no reemplazan la atención de un veterinario. Ante heridas graves, busca ayuda profesional.</div>
+          </div>
+          </sc-if>
+
+          <!-- ============== ADMIN DASHBOARD ============== -->
+          <sc-if value="{{ sc.admin }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 0 26px;">
+            <div style="background:#1F4D3A; padding:16px; color:#fff;">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div><div style="font-size:11.5px; color:#A9C6B5; font-weight:600;">Panel del centro</div><div style="font-family:'Archivo',sans-serif; font-weight:800; font-size:17px; margin-top:2px;">{{ cur.name }}</div></div>
+                <span style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex:none;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 20V8l5-4 5 4v12" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 20v-8h6v8M3 20h18" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+              </div>
+              <div style="margin-top:10px; display:flex; align-items:center; gap:6px; font-size:11.5px; color:#A9C6B5;"><span style="width:7px;height:7px;border-radius:50%;background:#FF6B2C; animation:psPulse 1.4s infinite;"></span>Última actualización: {{ adminPublished }}</div>
+            </div>
+            <div style="padding:16px;">
+              <div style="font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">Estado del centro</div>
+              <div style="display:flex; flex-wrap:wrap; gap:7px;"><sc-for list="{{ statusOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="{{ o.st }} padding:9px 13px; border-radius:10px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div>
+
+              <div style="margin-top:16px; font-size:12.5px; font-weight:700; color:#3A4650; margin-bottom:8px;">Urgencia general</div>
+              <div style="display:flex; gap:7px;"><sc-for list="{{ urgencyOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="{{ o.st }} flex:1; padding:10px; border-radius:10px; font-size:12.5px; font-weight:700; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div>
+
+              <div style="margin-top:18px; display:flex; align-items:center; justify-content:space-between;"><span style="font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; color:#1A2620;">Inventario de necesidades</span></div>
+              <div style="margin-top:10px; display:flex; flex-direction:column; gap:9px;">
+                <sc-for list="{{ adminInv }}" as="r" hint-placeholder-count="6">
+                  <div style="background:#fff; border:1px solid #EBE2D2; border-radius:12px; padding:12px 13px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                      <span style="font-weight:700; font-size:13.5px; color:#1F2933;">{{ r.name }}</span>
+                      <span style="display:inline-flex; align-items:center; gap:4px; background:{{ r.sBg }}; color:{{ r.sFg }}; font-size:10px; font-weight:800; text-transform:uppercase; padding:3px 7px; border-radius:6px;">{{ r.pr }}</span>
+                    </div>
+                    <div style="margin-top:10px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                      <span style="font-size:12px; color:#6B7280;">Recibidos <strong style="color:#1F2933;">{{ r.got }}</strong> / {{ r.need }} {{ r.unit }}</span>
+                      <span style="display:flex; align-items:center; gap:8px;">
+                        <button onClick="{{ r.dec }}" style="width:30px;height:30px;border-radius:9px;border:1px solid #E7DECE;background:#F8F3EA;color:#1F2933;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;">−</button>
+                        <button onClick="{{ r.inc }}" style="width:30px;height:30px;border-radius:9px;border:none;background:#1F4D3A;color:#fff;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;">+</button>
+                      </span>
+                    </div>
+                    <div style="margin-top:9px; height:7px; background:#EFE7D6; border-radius:5px; overflow:hidden;"><div style="height:100%; width:{{ r.pct }}%; background:{{ r.sFg }}; border-radius:5px;"></div></div>
+                    <button onClick="{{ r.cover }}" style="margin-top:9px; background:none; border:none; color:#2A9D8F; font-size:11.5px; font-weight:700; cursor:pointer; padding:0;">✓ Marcar como cubierto</button>
+                  </div>
+                </sc-for>
+              </div>
+
+              <button style="margin-top:14px; width:100%; background:#fff; color:#1F4D3A; border:1.5px dashed #BBD2C2; border-radius:12px; padding:13px; font-weight:700; font-size:13.5px; cursor:pointer;">+ Agregar necesidad urgente</button>
+
+              <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:9px;">
+                <button onClick="{{ publish }}" style="grid-column:span 2; background:#FF6B2C; color:#fff; border:none; border-radius:13px; padding:15px; font-weight:800; font-size:14.5px; cursor:pointer; box-shadow:0 8px 18px -8px rgba(255,107,44,.7);">Publicar actualización</button>
+                <button style="background:#fff; color:#1F4D3A; border:1px solid #E7DECE; border-radius:12px; padding:12px; font-weight:700; font-size:12.5px; cursor:pointer;">Compartir link</button>
+                <button style="background:#fff; color:#1F4D3A; border:1px solid #E7DECE; border-radius:12px; padding:12px; font-weight:700; font-size:12.5px; cursor:pointer;">Ver QR</button>
+              </div>
+
+              <div style="margin-top:20px; font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; color:#1A2620;">Actividad reciente</div>
+              <div style="margin-top:9px; display:flex; flex-direction:column; gap:7px;">
+                <sc-for list="{{ feed }}" as="f" hint-placeholder-count="3">
+                  <div style="display:flex; align-items:center; gap:10px; background:#fff; border:1px solid #EBE2D2; border-radius:11px; padding:10px 12px;">
+                    <span style="width:30px;height:30px;border-radius:50%;background:#F1EADE;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#1F4D3A;flex:none;">{{ f.who }}</span>
+                    <span style="flex:1; font-size:12.5px; color:#1F2933;"><strong>{{ f.who }}</strong> {{ f.what }}</span>
+                    <span style="font-size:11px; color:#9AA3AD; font-weight:600; flex:none;">{{ f.t }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ============== TRUST / VERIFICATION ============== -->
+          <sc-if value="{{ sc.trust }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:16px 16px 26px;">
+            <h1 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:22px; color:#1A2620; margin:0 0 5px;">Confianza y verificación</h1>
+            <p style="font-size:13.5px; color:#5C6670; margin:0 0 16px; line-height:1.4;">La información la comparte la comunidad y cambia rápido. Estas etiquetas te ayudan a saber qué tan reciente y confirmada está.</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <sc-for list="{{ trustBadges }}" as="b" hint-placeholder-count="5">
+                <div style="background:#fff; border:1px solid #EBE2D2; border-radius:13px; padding:13px 14px;">
+                  <span style="display:inline-flex; align-items:center; gap:6px; background:{{ b.bg }}; color:{{ b.fg }}; font-size:11.5px; font-weight:800; padding:5px 10px; border-radius:8px;"><span style="width:7px;height:7px;border-radius:50%;background:{{ b.dot }};"></span>{{ b.label }}</span>
+                  <div style="margin-top:8px; font-size:12.5px; color:#5C6670; line-height:1.4;">{{ b.desc }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:18px; background:#1F4D3A; border-radius:14px; padding:16px; color:#fff;">
+              <div style="font-family:'Archivo',sans-serif; font-weight:800; font-size:15px;">Antes de movilizarte</div>
+              <div style="margin-top:11px; display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; gap:9px; align-items:flex-start;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="flex:none;margin-top:1px;"><path d="M5 12l4 4 10-10" stroke="#FF6B2C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-size:12.5px; color:#DCE9E1; line-height:1.4;">Verifica por WhatsApp que el punto siga activo.</span></div>
+                <div style="display:flex; gap:9px; align-items:flex-start;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="flex:none;margin-top:1px;"><path d="M5 12l4 4 10-10" stroke="#FF6B2C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-size:12.5px; color:#DCE9E1; line-height:1.4;">Trae solo lo que el centro necesita ahora.</span></div>
+                <div style="display:flex; gap:9px; align-items:flex-start;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="flex:none;margin-top:1px;"><path d="M5 12l4 4 10-10" stroke="#FF6B2C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-size:12.5px; color:#DCE9E1; line-height:1.4;">Prioriza tu seguridad. No entres a estructuras dañadas.</span></div>
+              </div>
+            </div>
+          </div>
+          </sc-if>
+
+          <span data-anchor="screens"></span>
+
+        </div>
+
+        <!-- bottom nav -->
+        <div style="flex:none; background:#fff; border-top:1px solid #EFE7D6; padding:7px 8px calc(7px + env(safe-area-inset-bottom)); display:flex; align-items:flex-end; justify-content:space-around;">
+          <button onClick="{{ goHome }}" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;width:58px; color:{{ nav.home }};">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M3 11l9-7 9 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v9h5v-5h4v5h5v-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:10px; font-weight:700;">Inicio</span>
+          </button>
+          <button onClick="{{ goMap }}" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;width:58px; color:{{ nav.map }};">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 4v14M15 6v14" stroke="currentColor" stroke-width="1.7"/></svg>
+            <span style="font-size:10px; font-weight:700;">Mapa</span>
+          </button>
+          <button onClick="{{ goReport }}" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;width:62px;">
+            <span style="width:50px;height:50px;border-radius:16px;background:#FF6B2C;display:flex;align-items:center;justify-content:center;margin-top:-18px;box-shadow:0 8px 18px -6px rgba(255,107,44,.7); border:3px solid #fff;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 6v12M6 12h12" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+            </span>
+            <span style="font-size:10px; font-weight:800; color:#C2410C;">Reportar</span>
+          </button>
+          <button onClick="{{ goCentros }}" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;width:58px; color:{{ nav.cen }};">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M4 20V8l5-4 5 4v12" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 20v-8h6v8M3 20h18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:10px; font-weight:700;">Centros</span>
+          </button>
+          <button onClick="{{ goAyudar }}" style="background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;width:58px; color:{{ nav.ayu }};">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M12 20s-6.5-4-9-7.7C1.2 9.6 2.5 6.5 5.5 6.5c1.7 0 2.8 1 3.5 1.9.3.4.7.6 1 .6s.7-.2 1-.6c.7-.9 1.8-1.9 3.5-1.9 3 0 4.3 3.1 2.5 5.8C18.5 16 12 20 12 20z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            <span style="font-size:10px; font-weight:700;">Ayudar</span>
+          </button>
+        </div>
+
+        <!-- toast -->
+        <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute; bottom:84px; left:50%; transform:translateX(-50%); background:#1A2620; color:#F4EFE4; font-size:12.5px; font-weight:600; padding:10px 16px; border-radius:11px; box-shadow:0 10px 30px -8px rgba(0,0,0,.5); animation:psToast 2.4s ease forwards; white-space:nowrap; z-index:30;">{{ toast }}</div>
+        </sc-if>
+
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ DESKTOP ============ -->
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ false }}">
+    <div style="width:1280px; background:#F8F3EA; border-radius:20px; overflow:hidden; box-shadow:0 30px 70px -24px rgba(20,40,30,.5); border:1px solid rgba(0,0,0,.05);">
+
+      <!-- top nav -->
+      <div style="background:#fff; border-bottom:1px solid #EDE4D4; padding:0 26px; display:flex; align-items:center; gap:28px; height:64px;">
+        <div style="display:flex; align-items:center; gap:11px;">
+          <span style="width:36px;height:36px;border-radius:11px;background:#1F4D3A;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="#FF6B2C"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.7 2 5.5 5.2 5.5c1.9 0 3.1 1 3.8 2 .3.4.7.6 1 .6s.7-.2 1-.6c.7-1 1.9-2 3.8-2 3.2 0 4.8 3.2 3.2 6.3C19.5 16.4 12 21 12 21z"/></svg></span>
+          <div style="line-height:1.05;"><div style="font-family:'Archivo',sans-serif; font-weight:800; font-size:16px; color:#1A2620;">Patitas a Salvo</div><div style="font-size:10.5px; color:#9AA3AD; font-weight:600;">Venezuela 2026</div></div>
+        </div>
+        <div style="flex:1; display:flex; align-items:center; gap:22px; margin-left:14px;">
+          <button onClick="{{ goDNational }}" style="background:none;border:none;cursor:pointer;font-family:'Public Sans',sans-serif;font-size:13.5px;font-weight:700;color:#1F4D3A;padding:0;">Inicio</button>
+          <span style="font-size:13.5px;font-weight:600;color:#6B7280;cursor:pointer;">Reportar</span>
+          <span style="font-size:13.5px;font-weight:600;color:#6B7280;cursor:pointer;">Mascotas perdidas</span>
+          <span style="font-size:13.5px;font-weight:600;color:#6B7280;cursor:pointer;">Centros activos</span>
+          <span style="font-size:13.5px;font-weight:600;color:#6B7280;cursor:pointer;">Necesidades</span>
+          <span style="font-size:13.5px;font-weight:600;color:#6B7280;cursor:pointer;">Veterinarias</span>
+          <span style="font-size:13.5px;font-weight:600;color:#6B7280;cursor:pointer;">Voluntarios</span>
+        </div>
+        <button onClick="{{ goDAdmin }}" style="background:#1F4D3A;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Public Sans',sans-serif;">Panel del centro</button>
+      </div>
+      <!-- banner -->
+      <div style="background:#FCEFE4; border-bottom:1px solid #F6D9C2; padding:9px 26px; display:flex; align-items:center; gap:9px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex:none;"><path d="M12 3l9 16H3L12 3z" stroke="#C2410C" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v4M12 16.5v.2" stroke="#C2410C" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span style="font-size:12px; color:#9A4A1A; font-weight:500;">Información ciudadana en actualización. Verifica antes de movilizarte. No pongas tu vida en riesgo para rescatar animales en estructuras inestables.</span>
+      </div>
+
+      <!-- ===== NATIONAL DASHBOARD ===== -->
+      <sc-if value="{{ dNational }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; gap:0; align-items:stretch;">
+        <!-- filters -->
+        <div style="width:230px; flex:none; background:#fff; border-right:1px solid #EDE4D4; padding:22px 18px;">
+          <div style="font-family:'Archivo',sans-serif; font-weight:800; font-size:14px; color:#1A2620;">Filtros</div>
+          <div style="margin-top:16px; font-size:11px; font-weight:800; color:#9AA3AD; text-transform:uppercase; letter-spacing:.5px;">Estado</div>
+          <div style="margin-top:9px; display:flex; flex-direction:column; gap:8px;">
+            <sc-for list="{{ filterOpts }}" as="o" hint-placeholder-count="6"><button onClick="{{ o.pick }}" style="{{ o.st }} text-align:left; font-size:12.5px; font-weight:600; padding:9px 11px; border-radius:9px; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for>
+          </div>
+          <div style="margin-top:22px; padding:14px; background:#EAF3EC; border-radius:12px;">
+            <div style="font-size:12px; font-weight:700; color:#1F4D3A;">Solo verificado</div>
+            <div style="font-size:11px; color:#3E6B53; margin-top:4px; line-height:1.4;">Muestra puntos confirmados por rescatistas o centros en la última hora.</div>
+          </div>
+        </div>
+
+        <!-- main -->
+        <div style="flex:1; padding:24px 26px; min-width:0;">
+          <div style="display:flex; align-items:flex-end; justify-content:space-between;">
+            <div><h1 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:24px; color:#1A2620; margin:0;">Resumen nacional</h1><div style="font-size:13px; color:#6B7280; margin-top:3px;">Respuesta animal post-terremoto · actualizado hace 6 min</div></div>
+            <div style="display:flex; align-items:center; gap:9px; background:#fff; border:1px solid #E7DECE; border-radius:11px; padding:10px 13px; width:260px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#9AA3AD" stroke-width="1.8"/><path d="M16 16l5 5" stroke="#9AA3AD" stroke-width="1.8" stroke-linecap="round"/></svg><span style="color:#9AA3AD; font-size:13px;">Buscar centro o insumo…</span></div>
+          </div>
+
+          <div style="margin-top:18px; display:grid; grid-template-columns:repeat(6,1fr); gap:11px;">
+            <sc-for list="{{ natStats }}" as="s" hint-placeholder-count="6">
+              <div style="background:#fff; border:1px solid #EBE2D2; border-radius:14px; padding:14px;">
+                <div style="font-family:'Archivo',sans-serif; font-weight:800; font-size:24px; color:#1A2620;">{{ s.v }}</div>
+                <div style="font-size:11.5px; color:#5C6670; font-weight:600; margin-top:3px; line-height:1.2;">{{ s.k }}</div>
+                <div style="font-size:10.5px; color:#2A9D8F; font-weight:700; margin-top:5px;">{{ s.d }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="margin-top:18px; display:flex; gap:18px; align-items:stretch;">
+            <div style="flex:1; min-width:0;">
+              <div style="background:#fff; border:1px solid #EBE2D2; border-radius:16px; overflow:hidden;">
+                <div style="position:relative; height:280px; background:#E7EEE6; background-image:linear-gradient(#DBE6DC 1px, transparent 1px), linear-gradient(90deg, #DBE6DC 1px, transparent 1px); background-size:30px 30px;">
+                  <div style="position:absolute; left:6%; top:34%; width:44%; height:10px; background:#CBDDD9; border-radius:6px; transform:rotate(-7deg);"></div>
+                  <div style="position:absolute; left:42%; top:62%; width:56%; height:10px; background:#CBDDD9; border-radius:6px; transform:rotate(5deg);"></div>
+                  <sc-for list="{{ centersList }}" as="c" hint-placeholder-count="6">
+                    <button onClick="{{ c.open }}" style="position:absolute; left:{{ c.mx }}%; top:{{ c.my }}%; transform:translate(-50%,-100%); background:none; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center;">
+                      <span style="background:{{ c.stDot }}; color:#fff; font-size:10px; font-weight:800; padding:3px 7px; border-radius:6px; white-space:nowrap; box-shadow:0 3px 8px rgba(0,0,0,.2);">{{ c.city }}</span>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="{{ c.stDot }}" style="margin-top:-1px;"><path d="M12 22s-7-6-7-12a7 7 0 1114 0c0 6-7 12-7 12z"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg>
+                    </button>
+                  </sc-for>
+                  <div style="position:absolute; left:14px; bottom:14px; background:rgba(255,255,255,.94); border-radius:11px; padding:10px 13px; display:flex; gap:14px;">
+                    <span style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:#1F2933;"><span style="width:9px;height:9px;border-radius:50%;background:#2A9D8F;"></span>Activo</span>
+                    <span style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:#1F2933;"><span style="width:9px;height:9px;border-radius:50%;background:#FF6B2C;"></span>Saturado</span>
+                    <span style="display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:#1F2933;"><span style="width:9px;height:9px;border-radius:50%;background:#9AA3AD;"></span>Cerrado</span>
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top:16px; display:flex; align-items:center; justify-content:space-between;"><h2 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:17px; color:#1A2620; margin:0;">Centros activos</h2><span style="font-size:12.5px; color:#9AA3AD; font-weight:600;">Toca un centro para ver detalle</span></div>
+              <div style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <sc-for list="{{ centersList }}" as="c" hint-placeholder-count="6">
+                  <button onClick="{{ c.open }}" style="text-align:left; background:#fff; border:1px solid #EBE2D2; border-radius:14px; padding:15px; cursor:pointer;">
+                    <span style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px;">
+                      <span style="min-width:0;"><span style="display:block; font-weight:700; font-size:14.5px; color:#1F2933;">{{ c.name }}</span><span style="display:block; font-size:12px; color:#6B7280; margin-top:2px;">{{ c.city }} · {{ c.type }}</span></span>
+                      <span style="flex:none; display:inline-flex; align-items:center; gap:5px; background:{{ c.stBg }}; color:{{ c.stFg }}; font-size:10px; font-weight:800; padding:4px 8px; border-radius:7px;"><span style="width:6px;height:6px;border-radius:50%;background:{{ c.stDot }};"></span>{{ c.status }}</span>
+                    </span>
+                    <span style="display:block; margin-top:10px; font-size:12.5px; color:#1F2933; background:#F8F3EA; border-radius:8px; padding:8px 10px;">{{ c.tagLine }}</span>
+                    <span style="display:flex; align-items:center; justify-content:space-between; margin-top:10px;"><span style="display:inline-flex; align-items:center; gap:5px; background:{{ c.ugBg }}; color:{{ c.ugFg }}; font-size:10px; font-weight:800; padding:3px 8px; border-radius:6px;">Urgencia {{ c.urgency }}</span><span style="font-size:11px; color:#9AA3AD; font-weight:600;">Act. {{ c.updated }}</span></span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- right rail -->
+            <div style="width:320px; flex:none;">
+              <div style="background:#fff; border:1px solid #EBE2D2; border-radius:16px; padding:17px;">
+                <h2 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:15.5px; color:#1A2620; margin:0 0 4px;">Necesidades críticas nacionales</h2>
+                <div style="font-size:11.5px; color:#9AA3AD; margin-bottom:13px;">Insumos más solicitados ahora</div>
+                <div style="display:flex; flex-direction:column; gap:13px;">
+                  <sc-for list="{{ natNeeds }}" as="n" hint-placeholder-count="7">
+                    <div>
+                      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;"><span style="font-size:13px; font-weight:700; color:#1F2933;">{{ n.t }}</span><span style="font-size:10px; font-weight:800; color:{{ n.fg }}; background:{{ n.bg }}; padding:2px 7px; border-radius:5px;">{{ n.level }}</span></div>
+                      <div style="height:8px; background:#EFE7D6; border-radius:5px; overflow:hidden;"><div style="height:100%; width:{{ n.pct }}%; background:{{ n.dot }}; border-radius:5px;"></div></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="margin-top:16px; background:#fff; border:1px solid #EBE2D2; border-radius:16px; padding:17px;">
+                <h2 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:15.5px; color:#1A2620; margin:0 0 12px;">Actividad reciente</h2>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                  <sc-for list="{{ feed }}" as="f" hint-placeholder-count="3">
+                    <div style="display:flex; align-items:center; gap:11px;"><span style="width:34px;height:34px;border-radius:50%;background:#F1EADE;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#1F4D3A;flex:none;">{{ f.who }}</span><span style="flex:1; font-size:12.5px; color:#1F2933; line-height:1.3;"><strong>{{ f.who }}</strong> {{ f.what }}</span><span style="font-size:10.5px; color:#9AA3AD; font-weight:600;">{{ f.t }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== DESKTOP CENTER DETAIL ===== -->
+      <sc-if value="{{ dCenter }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:22px 26px 30px;">
+        <button onClick="{{ goDNational }}" style="display:inline-flex; align-items:center; gap:7px; background:#fff; border:1px solid #E7DECE; border-radius:10px; padding:9px 14px; font-size:13px; font-weight:700; color:#1F4D3A; cursor:pointer; font-family:'Public Sans',sans-serif;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#1F4D3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Volver al resumen</button>
+        <div style="margin-top:16px; display:flex; gap:20px; align-items:flex-start;">
+          <!-- left -->
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; align-items:center; gap:11px; flex-wrap:wrap;">
+              <h1 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:25px; color:#1A2620; margin:0;">{{ cur.name }}</h1>
+              <span style="display:inline-flex; align-items:center; gap:5px; background:{{ cur.stBg }}; color:{{ cur.stFg }}; font-size:11.5px; font-weight:800; padding:5px 11px; border-radius:8px;"><span style="width:7px;height:7px;border-radius:50%;background:{{ cur.stFg }};"></span>{{ cur.status }}</span>
+              <span style="display:inline-flex; align-items:center; gap:5px; background:{{ cur.ugBg }}; color:{{ cur.ugFg }}; font-size:11.5px; font-weight:800; padding:5px 11px; border-radius:8px;">Urgencia {{ cur.urgency }}</span>
+            </div>
+            <div style="margin-top:8px; font-size:13.5px; color:#6B7280;">{{ cur.type }} · {{ cur.city }}</div>
+            <div style="margin-top:7px; display:flex; align-items:center; gap:7px; font-size:12.5px; color:#1F7A6D; font-weight:700;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 4v5c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V6l8-4z" stroke="#1F7A6D" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="#1F7A6D" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ cur.trust }} · actualizado {{ cur.updated }}</div>
+
+            <div style="margin-top:18px; font-family:'Archivo',sans-serif; font-weight:800; font-size:17px; color:#1A2620;">Necesitan ahora</div>
+            <div style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <sc-for list="{{ curInv }}" as="n" hint-placeholder-count="6">
+                <div style="background:#fff; border:1px solid #EBE2D2; border-radius:13px; padding:14px;">
+                  <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font-weight:700; font-size:14px; color:#1F2933;">{{ n.name }}</span><span style="display:inline-flex; align-items:center; gap:4px; background:{{ n.sBg }}; color:{{ n.sFg }}; font-size:10px; font-weight:800; text-transform:uppercase; padding:3px 7px; border-radius:6px;">{{ n.pr }}</span></div>
+                  <div style="margin-top:10px; height:8px; background:#EFE7D6; border-radius:5px; overflow:hidden;"><div style="height:100%; width:{{ n.pct }}%; background:{{ n.sDot }}; border-radius:5px;"></div></div>
+                  <div style="margin-top:7px; display:flex; justify-content:space-between; font-size:11.5px; color:#6B7280; font-weight:600;"><span>Faltan {{ n.faltan }} {{ n.unit }}</span><span>{{ n.got }} / {{ n.need }} {{ n.unit }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="margin-top:18px; display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+              <div style="background:#EAF3EC; border:1px solid #D4E7D8; border-radius:13px; padding:14px;"><div style="font-weight:800; font-size:13px; color:#1F4D3A;">Ya cubierto</div><div style="margin-top:9px; display:flex; flex-wrap:wrap; gap:7px;"><sc-for list="{{ cur.covered }}" as="x" hint-placeholder-count="3"><span style="background:#fff; color:#1F4D3A; font-size:12px; font-weight:600; padding:5px 11px; border-radius:8px;">{{ x }}</span></sc-for></div></div>
+              <div style="background:#FCEFE4; border:1px solid #F6D9C2; border-radius:13px; padding:14px;"><div style="font-weight:800; font-size:13px; color:#C2410C;">No traer por ahora</div><div style="margin-top:9px; display:flex; flex-wrap:wrap; gap:7px;"><sc-for list="{{ cur.noBring }}" as="x" hint-placeholder-count="4"><span style="background:#fff; color:#9A4A1A; font-size:12px; font-weight:600; padding:5px 11px; border-radius:8px;">{{ x }}</span></sc-for></div></div>
+            </div>
+          </div>
+
+          <!-- right -->
+          <div style="width:360px; flex:none;">
+            <div style="background:#fff; border:1px solid #EBE2D2; border-radius:16px; overflow:hidden;">
+              <div style="height:160px; background:#E7EEE6; background-image:linear-gradient(#DBE6DC 1px, transparent 1px), linear-gradient(90deg, #DBE6DC 1px, transparent 1px); background-size:24px 24px; position:relative;"><span style="position:absolute; left:50%; top:46%; transform:translate(-50%,-50%);"><svg width="34" height="34" viewBox="0 0 24 24" fill="#FF6B2C"><path d="M12 22s-7-6-7-12a7 7 0 1114 0c0 6-7 12-7 12z"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg></span></div>
+              <div style="padding:14px;">
+                <div style="font-size:12.5px; color:#5C6670; line-height:1.35;">{{ cur.addr }}</div>
+                <div style="margin-top:13px; display:grid; grid-template-columns:1fr 1fr; gap:9px;">
+                  <button style="background:#25D366; color:#fff; border:none; border-radius:11px; padding:11px; font-weight:700; font-size:12.5px; cursor:pointer;">WhatsApp</button>
+                  <button style="background:#fff; color:#1F4D3A; border:1px solid #E7DECE; border-radius:11px; padding:11px; font-weight:700; font-size:12.5px; cursor:pointer;">Cómo llegar</button>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:14px; background:#fff; border:1px solid #EBE2D2; border-radius:16px; padding:16px;">
+              <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:700; color:#1F2933;"><span>Capacidad de recepción</span><span>{{ cur.capLabel }}</span></div>
+              <div style="margin-top:8px; height:9px; background:#EFE7D6; border-radius:5px; overflow:hidden;"><div style="height:100%; width:{{ cur.capLabel }}; background:#2A9D8F; border-radius:5px;"></div></div>
+              <div style="margin-top:9px; font-size:12px; color:#6B7280;">Cupo temporal: <strong style="color:#1F2933;">{{ cur.slots }}</strong></div>
+              <div style="margin-top:15px; font-family:'Archivo',sans-serif; font-weight:800; font-size:14px; color:#1A2620;">Entregas recientes</div>
+              <div style="margin-top:9px; display:flex; flex-direction:column; gap:8px;">
+                <sc-for list="{{ delFeed }}" as="d" hint-placeholder-count="3"><div style="display:flex; align-items:center; gap:9px; font-size:12px;"><span style="width:26px;height:26px;border-radius:8px;background:#EAF3EC;display:flex;align-items:center;justify-content:center;flex:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="#1F4D3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="flex:1; color:#1F2933; font-weight:600;">{{ d.txt }}</span><span style="color:#9AA3AD; font-weight:600;">{{ d.t }}</span></div></sc-for>
+              </div>
+            </div>
+            <button onClick="{{ goDAdmin }}" style="margin-top:14px; width:100%; background:#FF6B2C; color:#fff; border:none; border-radius:13px; padding:15px; font-weight:800; font-size:14.5px; cursor:pointer; box-shadow:0 8px 18px -8px rgba(255,107,44,.7);">Editar en panel del centro</button>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== DESKTOP ADMIN ===== -->
+      <sc-if value="{{ dAdmin }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:22px 26px 30px;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div><div style="font-size:12px; color:#9AA3AD; font-weight:700;">Panel del centro</div><h1 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:24px; color:#1A2620; margin:2px 0 0;">{{ cur.name }}</h1><div style="margin-top:5px; display:flex; align-items:center; gap:6px; font-size:12px; color:#6B7280;"><span style="width:7px;height:7px;border-radius:50%;background:#FF6B2C;"></span>Última actualización: {{ adminPublished }}</div></div>
+          <button onClick="{{ publish }}" style="background:#FF6B2C; color:#fff; border:none; border-radius:12px; padding:13px 22px; font-weight:800; font-size:14px; cursor:pointer; box-shadow:0 8px 18px -8px rgba(255,107,44,.7);">Publicar actualización</button>
+        </div>
+
+        <div style="margin-top:18px; display:flex; gap:18px; align-items:flex-start;">
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; gap:18px;">
+              <div style="flex:1;"><div style="font-size:12px; font-weight:700; color:#3A4650; margin-bottom:8px;">Estado del centro</div><div style="display:flex; flex-wrap:wrap; gap:7px;"><sc-for list="{{ statusOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="{{ o.st }} padding:9px 13px; border-radius:9px; font-size:12.5px; font-weight:600; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div></div>
+              <div style="flex:1;"><div style="font-size:12px; font-weight:700; color:#3A4650; margin-bottom:8px;">Urgencia general</div><div style="display:flex; gap:7px;"><sc-for list="{{ urgencyOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="{{ o.st }} flex:1; padding:9px; border-radius:9px; font-size:12.5px; font-weight:700; cursor:pointer; font-family:'Public Sans',sans-serif;">{{ o.label }}</button></sc-for></div></div>
+            </div>
+
+            <div style="margin-top:20px; background:#fff; border:1px solid #EBE2D2; border-radius:16px; overflow:hidden;">
+              <div style="display:grid; grid-template-columns:1.6fr 1fr 1.4fr 1fr 1.3fr; padding:13px 16px; background:#F4EEE2; font-size:11px; font-weight:800; color:#6B7280; text-transform:uppercase; letter-spacing:.4px;">
+                <span>Insumo</span><span>Necesario</span><span>Recibido</span><span>Prioridad</span><span style="text-align:right;">Acciones</span>
+              </div>
+              <sc-for list="{{ adminInv }}" as="r" hint-placeholder-count="6">
+                <div style="display:grid; grid-template-columns:1.6fr 1fr 1.4fr 1fr 1.3fr; padding:13px 16px; border-top:1px solid #F0E8D9; align-items:center;">
+                  <span style="font-weight:700; font-size:13.5px; color:#1F2933;">{{ r.name }}</span>
+                  <span style="font-size:13px; color:#6B7280;">{{ r.need }} {{ r.unit }}</span>
+                  <span style="display:flex; align-items:center; gap:10px;"><span style="font-size:13px; color:#1F2933; font-weight:700; min-width:54px;">{{ r.got }} {{ r.unit }}</span><span style="flex:1; height:6px; background:#EFE7D6; border-radius:4px; overflow:hidden; max-width:90px;"><span style="display:block; height:100%; width:{{ r.pct }}%; background:{{ r.sFg }};"></span></span></span>
+                  <span><span style="display:inline-flex; background:{{ r.sBg }}; color:{{ r.sFg }}; font-size:10px; font-weight:800; text-transform:uppercase; padding:3px 8px; border-radius:6px;">{{ r.pr }}</span></span>
+                  <span style="display:flex; align-items:center; justify-content:flex-end; gap:7px;">
+                    <button onClick="{{ r.dec }}" style="width:28px;height:28px;border-radius:8px;border:1px solid #E7DECE;background:#F8F3EA;color:#1F2933;font-size:16px;font-weight:700;cursor:pointer;">−</button>
+                    <button onClick="{{ r.inc }}" style="width:28px;height:28px;border-radius:8px;border:none;background:#1F4D3A;color:#fff;font-size:16px;font-weight:700;cursor:pointer;">+</button>
+                    <button onClick="{{ r.cover }}" style="background:none;border:none;color:#2A9D8F;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;">Cubierto</button>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:13px; display:flex; gap:10px;">
+              <button style="background:#fff; color:#1F4D3A; border:1.5px dashed #BBD2C2; border-radius:11px; padding:12px 18px; font-weight:700; font-size:13px; cursor:pointer;">+ Agregar necesidad urgente</button>
+              <button style="background:#fff; color:#1F4D3A; border:1px solid #E7DECE; border-radius:11px; padding:12px 18px; font-weight:700; font-size:13px; cursor:pointer;">Compartir link público</button>
+              <button style="background:#fff; color:#1F4D3A; border:1px solid #E7DECE; border-radius:11px; padding:12px 18px; font-weight:700; font-size:13px; cursor:pointer;">Ver QR</button>
+            </div>
+          </div>
+
+          <div style="width:320px; flex:none; background:#fff; border:1px solid #EBE2D2; border-radius:16px; padding:17px;">
+            <h2 style="font-family:'Archivo',sans-serif; font-weight:800; font-size:15.5px; color:#1A2620; margin:0 0 12px;">Actividad reciente</h2>
+            <div style="display:flex; flex-direction:column; gap:11px;">
+              <sc-for list="{{ feed }}" as="f" hint-placeholder-count="3"><div style="display:flex; align-items:center; gap:11px;"><span style="width:34px;height:34px;border-radius:50%;background:#F1EADE;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#1F4D3A;flex:none;">{{ f.who }}</span><span style="flex:1; font-size:12.5px; color:#1F2933; line-height:1.3;"><strong>{{ f.who }}</strong> {{ f.what }}</span><span style="font-size:10.5px; color:#9AA3AD; font-weight:600;">{{ f.t }}</span></div></sc-for>
+            </div>
+            <div style="margin-top:16px; padding:13px; background:#EAF3EC; border-radius:12px; font-size:11.5px; color:#1F4D3A; line-height:1.4;">La información cambia rápido. Publica una actualización cada vez que recibas o se agote un insumo.</div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+    </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = {
+    platform: 'mobile',
+    screen: 'home',
+    centerId: 'laguaira',
+    q: '',
+    qActive: false,
+    mapView: 'list',
+    delItem: 'Perrarina',
+    delQty: '',
+    delDone: false,
+    adminStatus: 'Activo',
+    adminUrgency: 'Crítica',
+    adminPublished: 'hace 7 min',
+    inv: [
+      { name:'Perrarina', need:120, got:35, unit:'kg', pr:'Crítico' },
+      { name:'Gatarina', need:60, got:12, unit:'kg', pr:'Alto' },
+      { name:'Agua', need:200, got:70, unit:'botellas', pr:'Medio' },
+      { name:'Transportadoras', need:18, got:4, unit:'u.', pr:'Alto' },
+      { name:'Medicinas', need:40, got:8, unit:'u.', pr:'Alto' },
+      { name:'Mantas', need:50, got:30, unit:'u.', pr:'Medio' },
+      { name:'Jaulas', need:10, got:2, unit:'u.', pr:'Medio' },
+      { name:'Arena para gatos', need:40, got:40, unit:'kg', pr:'Cubierto' },
+    ],
+    feed: [
+      { who:'Mariana', what:'registró 5 kg de gatarina', t:'hace 3 min' },
+      { who:'Anónimo', what:'registró 2 transportadoras', t:'hace 11 min' },
+      { who:'José', what:'ofreció traslado para 3 perros', t:'hace 24 min' },
+    ],
+    delFeed: [
+      { txt:'10 kg de perrarina', t:'hace 4 min' },
+      { txt:'3 transportadoras', t:'hace 11 min' },
+      { txt:'24 botellas de agua', t:'hace 19 min' },
+    ],
+    toast: '',
+    successMsg: '', successSub: '',
+    choices: {},
+  };
+  setChoice(k, v) { this.setState(s => ({ choices: { ...s.choices, [k]: v } })); }
+  chosen(k) { return this.state.choices[k]; }
+
+  _u(level) {
+    const m = {
+      'Crítico': { bg:'#FBE3E1', fg:'#C81E1E', dot:'#D62828' },
+      'Crítica': { bg:'#FBE3E1', fg:'#C81E1E', dot:'#D62828' },
+      'Alto': { bg:'#FCE7D6', fg:'#C2410C', dot:'#FF6B2C' },
+      'Alta': { bg:'#FCE7D6', fg:'#C2410C', dot:'#FF6B2C' },
+      'Medio': { bg:'#FAEAD0', fg:'#9C6B12', dot:'#F4A261' },
+      'Media': { bg:'#FAEAD0', fg:'#9C6B12', dot:'#F4A261' },
+      'Baja': { bg:'#FAEAD0', fg:'#9C6B12', dot:'#F4A261' },
+      'Cubierto': { bg:'#DCF0EC', fg:'#1F7A6D', dot:'#2A9D8F' },
+      'No recibir': { bg:'#EAEDF0', fg:'#6B7280', dot:'#9AA3AD' },
+    };
+    return m[level] || m['Medio'];
+  }
+  _stat(kind) {
+    const m = {
+      'activo': { bg:'#DCF0EC', fg:'#1F7A6D', dot:'#2A9D8F' },
+      'emerg': { bg:'#FBE3E1', fg:'#C81E1E', dot:'#D62828' },
+      'full': { bg:'#FAEAD0', fg:'#9C6B12', dot:'#F4A261' },
+      'remote': { bg:'#E7EEF4', fg:'#3F6087', dot:'#5B82AD' },
+      'sat': { bg:'#FCE7D6', fg:'#C2410C', dot:'#FF6B2C' },
+      'closed': { bg:'#EAEDF0', fg:'#6B7280', dot:'#9AA3AD' },
+    };
+    return m[kind] || m['activo'];
+  }
+
+  _centers() {
+    return [
+      { id:'laguaira', name:'Punto Patitas La Guaira', type:'Centro de acopio · rescatistas', city:'Caraballeda, La Guaira', addr:'Av. La Playa, sector Los Corales, Caraballeda', status:'Activo', statusKind:'activo', updated:'hace 7 min', urgency:'Crítica', trust:'Verificado por rescatista', trustKind:'verif', cap:68, slots:'9 de 15 ocupados', wa:'+58 412-555-0142', tags:['perrarina','agua','transportadoras'], covered:['Ropa para mascotas','Juguetes','Platos'], noBring:['Ropa humana','Zapatos','Comida vencida','Medicamentos humanos sin indicación veterinaria'] },
+      { id:'altamira', name:'Clínica Veterinaria Aliada Altamira', type:'Veterinaria aliada', city:'Altamira, Caracas', addr:'Av. Luis Roche con 3ra transversal, Altamira', status:'Recibiendo emergencias', statusKind:'emerg', updated:'hace 12 min', urgency:'Alta', trust:'Confirmado por centro', trustKind:'centro', cap:54, slots:'4 de 8 ocupados', wa:'+58 414-555-0199', tags:['medicinas','heridas','fracturas'], covered:['Mantas'], noBring:['Comida vencida','Medicamentos humanos'] },
+      { id:'caraballeda', name:'Rescatistas Caraballeda', type:'Rescatistas', city:'Caraballeda, La Guaira', addr:'Punto móvil · coordinación por WhatsApp', status:'Solo emergencias', statusKind:'sat', updated:'hace 18 min', urgency:'Alta', trust:'Reporte comunitario', trustKind:'com', cap:80, slots:'sin cupo fijo', wa:'+58 426-555-0110', tags:['traslado','jaulas'], covered:[], noBring:['Ropa humana'] },
+      { id:'maracay', name:'Centro de acopio mascotas Maracay', type:'Centro de acopio', city:'Maracay, Aragua', addr:'C.C. Las Delicias, nivel feria, local 12', status:'Activo', statusKind:'activo', updated:'hace 42 min', urgency:'Media', trust:'Confirmado por centro', trustKind:'centro', cap:45, slots:'6 de 20 ocupados', wa:'+58 412-555-0177', tags:['gatarina','arena'], covered:['Platos','Correas'], noBring:['Zapatos'] },
+      { id:'valencia', name:'Fundación animalista Valencia', type:'Refugio temporal', city:'Valencia, Carabobo', addr:'Av. Bolívar Norte, sector La Viña', status:'Saturado', statusKind:'sat', updated:'hace 1 h', urgency:'Media', trust:'Verificado por rescatista', trustKind:'verif', cap:96, slots:'18 de 18 ocupados', wa:'+58 414-555-0133', tags:['hogar temporal','mantas'], covered:['Juguetes','Mantas'], noBring:['Ropa humana','Comida vencida'] },
+      { id:'naranjos', name:'Refugio temporal Los Naranjos', type:'Refugio temporal', city:'Los Naranjos, Caracas', addr:'Calle El Limón, Los Naranjos', status:'Cerrado temporalmente', statusKind:'closed', updated:'hace 3 h', urgency:'Baja', trust:'Pendiente por verificar', trustKind:'pend', cap:0, slots:'cerrado', wa:'+58 412-555-0150', tags:[], covered:[], noBring:[] },
+    ];
+  }
+  _vets() {
+    return [
+      { name:'Clínica Veterinaria Aliada Altamira', loc:'Altamira, Caracas', status:'Recibiendo emergencias', kind:'emerg', accepts:['Heridas','Fracturas','Deshidratación'], needs:['Medicamentos','Voluntarios'], wa:'+58 414-555-0199', updated:'hace 12 min' },
+      { name:'Vet móvil Caraballeda', loc:'Caraballeda, La Guaira', status:'Activo', kind:'activo', accepts:['Heridas','Deshidratación','Intoxicación'], needs:['Insumos','Transporte'], wa:'+58 426-555-0188', updated:'hace 25 min' },
+      { name:'Clínica San Bernardino', loc:'San Bernardino, Caracas', status:'Sin cupo', kind:'full', accepts:['Animales atrapados','Quemaduras'], needs:['Voluntarios'], wa:'+58 412-555-0166', updated:'hace 1 h' },
+      { name:'Dra. Pérez · consulta remota', loc:'Valencia, Carabobo', status:'Solo consultas remotas', kind:'remote', accepts:['Intoxicación','Deshidratación'], needs:[], wa:'+58 414-555-0102', updated:'hace 40 min' },
+    ];
+  }
+  _fosters() {
+    return [
+      { loc:'Los Palos Grandes, Caracas', can:['Perros pequeños','Cachorros'], cap:'2', time:'1 semana', req:'Necesita apoyo de alimento', trust:'Verificado', trustKind:'verif' },
+      { loc:'Maracay, Aragua', can:['Gatos','Animales heridos'], cap:'3+', time:'Indefinido', req:'Alimento incluido', trust:'Comunidad', trustKind:'com' },
+      { loc:'Altamira, Caracas', can:['Perros grandes'], cap:'1', time:'3 días', req:'Necesita transporte', trust:'Pendiente', trustKind:'pend' },
+    ];
+  }
+  _pets() {
+    return [
+      { name:'Luna', kind:'Perra pequeña', desc:'Blanca con manchas marrones, collar rojo', loc:'Macuto', when:'hace 3 h', status:'Perdida', sk:'lost', emoji:'🐕' },
+      { name:'Gato encontrado', kind:'Gato adulto', desc:'Naranja, sin collar, asustado', loc:'cerca de Los Palos Grandes', when:'hace 1 h', status:'Encontrado', sk:'found', emoji:'🐈' },
+      { name:'Max', kind:'Perro mediano', desc:'Mestizo marrón, collar azul', loc:'Maiquetía', when:'hace 5 h', status:'Perdida', sk:'lost', emoji:'🐕' },
+      { name:'Michi', kind:'Gata', desc:'Gris atigrada, reunida con su familia', loc:'Los Naranjos', when:'hace 1 día', status:'Reunido', sk:'done', emoji:'🐈' },
+    ];
+  }
+
+  go(s) { this.setState({ screen: s, qActive:false }); this._scrollTop(); }
+  _scrollTop() { setTimeout(() => { const el = document.querySelector('.ps-scroll'); if (el) el.scrollTop = 0; }, 10); }
+  openCenter(id) { this.setState({ centerId:id, screen:'center' }); this._scrollTop(); }
+  flash(t) { this.setState({ toast:t }); clearTimeout(this._tt); this._tt = setTimeout(() => this.setState({ toast:'' }), 2400); }
+
+  current() { return this._centers().find(c => c.id === this.state.centerId) || this._centers()[0]; }
+
+  succeed(msg, sub) { this.setState({ successMsg:msg, successSub:sub, screen:'success' }); this._scrollTop(); }
+
+  // delivery
+  submitDeliver() {
+    const qty = (this.state.delQty || '').trim();
+    const label = qty ? (qty + ' · ' + this.state.delItem) : this.state.delItem;
+    const inv = this.state.inv.map(r => {
+      if (r.name === this.state.delItem || (this.state.delItem === 'Agua' && r.name === 'Agua')) {
+        const add = parseInt(qty) || Math.round(r.need * 0.12);
+        const got = Math.min(r.need, r.got + add);
+        return { ...r, got, pr: got >= r.need ? 'Cubierto' : (r.pr === 'Crítico' ? 'Alto' : r.pr) };
+      }
+      return r;
+    });
+    const delFeed = [{ txt: label, t:'ahora' }, ...this.state.delFeed].slice(0, 5);
+    this.setState({ inv, delFeed, adminPublished:'hace 1 min', delQty:'' });
+    this.succeed('Entrega registrada', 'Gracias por ayudar a mantener esta información actualizada. El centro ya refleja tu entrega.');
+  }
+  // admin
+  incGot(i, d) { const inv = this.state.inv.map((r,idx) => idx===i ? { ...r, got: Math.max(0, Math.min(r.need, r.got + d)) } : r); this.setState({ inv }); }
+  setPr(i, pr) { const inv = this.state.inv.map((r,idx) => idx===i ? { ...r, pr } : r); this.setState({ inv }); }
+  markCovered(i) { const inv = this.state.inv.map((r,idx) => idx===i ? { ...r, got:r.need, pr:'Cubierto' } : r); this.setState({ inv }); this.flash('Necesidad marcada como cubierta'); }
+  publish() { this.setState({ adminPublished:'hace unos segundos' }); this.flash('Actualización publicada · visible para todos'); }
+
+  renderVals() {
+    const S = this.state;
+    const isMobile = S.platform === 'mobile';
+    const screen = S.screen;
+    const sc = {};
+    ['home','search','center','deliver','lost','found','foster','vets','admin','report','map','trust','success','volunteer','guides','trapped','centerNeed','lostfound'].forEach(k => sc[k] = screen === k);
+
+    const navGroup = {
+      home:'home', map:'map', report:'rep', trapped:'rep', centerNeed:'rep', lost:'rep', found:'rep',
+      search:'cen', center:'cen', deliver:'cen', map2:'cen',
+      vets:'ayu', foster:'ayu', volunteer:'ayu', guides:'ayu', admin:'ayu', trust:'ayu',
+    }[screen] || '';
+    const A = '#1F4D3A', I = '#A9B0B6';
+    const nav = { home: navGroup==='home'?A:I, map: navGroup==='map'?A:I, cen: navGroup==='cen'?A:I, ayu: navGroup==='ayu'?A:I };
+
+    const tbActive = 'background:#FF6B2C;color:#fff;border:none;border-radius:7px;padding:6px 13px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:Public Sans,sans-serif;';
+    const tbIdle = 'background:none;color:#CDE0D6;border:none;border-radius:7px;padding:6px 13px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:Public Sans,sans-serif;';
+    const tab = { m: isMobile?tbActive:tbIdle, d: isMobile?tbIdle:tbActive };
+    const chipSt = (active) => active ? 'background:#1F4D3A;color:#fff;border:1px solid #1F4D3A;box-shadow:0 4px 10px -5px rgba(31,77,58,.6);' : 'background:#fff;color:#3A4650;border:1px solid #E7DECE;';
+
+    const ic = (p) => React.createElement('svg', { width:20, height:20, viewBox:'0 0 24 24', fill:'none' }, React.createElement('path', { d:p, stroke:'currentColor', strokeWidth:1.7, strokeLinecap:'round', strokeLinejoin:'round' }));
+    const urgentRaw = [
+      { t:'Perrarina', level:'Crítico', m:'8 centros la necesitan', go:() => this.go('search'), icon:'🦴' },
+      { t:'Transportadoras', level:'Alto', m:'5 centros la necesitan', go:() => this.go('search'), icon:'📦' },
+      { t:'Atención veterinaria', level:'Crítico', m:'12 casos reportados', go:() => this.go('vets'), icon:'🩺' },
+      { t:'Hogares temporales', level:'Alto', m:'27 mascotas esperando', go:() => this.go('foster'), icon:'🏠' },
+    ];
+    const urgent = urgentRaw.map(u => { const s = this._u(u.level); return { ...u, bg:s.bg, fg:s.fg, dot:s.dot, icon: React.createElement('span', { style:{ fontSize:'20px' } }, u.icon) }; });
+
+    const recent = [
+      { n:'Punto Patitas La Guaira', t:'hace 6 min', d:'Necesita perrarina, agua, transportadoras', go:() => this.openCenter('laguaira') },
+      { n:'Clínica Altamira', t:'hace 12 min', d:'Recibiendo emergencias veterinarias', go:() => this.openCenter('altamira') },
+      { n:'Rescatistas Caraballeda', t:'hace 18 min', d:'Necesitan traslado y jaulas', go:() => this.openCenter('caraballeda') },
+    ];
+
+    const chipLabels = ['Perrarina','Gatarina','Medicinas','Transportadoras','Hogar temporal','Veterinaria','La Guaira','Caracas'];
+    const chips = chipLabels.map(label => ({ label, go: () => { this.setState({ q: label }); this.go('search'); } }));
+
+    // ---- centers decorated ----
+    const decoCenter = (c) => { const st = this._stat(c.statusKind); const ug = this._u(c.urgency); return { ...c, stBg:st.bg, stFg:st.fg, stDot:st.dot, ugBg:ug.bg, ugFg:ug.fg, ugDot:ug.dot, open: () => this.openCenter(c.id), tagLine: c.tags.length ? ('Necesita: ' + c.tags.join(', ')) : 'Sin necesidades activas' }; };
+    const pinPos = [[30,32],[64,24],[44,54],[74,66],[34,72],[58,84]];
+    const centersList = this._centers().map((c, i) => ({ ...decoCenter(c), mx: pinPos[i % pinPos.length][0], my: pinPos[i % pinPos.length][1] }));
+    const q = (S.q || '').toLowerCase().trim();
+    const searchResults = q ? centersList.filter(c => (c.name + ' ' + c.city + ' ' + c.tags.join(' ')).toLowerCase().includes(q)) : centersList;
+
+    // ---- current center detail ----
+    const c0 = this.current();
+    const useInv = c0.id === 'laguaira';
+    const curInv = (useInv ? S.inv : [
+      { name:'Perrarina', need:80, got:20, unit:'kg', pr: c0.urgency==='Crítica'?'Crítico':'Alto' },
+      { name:'Mantas', need:40, got:18, unit:'u.', pr:'Medio' },
+      { name:'Medicinas', need:30, got:10, unit:'u.', pr:'Alto' },
+    ]).map(r => { const s = this._u(r.pr); const pct = Math.round((r.got / r.need) * 100); return { ...r, faltan: Math.max(0, r.need - r.got), pct, sBg:s.bg, sFg:s.fg, sDot:s.dot }; });
+    const cst = this._stat(c0.statusKind); const cug = this._u(c0.urgency);
+    const cur = { ...c0, stBg:cst.bg, stFg:cst.fg, ugBg:cug.bg, ugFg:cug.fg, covered: c0.covered, noBring: c0.noBring, capLabel: c0.cap + '%' };
+
+    // ---- vets / fosters / pets ----
+    const vets = this._vets().map(v => { const s = this._stat(v.kind); return { ...v, sBg:s.bg, sFg:s.fg, sDot:s.dot }; });
+    const tMap = { verif:{bg:'#DCF0EC',fg:'#1F7A6D',label:'Verificado'}, com:{bg:'#E7EEF4',fg:'#3F6087',label:'Comunidad'}, pend:{bg:'#FAEAD0',fg:'#9C6B12',label:'Pendiente'} };
+    const fosters = this._fosters().map(f => { const t = tMap[f.trustKind]; return { ...f, tBg:t.bg, tFg:t.fg }; });
+    const petStat = { lost:{bg:'#FBE3E1',fg:'#C81E1E'}, found:{bg:'#DCF0EC',fg:'#1F7A6D'}, done:{bg:'#E7EEF4',fg:'#3F6087'} };
+    const pets = this._pets().map(p => { const s = petStat[p.sk]; return { ...p, pBg:s.bg, pFg:s.fg }; });
+
+    // ---- deliver ----
+    const delOptions = ['Perrarina','Gatarina','Agua','Medicinas','Transportadoras','Mantas','Otro'];
+    const deliver = delOptions.map(o => ({ label:o, active: S.delItem === o, st: chipSt(S.delItem === o), pick: () => this.setState({ delItem:o }) }));
+    const delFeed = S.delFeed;
+
+    // ---- admin inventory ----
+    const adminInv = S.inv.map((r, i) => { const s = this._u(r.pr); const pct = Math.round((r.got/r.need)*100); return { ...r, pct, sBg:s.bg, sFg:s.fg, inc:() => this.incGot(i, 1), dec:() => this.incGot(i, -1), cover:() => this.markCovered(i), crit:()=>this.setPr(i,'Crítico'), high:()=>this.setPr(i,'Alto') }; });
+    const statusOpts = ['Activo','Saturado','Cerrado temporalmente','Solo emergencias'].map(o => ({ label:o, active:S.adminStatus===o, st: chipSt(S.adminStatus===o), pick:()=>this.setState({adminStatus:o}) }));
+    const urgencyOpts = ['Crítica','Alta','Media','Baja'].map(o => { const s=this._u(o); const active=S.adminUrgency===o; return { label:o, active, fg:s.fg, bg:s.bg, st: active ? ('background:'+s.bg+';color:'+s.fg+';border:1.5px solid '+s.fg+';') : 'background:#fff;color:#3A4650;border:1px solid #E7DECE;', pick:()=>this.setState({adminUrgency:o}) }; });
+
+    // ---- guides / volunteer / trust ----
+    const guides = [
+      { t:'Qué hacer si encuentras un perro asustado', tag:'Rescate', emoji:'🐕' },
+      { t:'Qué hacer si encuentras un gato escondido', tag:'Rescate', emoji:'🐈' },
+      { t:'Cómo mover una mascota herida', tag:'Primeros auxilios', emoji:'🩹' },
+      { t:'Qué NO darle de comer a un animal en shock', tag:'Cuidado', emoji:'🚫' },
+      { t:'Cómo improvisar una transportadora', tag:'Traslado', emoji:'📦' },
+      { t:'Qué llevar a un refugio animal', tag:'Donación', emoji:'🎒' },
+      { t:'Señales de deshidratación', tag:'Salud', emoji:'💧' },
+      { t:'Cómo ayudar sin entrar a estructuras peligrosas', tag:'Seguridad', emoji:'⚠️' },
+    ];
+    const volOptions = [
+      { label:'Tengo carro', icon:'🚗' }, { label:'Puedo trasladar mascotas', icon:'🐾' },
+      { label:'Puedo ser hogar temporal', icon:'🏠' }, { label:'Puedo donar alimento', icon:'🦴' },
+      { label:'Soy veterinario/a', icon:'🩺' }, { label:'Puedo verificar información', icon:'✅' },
+      { label:'Puedo ayudar desde fuera de Venezuela', icon:'🌎' },
+    ].map(o => ({ ...o, active: this.chosen('vol') === o.label, st: chipSt(this.chosen('vol') === o.label), pick: () => this.setChoice('vol', o.label) }));
+    const optGroup = (key, arr) => arr.map(label => ({ label, active: S.choices[key] === label, st: chipSt(S.choices[key] === label), pick: () => this.setChoice(key, label) }));
+    const multiGroup = (prefix, arr) => arr.map(label => { const k = prefix + label; const active = !!S.choices[k]; return { label, active, st: chipSt(active), toggle: () => this.setChoice(k, !S.choices[k]) }; });
+    const fosterCan = multiGroup('fc_', ['Perros','Gatos','Perros pequeños','Perros grandes','Animales heridos','Cachorros']);
+    const capOpts = optGroup('cap', ['1','2','3+']);
+    const timeOpts = optGroup('time', ['24 h','3 días','1 semana','Indefinido']);
+    const reqOpts = optGroup('req', ['Alimento incluido','Necesito apoyo de alimento','Necesito transporte']);
+    const filterOpts = optGroup('filt', ['Todos','Críticos','Veterinarias','Refugios','Actualizado < 1h','Solo verificado']);
+    const animalOpts = optGroup('animal', ['Perro','Gato','Otro']);
+    const sizeOpts = optGroup('size', ['Pequeño','Mediano','Grande']);
+    const sexOpts = optGroup('sex', ['Macho','Hembra','No sé']);
+    const urgFormOpts = optGroup('urg', ['Crítica','Alta','Media']).map(o => { const s = this._u(o.label); return { ...o, fg:s.fg, bg:s.bg }; });
+    const riskOpts = optGroup('risk', ['Estructura estable','Riesgo moderado','Estructura inestable']);
+
+    const trustBadges = [
+      { label:'Actualizado hace menos de 1h', bg:'#DCF0EC', fg:'#1F7A6D', dot:'#2A9D8F', desc:'Confirmado recientemente por el centro o un rescatista.' },
+      { label:'Verificado por rescatista', bg:'#E3EEFB', fg:'#2D5FA6', dot:'#2D5FA6', desc:'Un rescatista de la red visitó o contactó el punto.' },
+      { label:'Confirmado por centro', bg:'#EAF3EC', fg:'#1F4D3A', dot:'#1F4D3A', desc:'El propio centro publicó la actualización.' },
+      { label:'Reporte comunitario', bg:'#FAEAD0', fg:'#9C6B12', dot:'#F4A261', desc:'Información compartida por la comunidad. Verifica por WhatsApp.' },
+      { label:'Pendiente por verificar', bg:'#EAEDF0', fg:'#6B7280', dot:'#9AA3AD', desc:'Aún no confirmado. Trata con precaución.' },
+    ];
+
+    // ---- national (desktop) ----
+    const natStats = [
+      { k:'Centros activos', v:'34', d:'+6 hoy' }, { k:'Mascotas reportadas', v:'212', d:'+18 hoy' },
+      { k:'Mascotas reunidas', v:'47', d:'+5 hoy' }, { k:'Necesidades críticas', v:'18', d:'activas' },
+      { k:'Hogares disponibles', v:'29', d:'24 verificados' }, { k:'Veterinarias activas', v:'15', d:'8 emergencias' },
+    ];
+    const natNeeds = [
+      { t:'Perrarina', pct:82, level:'Crítico' }, { t:'Gatarina', pct:71, level:'Alto' },
+      { t:'Transportadoras', pct:64, level:'Alto' }, { t:'Atención veterinaria', pct:58, level:'Crítico' },
+      { t:'Hogares temporales', pct:49, level:'Alto' }, { t:'Agua', pct:38, level:'Medio' },
+      { t:'Medicinas veterinarias', pct:33, level:'Alto' },
+    ].map(n => { const s = this._u(n.level); return { ...n, bg:s.bg, fg:s.fg, dot:s.dot }; });
+    const reportOptions = [
+      { label:'Encontré una mascota', sub:'Reporta un animal que viste o rescataste', go:() => this.go('found'), icon:'🔍', tone:'#1F4D3A' },
+      { label:'Perdí mi mascota', sub:'Publica una alerta de búsqueda', go:() => this.go('lost'), icon:'🐾', tone:'#D62828' },
+      { label:'Hay mascotas atrapadas', sub:'Reporta una ubicación de riesgo', go:() => this.go('trapped'), icon:'⚠️', tone:'#C2410C' },
+      { label:'Un centro necesita insumos', sub:'Avisa qué hace falta y dónde', go:() => this.go('centerNeed'), icon:'📦', tone:'#1F4D3A' },
+      { label:'Puedo ayudar', sub:'Súmate como voluntario', go:() => this.go('volunteer'), icon:'🤝', tone:'#2A9D8F' },
+    ];
+
+    return {
+      isMobile, isDesktop: !isMobile, sc, nav, tab, toast: S.toast,
+      jump: (isMobile?'m:':'d:') + screen,
+      setMobile: () => this.setState({ platform:'mobile', screen: ['national','center','admin'].includes(screen) ? 'home' : screen }),
+      setDesktop: () => this.setState({ platform:'desktop', screen: ['national','center','admin'].includes(screen) ? screen : 'national' }),
+      dNational: screen === 'national', dCenter: screen === 'center', dAdmin: screen === 'admin',
+      goDNational: () => this.go('national'), goDCenterFrom: (id) => this.openCenter(id), goDAdmin: () => this.go('admin'),
+      onJump: (e) => { const [p,s] = e.target.value.split(':'); this.setState({ platform: p==='m'?'mobile':'desktop', screen:s }); this._scrollTop(); },
+      goHome: () => this.go('home'), goMap: () => this.go('map'), goReport: () => this.go('report'),
+      goCentros: () => { this.setState({ q:'' }); this.go('search'); }, goAyudar: () => this.go('volunteer'),
+      goSearch: () => this.go('search'), goDonate: () => this.go('search'), goFound: () => this.go('found'),
+      goLost: () => this.go('lost'), goFoster: () => this.go('foster'),
+      urgent, recent, chips,
+      // navigation
+      go: (s) => this.go(s), openCenterDeliver: () => this.go('deliver'),
+      goTrust: () => this.go('trust'), goVets: () => this.go('vets'), goAdmin: () => this.go('admin'),
+      goGuides: () => this.go('guides'), goVolunteer: () => this.go('volunteer'), goTrapped: () => this.go('trapped'),
+      q: S.q, setQ: (e) => this.setState({ q: e.target.value }),
+      // data
+      centersList, searchResults, resultCount: searchResults.length, hasResults: searchResults.length > 0, noResults: searchResults.length === 0,
+      cur, curInv, delFeed, vets, fosters, pets, guides, volOptions, trustBadges,
+      natStats, natNeeds, reportOptions, deliver, adminInv, statusOpts, urgencyOpts,
+      delItem: S.delItem, delQty: S.delQty, setDelQty: (e) => this.setState({ delQty: e.target.value }),
+      submitDeliver: () => this.submitDeliver(),
+      adminStatus: S.adminStatus, adminUrgency: S.adminUrgency, adminPublished: S.adminPublished, feed: S.feed,
+      publish: () => this.publish(),
+      mapView: S.mapView, setMapList: () => this.setState({ mapView:'list' }), setMapMap: () => this.setState({ mapView:'map' }),
+      mapIsList: S.mapView === 'list', mapIsMap: S.mapView === 'map',
+      listBtnSt: S.mapView === 'list' ? 'background:#1F4D3A;color:#fff;' : 'background:transparent;color:#5C6670;',
+      mapBtnSt: S.mapView === 'map' ? 'background:#1F4D3A;color:#fff;' : 'background:transparent;color:#5C6670;',
+      successMsg: S.successMsg, successSub: S.successSub,
+      // form choices
+      setChoice: (k,v) => this.setChoice(k,v), choices: S.choices,
+      submitLost: () => this.succeed('Reporte publicado', 'Tu alerta de búsqueda ya es visible. Te avisaremos por WhatsApp si alguien tiene información.'),
+      submitFound: () => this.succeed('Mascota reportada', 'Gracias. Un reporte claro puede salvar una mascota. Compártelo por WhatsApp para llegar a más personas.'),
+      submitFoster: () => this.succeed('Hogar temporal registrado', 'Gracias por abrir tu casa. Un coordinador te contactará por WhatsApp antes de asignar una mascota.'),
+      submitVolunteer: () => this.succeed('¡Gracias por sumarte!', 'Recibirás un mensaje de coordinación por WhatsApp con las tareas más urgentes cerca de ti.'),
+      submitTrapped: () => this.succeed('Ubicación reportada', 'Un equipo de rescate revisará el reporte. No entres a estructuras dañadas: tu seguridad es primero.'),
+      submitCenterNeed: () => this.succeed('Necesidad publicada', 'El centro aparecerá en el listado con sus insumos. Mantén la información actualizada por WhatsApp.'),
+      animalOpts, sizeOpts, sexOpts, urgFormOpts, riskOpts, fosterCan, capOpts, timeOpts, reqOpts, filterOpts,
+      delConfirmed: !!S.choices.delConfirm,
+      toggleDelConfirm: () => this.setChoice('delConfirm', !S.choices.delConfirm),
+      backToCenter: () => this.go('center'),
+      delBoxStyle: S.choices.delConfirm ? 'background:#1F4D3A;border:1px solid #1F4D3A;' : 'background:#fff;border:1.5px solid #C9BFA9;',
+    };
+  }
+}
+</script>
+</body>
+</html>
