@@ -18,6 +18,7 @@ export interface CenterRow {
   payment_mobile_phone: string | null;
   zelle_email: string | null;
   paypal_email: string | null;
+  image_url: string | null;
   notes: string | null;
   verified: boolean;
   created_at: string;
@@ -81,6 +82,7 @@ export type RefugeInsert = {
   payment_mobile_phone: string | null;
   zelle_email: string | null;
   paypal_email: string | null;
+  image_url: string | null;
   notes: string | null;
 };
 

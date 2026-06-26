@@ -7,6 +7,7 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Chip } from '@/components/ui/Chip';
 import { SubmittedNotice } from '@/components/ui/SubmittedNotice';
+import { ImageUpload } from '@/components/ui/ImageUpload';
 import { useToast } from '@/components/ui/Toast';
 import { normalizeVePhone } from '@/lib/utils';
 import {
@@ -16,6 +17,7 @@ import {
   refugeTypeToCenterType,
 } from '@/constants/help';
 import { useCreateRefugeReport } from '@/features/help/hooks';
+import { uploadImage } from '@/features/pets/api/uploadPetImage';
 
 export function ReportRefugioPage() {
   const { toast } = useToast();
@@ -27,6 +29,8 @@ export function ReportRefugioPage() {
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
+  const [image, setImage] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [receives, setReceives] = useState<string[]>([]);
   const [status, setStatus] = useState('Activo');
   const [capacity, setCapacity] = useState('');
@@ -43,13 +47,27 @@ export function ReportRefugioPage() {
     setReceives((p) => (p.includes(v) ? p.filter((x) => x !== v) : [...p, v]));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (name.trim().length < 2 || !type || city.trim().length < 2 || !normalizeVePhone(whatsapp)) {
       setError('Completa nombre, tipo, ciudad y un WhatsApp válido.');
       return;
     }
     setError(null);
+
+    let imageUrl: string | null = null;
+    if (image) {
+      try {
+        setUploading(true);
+        imageUrl = await uploadImage(image, 'refuges');
+      } catch {
+        setUploading(false);
+        toast('No se pudo subir la imagen. Inténtalo de nuevo.');
+        return;
+      }
+      setUploading(false);
+    }
+
     create.mutate(
       {
         name: name.trim(),
@@ -66,6 +84,7 @@ export function ReportRefugioPage() {
         payment_mobile_phone: pmPhone.trim() || null,
         zelle_email: zelleEmail.trim() || null,
         paypal_email: paypalEmail.trim() || null,
+        image_url: imageUrl,
         notes: notes.trim() || null,
       },
       {
@@ -120,6 +139,11 @@ export function ReportRefugioPage() {
         <Input label="Ciudad / zona" placeholder="Ej: Caraballeda, La Guaira" value={city} onChange={(e) => setCity(e.target.value)} />
         <Input label="Dirección o referencia" placeholder="Ej: Av. La Playa, sector Los Corales" value={address} onChange={(e) => setAddress(e.target.value)} />
         <Input label="WhatsApp" placeholder="0412…" inputMode="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
+
+        <div>
+          <div className="mb-2 text-[12.5px] font-bold text-[#3A4650]">Logo o foto (opcional)</div>
+          <ImageUpload value={image} onChange={setImage} hint="Un logo o foto ayuda a reconocer el refugio" />
+        </div>
 
         <div>
           <div className="mb-2 text-[12.5px] font-bold text-[#3A4650]">¿Qué puede recibir?</div>
@@ -179,8 +203,8 @@ export function ReportRefugioPage() {
           </p>
         )}
 
-        <Button type="submit" fullWidth loading={create.isPending}>
-          Registrar refugio
+        <Button type="submit" fullWidth loading={uploading || create.isPending}>
+          {uploading ? 'Subiendo imagen…' : 'Registrar refugio'}
         </Button>
         <p className="text-center text-[11px] leading-relaxed text-faint">
           Tu refugio aparecerá públicamente para que las personas te contacten por WhatsApp.

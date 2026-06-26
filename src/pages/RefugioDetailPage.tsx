@@ -21,7 +21,17 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
-function DonationMethod({ title, lines, copyText }: { title: string; lines: string[]; copyText: string }) {
+function DonationMethod({
+  title,
+  lines,
+  copyText,
+  copyLabel,
+}: {
+  title: string;
+  lines: string[];
+  copyText: string;
+  copyLabel: string;
+}) {
   return (
     <div className="rounded-xl border border-sand-200 bg-white px-3.5 py-3">
       <div className="flex items-start justify-between gap-2">
@@ -33,7 +43,7 @@ function DonationMethod({ title, lines, copyText }: { title: string; lines: stri
             </div>
           ))}
         </div>
-        <CopyButton text={copyText} className="shrink-0" />
+        <CopyButton text={copyText} label={copyLabel} className="shrink-0" />
       </div>
     </div>
   );
@@ -96,6 +106,12 @@ export function RefugioDetailPage() {
     <div className="animate-fade">
       <PageHeading title={refuge.name} subtitle={`${refugeTypeLabel(refuge.type)} · ${refuge.city}`} />
 
+      {refuge.image_url && (
+        <div className="mb-4 overflow-hidden rounded-2xl border border-sand-200 bg-sand-100">
+          <img src={refuge.image_url} alt={refuge.name} className="h-44 w-full object-cover" />
+        </div>
+      )}
+
       {refuge.status && (
         <span
           className={`mb-4 inline-block rounded-md px-2 py-1 text-[10px] font-extrabold uppercase ${
@@ -128,6 +144,7 @@ export function RefugioDetailPage() {
                 title="Pago Móvil"
                 lines={pmLines}
                 copyText={`Pago Móvil\n${pmLines.join('\n')}`}
+                copyLabel="Copiar Pago Móvil"
               />
             )}
             {hasZelle && (
@@ -135,6 +152,7 @@ export function RefugioDetailPage() {
                 title="Zelle"
                 lines={[refuge.zelle_email as string]}
                 copyText={`Zelle: ${refuge.zelle_email}`}
+                copyLabel="Copiar Zelle"
               />
             )}
             {hasPaypal && (
@@ -142,6 +160,7 @@ export function RefugioDetailPage() {
                 title="PayPal"
                 lines={[refuge.paypal_email as string]}
                 copyText={`PayPal: ${refuge.paypal_email}`}
+                copyLabel="Copiar PayPal"
               />
             )}
           </div>
@@ -158,6 +177,14 @@ export function RefugioDetailPage() {
         {refuge.address && <DirectionsButton query={refuge.address || refuge.city} className="flex-1" />}
         <ShareButton title={refuge.name} text={shareText} className="flex-1" />
       </div>
+
+      {/* Volunteer CTA -> opens WhatsApp to the refuge with a prefilled message */}
+      <WhatsAppButton
+        phone={refuge.whatsapp}
+        message="Hola, vi su refugio en Patitas a Salvo Venezuela y quiero aplicar como voluntario. ¿Cómo puedo ayudar?"
+        label="Aplicar como voluntario para este refugio"
+        className="mt-2 w-full"
+      />
 
       <p className="mt-4 text-center text-[11.5px] text-faint">Publicado {formatRelativeTime(refuge.created_at)}</p>
 

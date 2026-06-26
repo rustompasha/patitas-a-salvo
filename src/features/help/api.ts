@@ -65,6 +65,7 @@ export async function createRefugeReport(input: RefugeInsert): Promise<void> {
     'payment_mobile_phone',
     'zelle_email',
     'paypal_email',
+    'image_url',
   ]);
 }
 

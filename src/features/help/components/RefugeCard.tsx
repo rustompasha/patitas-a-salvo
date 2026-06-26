@@ -27,11 +27,26 @@ export function RefugeCard({ refuge }: { refuge: CenterRow }) {
     <article className="overflow-hidden rounded-2xl border border-sand-200 bg-white">
       <Link to={`/refugios/${refuge.id}`} className="block p-3.5 transition active:scale-[0.99]">
         <div className="flex items-start justify-between gap-2.5">
-          <div className="min-w-0">
-            <h3 className="text-[14.5px] font-bold leading-tight text-ink">{refuge.name}</h3>
-            <p className="mt-0.5 text-[12px] text-muted">
-              {refugeTypeLabel(refuge.type)} · {refuge.city}
-            </p>
+          <div className="flex min-w-0 items-start gap-2.5">
+            {refuge.image_url ? (
+              <img
+                src={refuge.image_url}
+                alt={refuge.name}
+                loading="lazy"
+                decoding="async"
+                className="h-11 w-11 shrink-0 rounded-xl border border-sand-200 object-cover"
+              />
+            ) : (
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sand-100 text-lg" aria-hidden>
+                🏠
+              </span>
+            )}
+            <div className="min-w-0">
+              <h3 className="text-[14.5px] font-bold leading-tight text-ink">{refuge.name}</h3>
+              <p className="mt-0.5 text-[12px] text-muted">
+                {refugeTypeLabel(refuge.type)} · {refuge.city}
+              </p>
+            </div>
           </div>
           {refuge.status ? (
             <span
