@@ -3,9 +3,11 @@ import {
   createCenterReport,
   createFosterOffer,
   createNeedReport,
+  createVetReport,
   getVerifiedCenters,
   getFosterOffers,
   getNeeds,
+  getVeterinarians,
 } from './api';
 
 // ---- Public reads ----------------------------------------------------------
@@ -26,6 +28,10 @@ export function useVerifiedFosterOffers() {
   });
 }
 
+export function useVeterinarians() {
+  return useQuery({ queryKey: ['veterinarians'], queryFn: getVeterinarians, staleTime: 30_000 });
+}
+
 // ---- Submissions -----------------------------------------------------------
 export function useCreateCenterReport() {
   return useMutation({ mutationFn: createCenterReport });
@@ -37,4 +43,8 @@ export function useCreateNeedReport() {
 
 export function useCreateFosterOffer() {
   return useMutation({ mutationFn: createFosterOffer });
+}
+
+export function useCreateVetReport() {
+  return useMutation({ mutationFn: createVetReport });
 }

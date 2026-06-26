@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 const CARDS = [
   { to: '/donar-insumos', emoji: '📦', title: 'Donar insumos', sub: 'Lleva alimento, medicinas o transportadoras.' },
   { to: '/puedo-ser-hogar-temporal', emoji: '🏠', title: 'Ser hogar temporal', sub: 'Da refugio seguro mientras encuentran familia.' },
+  { to: '/veterinarios', emoji: '🏥', title: 'Veterinarios disponibles', sub: 'Encuentra atención veterinaria en la emergencia.' },
+  { to: '/reportar/veterinario', emoji: '🩺', title: 'Puedo ayudar como veterinario', sub: 'Publica tu disponibilidad para atender mascotas.' },
   { to: '/reportar/centro', emoji: '📍', title: 'Reportar centro o necesidad', sub: 'Ayuda a construir el mapa de ayuda real.' },
   { to: '/mascotas', emoji: '🐾', title: 'Ver mascotas perdidas/encontradas', sub: 'Comparte información que ayude a reunirlas.' },
 ];

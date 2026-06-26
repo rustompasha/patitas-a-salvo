@@ -4,6 +4,7 @@ import { URGENCY_DB_META } from '@/constants/help';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
+import { formatRelativeTime } from '@/lib/utils';
 import type { UrgencyLevel } from '@/types/help';
 
 const RANK: Record<UrgencyLevel, number> = { critico: 0, alto: 1, medio: 2, bajo: 3 };
@@ -43,18 +44,23 @@ export function UrgentNeeds() {
     .slice(0, 5);
 
   return (
-    <section>
-      <div className="mb-3 flex items-center gap-2">
-        <span className="h-2 w-2 animate-pulse rounded-full bg-lost" />
-        <h2 className="text-[16px] font-extrabold text-forest-dark">Más urgente ahora</h2>
+    <section className="rounded-3xl border border-[#F3E0D6] bg-[#FFF7F1] p-4">
+      <div className="mb-1 flex items-center gap-2">
+        <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-lost" />
+        <h2 className="text-[21px] font-extrabold leading-tight tracking-tight text-forest-dark">
+          Más urgente ahora
+        </h2>
       </div>
+      <p className="mb-4 text-[13px] leading-snug text-[#5C6670]">
+        Dónde se necesita ayuda en este momento.
+      </p>
 
       <div className="flex flex-col gap-2.5">
         {top.map((n) => (
           <button
             key={n.id}
             onClick={() => navigate('/donar-insumos')}
-            className="flex items-center gap-3 rounded-2xl border border-sand-200 bg-white p-3 text-left transition active:scale-[0.99]"
+            className="flex items-center gap-3 rounded-2xl border border-sand-200 bg-white p-3.5 text-left transition active:scale-[0.99]"
           >
             <span className="min-w-0 flex-1">
               <span className="flex items-center gap-2">
@@ -67,12 +73,21 @@ export function UrgentNeeds() {
                   </span>
                 )}
               </span>
-              <span className="mt-0.5 block text-[12.5px] text-muted">{n.city}</span>
+              <span className="mt-0.5 block text-[12.5px] text-muted">
+                {n.city} · {formatRelativeTime(n.created_at)}
+              </span>
             </span>
             <span className="shrink-0 text-[12px] font-bold text-forest">Ver ›</span>
           </button>
         ))}
       </div>
+
+      <Link
+        to="/donar-insumos"
+        className="mt-4 block text-center text-[13px] font-bold text-forest"
+      >
+        Ver todas las necesidades
+      </Link>
     </section>
   );
 }

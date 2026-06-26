@@ -6,6 +6,8 @@ import type {
   FosterRow,
   NeedInsert,
   NeedRow,
+  VetInsert,
+  VetRow,
 } from '@/types/help';
 
 // ---- Inserts (public; rows are unverified by default) ----------------------
@@ -21,6 +23,11 @@ export async function createNeedReport(input: NeedInsert): Promise<void> {
 
 export async function createFosterOffer(input: FosterInsert): Promise<void> {
   const { error } = await supabase.from('foster_offers').insert(input);
+  if (error) throw error;
+}
+
+export async function createVetReport(input: VetInsert): Promise<void> {
+  const { error } = await supabase.from('veterinarians').insert(input);
   if (error) throw error;
 }
 
@@ -53,4 +60,14 @@ export async function getFosterOffers(): Promise<FosterRow[]> {
     .order('created_at', { ascending: false });
   if (error) throw error;
   return (data ?? []) as FosterRow[];
+}
+
+// Veterinarians publish immediately — this returns ALL rows (no verified gate).
+export async function getVeterinarians(): Promise<VetRow[]> {
+  const { data, error } = await supabase
+    .from('veterinarians')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as VetRow[];
 }

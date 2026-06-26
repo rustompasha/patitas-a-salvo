@@ -6,6 +6,7 @@ const OPTIONS = [
   { to: '/reportar/centro', emoji: '📍', title: 'Reportar centro o rescatista', sub: 'Avisa de un punto que recibe o necesita ayuda.', tone: '#C2410C' },
   { to: '/reportar/necesidad', emoji: '📦', title: 'Reportar necesidad', sub: 'Avisa qué insumo hace falta y dónde.', tone: '#1F4D3A' },
   { to: '/puedo-ser-hogar-temporal', emoji: '🏠', title: 'Puedo ser hogar temporal', sub: 'Ofrece refugio temporal a una mascota.', tone: '#2A9D8F' },
+  { to: '/reportar/veterinario', emoji: '🏥', title: 'Puedo ayudar como veterinario', sub: 'Publica tu disponibilidad para atender mascotas.', tone: '#1F7A6D' },
 ];
 
 export function ReportMenuPage() {

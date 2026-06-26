@@ -71,3 +71,26 @@ export type FosterInsert = {
   availability: string | null;
   notes: string | null;
 };
+
+export interface VetRow {
+  id: string;
+  name: string;
+  clinic_name: string | null;
+  city: string;
+  whatsapp: string;
+  address: string | null;
+  services: string[];
+  notes: string | null;
+  verified: boolean;
+  created_at: string;
+}
+
+export type VetInsert = {
+  name: string;
+  clinic_name: string | null;
+  city: string;
+  whatsapp: string;
+  address: string | null;
+  services: string[];
+  notes: string | null;
+};

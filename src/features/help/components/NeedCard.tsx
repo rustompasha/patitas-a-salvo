@@ -1,6 +1,7 @@
 import { WhatsAppButton } from '@/components/contact/WhatsAppButton';
 import { ShareButton } from '@/components/contact/ShareButton';
 import { URGENCY_DB_META } from '@/constants/help';
+import { formatRelativeTime } from '@/lib/utils';
 import type { NeedRow } from '@/types/help';
 
 export function NeedCard({ need }: { need: NeedRow }) {
@@ -12,7 +13,9 @@ export function NeedCard({ need }: { need: NeedRow }) {
       <div className="flex items-start justify-between gap-2.5">
         <div className="min-w-0">
           <h3 className="text-[14px] font-bold text-ink">{need.need}</h3>
-          <p className="mt-0.5 text-[12px] text-muted">{where}</p>
+          <p className="mt-0.5 text-[12px] text-muted">
+            {where} · {formatRelativeTime(need.created_at)}
+          </p>
         </div>
         {need.urgency && (
           <span

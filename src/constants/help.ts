@@ -29,6 +29,15 @@ export const ACCEPTS_OPTIONS = ['Perros', 'Gatos', 'Cachorros', 'Animales herido
 export const CAPACITY_OPTIONS = ['1', '2', '3+'];
 export const TIME_OPTIONS = ['24h', '3 días', '1 semana', 'Indefinido'];
 
+export const VET_SERVICE_OPTIONS = [
+  'Consulta general',
+  'Emergencias',
+  'Cirugía',
+  'Medicamentos',
+  'Hospitalización',
+  'Otro',
+];
+
 export const URGENCY_DB_META: Record<UrgencyLevel, { label: string; badge: string }> = {
   bajo: { label: 'Bajo', badge: 'bg-[#FAEAD0] text-[#9C6B12]' },
   medio: { label: 'Medio', badge: 'bg-[#FAEAD0] text-[#9C6B12]' },

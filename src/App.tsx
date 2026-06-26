@@ -11,6 +11,8 @@ import { FosterPage } from '@/pages/FosterPage';
 import { ReportMenuPage } from '@/pages/ReportMenuPage';
 import { ReportCenterPage } from '@/pages/ReportCenterPage';
 import { ReportNeedPage } from '@/pages/ReportNeedPage';
+import { ReportVetPage } from '@/pages/ReportVetPage';
+import { VetsPage } from '@/pages/VetsPage';
 import { DonatePage } from '@/pages/DonatePage';
 import { HelpPage } from '@/pages/HelpPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
@@ -25,6 +27,8 @@ export default function App() {
         <Route path="reportar/encontrada" element={<ReportFoundPage />} />
         <Route path="reportar/centro" element={<ReportCenterPage />} />
         <Route path="reportar/necesidad" element={<ReportNeedPage />} />
+        <Route path="reportar/veterinario" element={<ReportVetPage />} />
+        <Route path="veterinarios" element={<VetsPage />} />
         <Route path="donar-insumos" element={<DonatePage />} />
         <Route path="ayudar" element={<HelpPage />} />
         <Route path="mascotas" element={<PetsListingPage />} />
