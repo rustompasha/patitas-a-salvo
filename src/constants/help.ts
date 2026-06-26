@@ -30,11 +30,30 @@ export const CAPACITY_OPTIONS = ['1', '2', '3+'];
 export const TIME_OPTIONS = ['24h', '3 días', '1 semana', 'Indefinido'];
 
 export const VET_SERVICE_OPTIONS = [
-  'Consulta general',
-  'Emergencias',
+  'Atención de emergencia',
+  'Respuesta en sitio',
   'Cirugía',
-  'Medicamentos',
   'Hospitalización',
+  'Medicamentos',
+  'Eutanasia humanitaria',
+  'Rescate de animales',
+  'Traslado veterinario',
+  'Consulta general',
+];
+
+// Vet transportation/mobility (single-select). Critical during disaster response.
+export const VET_MOBILITY_OPTIONS = ['Carro', 'Moto', 'Ambos', 'Ninguno'];
+
+// Structured categorization for reported needs (single-select), for filtering.
+export const NEED_CATEGORY_OPTIONS = [
+  'Perrarina',
+  'Gatarina',
+  'Medicamentos',
+  'Atención veterinaria',
+  'Transporte',
+  'Hogar temporal',
+  'Rescate',
+  'Refugio',
   'Otro',
 ];
 

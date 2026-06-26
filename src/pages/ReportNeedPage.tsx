@@ -8,7 +8,7 @@ import { Chip } from '@/components/ui/Chip';
 import { SubmittedNotice } from '@/components/ui/SubmittedNotice';
 import { useToast } from '@/components/ui/Toast';
 import { normalizeVePhone } from '@/lib/utils';
-import { URGENCY_OPTIONS } from '@/constants/help';
+import { NEED_CATEGORY_OPTIONS, URGENCY_OPTIONS } from '@/constants/help';
 import { useCreateNeedReport } from '@/features/help/hooks';
 import type { UrgencyLevel } from '@/types/help';
 
@@ -20,6 +20,7 @@ export function ReportNeedPage() {
   const [city, setCity] = useState('');
   const [reference, setReference] = useState('');
   const [need, setNeed] = useState('');
+  const [category, setCategory] = useState('');
   const [quantity, setQuantity] = useState('');
   const [urgency, setUrgency] = useState<UrgencyLevel>('medio');
   const [whatsapp, setWhatsapp] = useState('');
@@ -38,6 +39,7 @@ export function ReportNeedPage() {
         city: city.trim(),
         reference: reference.trim() || null,
         need: need.trim(),
+        category: category || null,
         quantity: quantity.trim() || null,
         urgency,
         whatsapp: whatsapp.trim() || null,
@@ -61,7 +63,7 @@ export function ReportNeedPage() {
           title="Necesidad publicada"
           message="Tu necesidad ya está publicada y visible para quienes quieran ayudar."
         >
-          <Link to="/donar-insumos">
+          <Link to="/necesidades">
             <Button fullWidth>Ver necesidades</Button>
           </Link>
           <Button variant="secondary" fullWidth onClick={() => setSubmitted(false)}>
@@ -79,6 +81,18 @@ export function ReportNeedPage() {
         <Input label="Ciudad / sector" placeholder="Ej: Maiquetía, La Guaira" value={city} onChange={(e) => setCity(e.target.value)} />
         <Input label="Centro o punto de referencia" placeholder="Ej: Plaza de Macuto (opcional)" value={reference} onChange={(e) => setReference(e.target.value)} />
         <Input label="Necesidad principal" placeholder="Ej: Perrarina, transportadoras, suero" value={need} onChange={(e) => setNeed(e.target.value)} />
+
+        <div>
+          <div className="mb-2 text-[12.5px] font-bold text-[#3A4650]">Tipo de ayuda necesaria</div>
+          <div className="flex flex-wrap gap-2">
+            {NEED_CATEGORY_OPTIONS.map((c) => (
+              <Chip key={c} active={category === c} onClick={() => setCategory(category === c ? '' : c)}>
+                {c}
+              </Chip>
+            ))}
+          </div>
+        </div>
+
         <Input label="Cantidad aproximada" placeholder="Ej: 50 kg, 10 unidades" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
 
         <div>

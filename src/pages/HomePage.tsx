@@ -110,10 +110,32 @@ export function HomePage() {
         />
       </div>
 
-      {/* Secondary actions */}
+      {/* Pedir ayuda (request help) */}
       <div className="space-y-2.5">
+        <h2 className="text-[12px] font-bold uppercase tracking-wide text-faint">Pedir ayuda</h2>
         <RowCard
-          to="/donar-insumos"
+          to="/reportar/necesidad"
+          label="Reportar una necesidad"
+          sublabel="Pide alimento, medicinas, traslado o rescate"
+          icon={
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 4h6v3H9zM9 5H7a1 1 0 00-1 1v13a1 1 0 001 1h10a1 1 0 001-1V6a1 1 0 00-1-1h-2"
+                stroke="#D9531E"
+                strokeWidth="1.7"
+                strokeLinejoin="round"
+              />
+              <path d="M12 11v5M9.5 13.5h5" stroke="#D9531E" strokeWidth="1.7" strokeLinecap="round" />
+            </svg>
+          }
+        />
+      </div>
+
+      {/* Ofrecer ayuda (offer help) */}
+      <div className="space-y-2.5">
+        <h2 className="text-[12px] font-bold uppercase tracking-wide text-faint">Ofrecer ayuda</h2>
+        <RowCard
+          to="/necesidades"
           label="Ver necesidades"
           sublabel="Mira quién necesita ayuda ahora"
           icon={

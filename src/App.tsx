@@ -10,6 +10,7 @@ import { ReportRefugioPage } from '@/pages/ReportRefugioPage';
 import { FosterPage } from '@/pages/FosterPage';
 import { ReportMenuPage } from '@/pages/ReportMenuPage';
 import { ReportNeedPage } from '@/pages/ReportNeedPage';
+import { NeedsListingPage } from '@/pages/NeedsListingPage';
 import { ReportVetPage } from '@/pages/ReportVetPage';
 import { VetsPage } from '@/pages/VetsPage';
 import { DonatePage } from '@/pages/DonatePage';
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="reportar/refugio" element={<ReportRefugioPage />} />
         <Route path="reportar/centro" element={<Navigate to="/reportar/refugio" replace />} />
         <Route path="reportar/necesidad" element={<ReportNeedPage />} />
+        <Route path="necesidades" element={<NeedsListingPage />} />
         <Route path="reportar/veterinario" element={<ReportVetPage />} />
         <Route path="veterinarios" element={<VetsPage />} />
         <Route path="donar-insumos" element={<DonatePage />} />

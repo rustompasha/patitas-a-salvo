@@ -14,10 +14,35 @@ import type {
  *  Treated as "no data yet", NOT a failure, so the public sees a clean empty state. */
 const TABLE_MISSING = 'PGRST205';
 
+/** True when an insert failed only because a column doesn't exist yet (migration
+ *  not applied). Lets newer optional fields degrade gracefully instead of breaking
+ *  the form in production. */
+function isMissingColumn(error: { code?: string } | null): boolean {
+  return error?.code === 'PGRST204' || error?.code === '42703';
+}
+
+/** Insert `record`; if a not-yet-migrated optional column makes it fail, retry
+ *  once without `optionalKeys` so the submission still succeeds. */
+async function insertResilient<T extends Record<string, unknown>>(
+  table: string,
+  record: T,
+  optionalKeys: (keyof T)[],
+): Promise<void> {
+  const { error } = await supabase.from(table).insert(record);
+  if (!error) return;
+  if (isMissingColumn(error)) {
+    const stripped: Record<string, unknown> = { ...record };
+    for (const k of optionalKeys) delete stripped[k as string];
+    const retry = await supabase.from(table).insert(stripped);
+    if (retry.error) throw retry.error;
+    return;
+  }
+  throw error;
+}
+
 // ---- Inserts (public; rows are unverified by default) ----------------------
 export async function createNeedReport(input: NeedInsert): Promise<void> {
-  const { error } = await supabase.from('needs').insert(input);
-  if (error) throw error;
+  await insertResilient('needs', input, ['category']);
 }
 
 export async function createFosterOffer(input: FosterInsert): Promise<void> {
@@ -26,8 +51,7 @@ export async function createFosterOffer(input: FosterInsert): Promise<void> {
 }
 
 export async function createVetReport(input: VetInsert): Promise<void> {
-  const { error } = await supabase.from('veterinarians').insert(input);
-  if (error) throw error;
+  await insertResilient('veterinarians', input, ['mobility']);
 }
 
 // Refugios are stored in the centers table (any type). Inserted unverified by default.

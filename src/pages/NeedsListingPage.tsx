@@ -5,19 +5,21 @@ import { Spinner } from '@/components/ui/Spinner';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { SearchBar } from '@/features/pets/components/SearchBar';
-import { RefugeCard } from '@/features/help/components/RefugeCard';
-import { useRefugios } from '@/features/help/hooks';
+import { NeedCard } from '@/features/help/components/NeedCard';
+import { useVerifiedNeeds } from '@/features/help/hooks';
 
-export function RefugiosPage() {
+export function NeedsListingPage() {
   const navigate = useNavigate();
-  const { data, isLoading, isError, refetch } = useRefugios();
+  const { data, isLoading, isError, refetch } = useVerifiedNeeds();
   const [search, setSearch] = useState('');
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
     const list = data ?? [];
     if (!q) return list;
-    return list.filter((r) => `${r.name} ${r.city} ${r.needs.join(' ')}`.toLowerCase().includes(q));
+    return list.filter((n) =>
+      `${n.need} ${n.category ?? ''} ${n.city} ${n.reference ?? ''}`.toLowerCase().includes(q),
+    );
   }, [data, search]);
 
   const hasData = (data?.length ?? 0) > 0;
@@ -35,19 +37,8 @@ export function RefugiosPage() {
             <path d="M15 6l-6 6 6 6" stroke="#1F2933" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <h1 className="text-[21px] font-extrabold text-forest-dark">Refugios y puntos de ayuda</h1>
-        <p className="mt-1 text-[13px] text-muted">
-          Lugares y personas organizadas que pueden recibir animales o insumos.
-        </p>
-        <Link
-          to="/reportar/refugio"
-          className="mt-3 inline-flex items-center gap-1.5 rounded-xl border border-forest bg-white px-3.5 py-2 text-[12.5px] font-bold text-forest"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-            <path d="M12 6v12M6 12h12" stroke="#1F4D3A" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-          Registrar refugio
-        </Link>
+        <h1 className="text-[21px] font-extrabold text-forest-dark">Necesidades activas</h1>
+        <p className="mt-1 text-[13px] text-muted">Solicitudes de ayuda reportadas. Contacta directamente por WhatsApp.</p>
       </header>
 
       {isLoading ? (
@@ -58,24 +49,24 @@ export function RefugiosPage() {
         <ErrorState onRetry={refetch} />
       ) : !hasData ? (
         <EmptyState
-          emoji="🏠"
-          title="Aún no hay refugios publicados"
-          message="Si gestionas un refugio o punto de ayuda, puedes publicarlo aquí."
+          emoji="📋"
+          title="No hay necesidades activas"
+          message="Cuando alguien solicite ayuda, aparecerá aquí."
           action={
-            <Link to="/reportar/refugio">
-              <Button>Registrar refugio</Button>
+            <Link to="/reportar/necesidad">
+              <Button>Reportar una necesidad</Button>
             </Link>
           }
         />
       ) : (
         <>
-          <SearchBar value={search} onChange={setSearch} placeholder="Buscar por nombre, ciudad o insumo…" />
+          <SearchBar value={search} onChange={setSearch} placeholder="Buscar por necesidad, tipo o ciudad…" />
           <p className="text-[13px] font-medium text-muted">
-            {filtered.length} refugio{filtered.length === 1 ? '' : 's'}
+            {filtered.length} necesidad{filtered.length === 1 ? '' : 'es'}
           </p>
           <div className="flex flex-col gap-3">
-            {filtered.map((r) => (
-              <RefugeCard key={r.id} refuge={r} />
+            {filtered.map((n) => (
+              <NeedCard key={n.id} need={n} />
             ))}
             {filtered.length === 0 && (
               <p className="py-4 text-center text-[13px] text-muted">Sin resultados para “{search}”.</p>

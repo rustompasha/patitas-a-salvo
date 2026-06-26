@@ -27,11 +27,11 @@ export function UrgentNeeds() {
       <section>
         <EmptyState
           emoji="📋"
-          title="Necesidades por confirmar"
-          message="Aún estamos cargando centros y necesidades reales. Si sabes de un centro que necesita ayuda, repórtalo."
+          title="No hay necesidades activas"
+          message="Cuando alguien solicite ayuda, aparecerá aquí."
           action={
             <Link to="/reportar/necesidad">
-              <Button>Reportar necesidad</Button>
+              <Button>Reportar una necesidad</Button>
             </Link>
           }
         />
@@ -59,7 +59,7 @@ export function UrgentNeeds() {
         {top.map((n) => (
           <button
             key={n.id}
-            onClick={() => navigate('/donar-insumos')}
+            onClick={() => navigate('/necesidades')}
             className="flex items-center gap-3 rounded-2xl border border-sand-200 bg-white p-3.5 text-left transition active:scale-[0.99]"
           >
             <span className="min-w-0 flex-1">
@@ -83,7 +83,7 @@ export function UrgentNeeds() {
       </div>
 
       <Link
-        to="/donar-insumos"
+        to="/necesidades"
         className="mt-4 block text-center text-[13px] font-bold text-forest"
       >
         Ver todas las necesidades

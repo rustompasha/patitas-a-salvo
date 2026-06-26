@@ -20,6 +20,7 @@ export interface NeedRow {
   city: string;
   reference: string | null;
   need: string;
+  category: string | null;
   quantity: string | null;
   urgency: UrgencyLevel | null;
   whatsapp: string | null;
@@ -67,6 +68,7 @@ export type NeedInsert = {
   city: string;
   reference: string | null;
   need: string;
+  category: string | null;
   quantity: string | null;
   urgency: UrgencyLevel;
   whatsapp: string | null;
@@ -91,6 +93,7 @@ export interface VetRow {
   whatsapp: string;
   address: string | null;
   services: string[];
+  mobility: string | null;
   notes: string | null;
   verified: boolean;
   created_at: string;
@@ -103,5 +106,6 @@ export type VetInsert = {
   whatsapp: string;
   address: string | null;
   services: string[];
+  mobility: string | null;
   notes: string | null;
 };

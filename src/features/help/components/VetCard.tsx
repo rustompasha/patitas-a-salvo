@@ -34,6 +34,11 @@ export function VetCard({ vet }: { vet: VetRow }) {
           ))}
         </div>
       )}
+      {vet.mobility && (
+        <p className="mt-2 text-[12px] text-ink">
+          <span className="font-semibold">Movilidad:</span> {vet.mobility}
+        </p>
+      )}
       {vet.address && <p className="mt-2 text-[12px] text-muted">{vet.address}</p>}
       {vet.notes && <p className="mt-1 text-[12px] leading-snug text-muted">{vet.notes}</p>}
 

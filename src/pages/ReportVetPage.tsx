@@ -8,7 +8,7 @@ import { Chip } from '@/components/ui/Chip';
 import { SubmittedNotice } from '@/components/ui/SubmittedNotice';
 import { useToast } from '@/components/ui/Toast';
 import { normalizeVePhone } from '@/lib/utils';
-import { VET_SERVICE_OPTIONS } from '@/constants/help';
+import { VET_MOBILITY_OPTIONS, VET_SERVICE_OPTIONS } from '@/constants/help';
 import { useCreateVetReport } from '@/features/help/hooks';
 
 export function ReportVetPage() {
@@ -22,6 +22,7 @@ export function ReportVetPage() {
   const [whatsapp, setWhatsapp] = useState('');
   const [address, setAddress] = useState('');
   const [services, setServices] = useState<string[]>([]);
+  const [mobility, setMobility] = useState('');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -44,6 +45,7 @@ export function ReportVetPage() {
         whatsapp: whatsapp.trim(),
         address: address.trim() || null,
         services,
+        mobility: mobility || null,
         notes: notes.trim() || null,
       },
       {
@@ -94,6 +96,22 @@ export function ReportVetPage() {
             {VET_SERVICE_OPTIONS.map((s) => (
               <Chip key={s} active={services.includes(s)} onClick={() => toggleService(s)}>
                 {s}
+              </Chip>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="mb-2 text-[12.5px] font-bold text-[#3A4650]">¿Tienes transporte disponible?</div>
+          <div className="flex flex-wrap gap-2">
+            {VET_MOBILITY_OPTIONS.map((m) => (
+              <Chip
+                key={m}
+                active={mobility === m}
+                onClick={() => setMobility(mobility === m ? '' : m)}
+                className="flex-1"
+              >
+                {m}
               </Chip>
             ))}
           </div>

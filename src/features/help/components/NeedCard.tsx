@@ -25,6 +25,11 @@ export function NeedCard({ need }: { need: NeedRow }) {
           </span>
         )}
       </div>
+      {need.category && (
+        <span className="mt-2 inline-block rounded-md bg-[#EAF3EC] px-2 py-1 text-[11px] font-semibold text-forest">
+          {need.category}
+        </span>
+      )}
       {need.quantity && (
         <p className="mt-2 text-[12px] text-ink">
           <span className="font-semibold">Cantidad:</span> {need.quantity}

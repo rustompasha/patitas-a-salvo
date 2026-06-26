@@ -7,9 +7,12 @@ import { STORAGE_BUCKET, IMAGE } from '@/constants/config';
  * Returns the public URL. Throws on failure.
  */
 export async function uploadPetImage(file: File): Promise<string> {
+  // Automatic: downscale to 1200px max edge, convert to WebP, compress to ~300 KB
+  // at 80% quality. Large inputs are processed, never rejected.
   const compressed = await imageCompression(file, {
     maxSizeMB: IMAGE.maxSizeMB,
     maxWidthOrHeight: IMAGE.maxWidthOrHeight,
+    initialQuality: IMAGE.quality,
     useWebWorker: true,
     fileType: 'image/webp',
   });

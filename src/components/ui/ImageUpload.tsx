@@ -10,7 +10,6 @@ interface ImageUploadProps {
 export function ImageUpload({ value, onChange, hint = 'Una foto clara ayuda a reconocerla' }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!value) {
@@ -22,13 +21,10 @@ export function ImageUpload({ value, onChange, hint = 'Una foto clara ayuda a re
     return () => URL.revokeObjectURL(url);
   }, [value]);
 
+  // Any image is accepted; it's downscaled, converted to WebP and compressed
+  // automatically on upload (see uploadPetImage). No size rejection.
   function handleFile(file: File | undefined) {
-    setError(null);
     if (!file) return;
-    if (file.size > IMAGE.maxInputMB * 1024 * 1024) {
-      setError(`La imagen supera ${IMAGE.maxInputMB} MB. Elige una más liviana.`);
-      return;
-    }
     onChange(file);
   }
 
@@ -74,8 +70,6 @@ export function ImageUpload({ value, onChange, hint = 'Una foto clara ayuda a re
           <span className="mt-1 text-[11.5px] text-faint">{hint}</span>
         </button>
       )}
-
-      {error && <p className="mt-1.5 text-xs font-medium text-lost">{error}</p>}
     </div>
   );
 }
