@@ -1,0 +1,14 @@
+{
+  "name": "Patitas a Salvo",
+  "short_name": "Patitas",
+  "description": "Reporta y encuentra mascotas perdidas, refugios, necesidades y veterinarios tras el terremoto en Venezuela.",
+  "lang": "es",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FBF8F1",
+  "theme_color": "#1F4D3A",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
