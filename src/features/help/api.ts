@@ -42,7 +42,7 @@ async function insertResilient<T extends Record<string, unknown>>(
 
 // ---- Inserts (public; rows are unverified by default) ----------------------
 export async function createNeedReport(input: NeedInsert): Promise<void> {
-  await insertResilient('needs', input, ['category', 'requester_type', 'requester_name']);
+  await insertResilient('needs', input, ['category', 'requester_type', 'requester_name', 'refuge_id']);
 }
 
 export async function createFosterOffer(input: FosterInsert): Promise<void> {
@@ -92,6 +92,18 @@ export async function getNeeds(): Promise<NeedRow[]> {
   const { data, error } = await supabase
     .from('needs')
     .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as NeedRow[];
+}
+
+// Active needs for a refuge — matched by requester_name (works for legacy rows too).
+export async function getRefugeNeeds(name: string): Promise<NeedRow[]> {
+  const { data, error } = await supabase
+    .from('needs')
+    .select('*')
+    .eq('requester_type', 'refugio')
+    .eq('requester_name', name)
     .order('created_at', { ascending: false });
   if (error) throw error;
   return (data ?? []) as NeedRow[];

@@ -36,6 +36,7 @@ export interface NeedRow {
   urgency: UrgencyLevel | null;
   requester_type: string | null;
   requester_name: string | null;
+  refuge_id: string | null;
   whatsapp: string | null;
   notes: string | null;
   verified: boolean;
@@ -95,6 +96,7 @@ export type NeedInsert = {
   urgency: UrgencyLevel;
   requester_type: string;
   requester_name: string | null;
+  refuge_id: string | null;
   whatsapp: string | null;
   notes: string | null;
 };

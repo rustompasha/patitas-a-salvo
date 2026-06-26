@@ -8,8 +8,8 @@ import { CopyButton } from '@/components/ui/CopyButton';
 import { WhatsAppButton } from '@/components/contact/WhatsAppButton';
 import { DirectionsButton } from '@/components/contact/DirectionsButton';
 import { ShareButton } from '@/components/contact/ShareButton';
-import { useRefugio } from '@/features/help/hooks';
-import { REFUGE_STATUS_BADGE, refugeTypeLabel } from '@/constants/help';
+import { useRefugeNeeds, useRefugio } from '@/features/help/hooks';
+import { REFUGE_STATUS_BADGE, URGENCY_DB_META, refugeTypeLabel } from '@/constants/help';
 import { formatRelativeTime } from '@/lib/utils';
 
 function Field({ label, value }: { label: string; value: string }) {
@@ -52,6 +52,7 @@ function DonationMethod({
 export function RefugioDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: refuge, isLoading, isError, refetch } = useRefugio(id);
+  const refugeNeeds = useRefugeNeeds(refuge?.name);
 
   if (isLoading) {
     return (
@@ -90,6 +91,12 @@ export function RefugioDetailPage() {
 
   const receives = refuge.needs.length ? refuge.needs.join(', ') : 'Sin especificar';
   const shareText = `🏠 ${refuge.name} (${refugeTypeLabel(refuge.type)}, ${refuge.city}). Contacta en Patitas a Salvo:`;
+  const activeNeeds = refugeNeeds.data ?? [];
+  const needHref =
+    `/reportar/necesidad?refugio=${refuge.id}` +
+    `&nombre=${encodeURIComponent(refuge.name)}` +
+    `&ciudad=${encodeURIComponent(refuge.city)}` +
+    (refuge.whatsapp ? `&wa=${encodeURIComponent(refuge.whatsapp)}` : '');
 
   // "Cómo donar" — only methods that have data.
   const pmLines = [
@@ -167,6 +174,39 @@ export function RefugioDetailPage() {
         </section>
       )}
 
+      {/* Necesidades activas — needs this refuge has reported */}
+      <section className="mt-6">
+        <h2 className="mb-3 text-[16px] font-extrabold text-forest-dark">Necesidades activas</h2>
+        {refugeNeeds.isLoading ? (
+          <p className="text-[13px] text-muted">Cargando…</p>
+        ) : activeNeeds.length === 0 ? (
+          <p className="rounded-xl border border-sand-200 bg-white px-3.5 py-3 text-[13px] text-muted">
+            No hay necesidades activas
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {activeNeeds.map((n) => (
+              <div
+                key={n.id}
+                className="flex items-center justify-between gap-2 rounded-xl border border-sand-200 bg-white px-3.5 py-2.5"
+              >
+                <span className="min-w-0">
+                  <span className="block truncate text-[13.5px] font-bold text-ink">{n.need}</span>
+                  <span className="text-[11.5px] text-muted">{formatRelativeTime(n.created_at)}</span>
+                </span>
+                {n.urgency && (
+                  <span
+                    className={`shrink-0 rounded-md px-2 py-1 text-[10px] font-extrabold uppercase ${URGENCY_DB_META[n.urgency].badge}`}
+                  >
+                    {URGENCY_DB_META[n.urgency].label}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
       <div className="mt-6 flex flex-wrap gap-2">
         <WhatsAppButton
           phone={refuge.whatsapp}
@@ -185,6 +225,13 @@ export function RefugioDetailPage() {
         label="Aplicar como voluntario para este refugio"
         className="mt-2 w-full"
       />
+
+      {/* Create a need pre-attached to this refuge (requester fields prefilled/hidden) */}
+      <Link to={needHref} className="mt-2 block">
+        <Button variant="secondary" fullWidth>
+          ➕ Registrar necesidad para este refugio
+        </Button>
+      </Link>
 
       <p className="mt-4 text-center text-[11.5px] text-faint">Publicado {formatRelativeTime(refuge.created_at)}</p>
 

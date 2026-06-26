@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { PageHeading } from './PageHeading';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
@@ -15,17 +15,24 @@ import type { UrgencyLevel } from '@/types/help';
 export function ReportNeedPage() {
   const { toast } = useToast();
   const create = useCreateNeedReport();
+  const [params] = useSearchParams();
+
+  // Prefill context when launched from a refuge profile (requester fields hidden).
+  const refugeId = params.get('refugio');
+  const refugeName = params.get('nombre') ?? '';
+  const fromRefuge = !!refugeName;
+
   const [submitted, setSubmitted] = useState(false);
 
-  const [requesterType, setRequesterType] = useState('individual');
-  const [requesterName, setRequesterName] = useState('');
-  const [city, setCity] = useState('');
+  const [requesterType, setRequesterType] = useState(fromRefuge ? 'refugio' : 'individual');
+  const [requesterName, setRequesterName] = useState(refugeName);
+  const [city, setCity] = useState(params.get('ciudad') ?? '');
   const [reference, setReference] = useState('');
   const [need, setNeed] = useState('');
   const [category, setCategory] = useState('');
   const [quantity, setQuantity] = useState('');
   const [urgency, setUrgency] = useState<UrgencyLevel>('medio');
-  const [whatsapp, setWhatsapp] = useState('');
+  const [whatsapp, setWhatsapp] = useState(params.get('wa') ?? '');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -52,6 +59,7 @@ export function ReportNeedPage() {
         urgency,
         requester_type: requesterType,
         requester_name: isOrg ? requesterName.trim() : null,
+        refuge_id: refugeId || null,
         whatsapp: whatsapp.trim() || null,
         notes: notes.trim() || null,
       },
@@ -86,31 +94,46 @@ export function ReportNeedPage() {
 
   return (
     <div className="animate-fade">
-      <PageHeading title="Reportar necesidad" subtitle="Avisa qué hace falta y dónde. Se publica de inmediato para que puedan ayudarte." />
+      <PageHeading
+        title="Reportar necesidad"
+        subtitle={
+          fromRefuge
+            ? `Para ${refugeName}. Se publica de inmediato.`
+            : 'Avisa qué hace falta y dónde. Se publica de inmediato para que puedan ayudarte.'
+        }
+      />
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <div className="mb-2 text-[12.5px] font-bold text-[#3A4650]">¿Quién solicita?</div>
-          <div className="flex flex-col gap-2">
-            {REQUESTER_TYPE_OPTIONS.map((r) => (
-              <Chip
-                key={r.value}
-                active={requesterType === r.value}
-                onClick={() => setRequesterType(r.value)}
-                className="text-left"
-              >
-                {r.label}
-              </Chip>
-            ))}
+        {fromRefuge ? (
+          <div className="rounded-xl border border-[#D4E7D8] bg-[#EAF3EC] px-3.5 py-3 text-[13px] text-forest-dark">
+            <span className="font-bold">Necesidad para:</span> {refugeName}
           </div>
-        </div>
+        ) : (
+          <>
+            <div>
+              <div className="mb-2 text-[12.5px] font-bold text-[#3A4650]">¿Quién solicita?</div>
+              <div className="flex flex-col gap-2">
+                {REQUESTER_TYPE_OPTIONS.map((r) => (
+                  <Chip
+                    key={r.value}
+                    active={requesterType === r.value}
+                    onClick={() => setRequesterType(r.value)}
+                    className="text-left"
+                  >
+                    {r.label}
+                  </Chip>
+                ))}
+              </div>
+            </div>
 
-        {isOrg && (
-          <Input
-            label={requesterType === 'veterinaria' ? 'Nombre de la clínica' : 'Nombre del refugio / organización'}
-            placeholder={requesterType === 'veterinaria' ? 'Ej: Clínica Veterinaria Macuto' : 'Ej: Refugio Patitas'}
-            value={requesterName}
-            onChange={(e) => setRequesterName(e.target.value)}
-          />
+            {isOrg && (
+              <Input
+                label={requesterType === 'veterinaria' ? 'Nombre de la clínica' : 'Nombre del refugio / organización'}
+                placeholder={requesterType === 'veterinaria' ? 'Ej: Clínica Veterinaria Macuto' : 'Ej: Refugio Patitas'}
+                value={requesterName}
+                onChange={(e) => setRequesterName(e.target.value)}
+              />
+            )}
+          </>
         )}
 
         <Input label="Ciudad / sector" placeholder="Ej: Maiquetía, La Guaira" value={city} onChange={(e) => setCity(e.target.value)} />

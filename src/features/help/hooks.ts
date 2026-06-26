@@ -7,6 +7,7 @@ import {
   getFosterOfferById,
   getFosterOffers,
   getNeeds,
+  getRefugeNeeds,
   getRefugioById,
   getRefugios,
   getVeterinarians,
@@ -48,6 +49,15 @@ export function useRefugio(id: string | undefined) {
     queryKey: ['refugios', 'detail', id],
     queryFn: () => getRefugioById(id as string),
     enabled: !!id,
+    staleTime: 30_000,
+  });
+}
+
+export function useRefugeNeeds(name: string | undefined) {
+  return useQuery({
+    queryKey: ['needs', 'refuge', name],
+    queryFn: () => getRefugeNeeds(name as string),
+    enabled: !!name,
     staleTime: 30_000,
   });
 }
