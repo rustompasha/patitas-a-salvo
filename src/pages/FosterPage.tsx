@@ -88,7 +88,7 @@ export function FosterPage() {
         <PageHeading title="Puedo ser hogar temporal" />
         <SubmittedNotice
           title="¡Gracias por abrir tu casa!"
-          message="Tu oferta ya está publicada y visible. Un coordinador te contactará por WhatsApp antes de asignar una mascota."
+          message="Tu oferta ya está publicada y visible. Las personas que necesiten un hogar temporal te contactarán directamente por WhatsApp."
         >
           <Button fullWidth onClick={resetForm}>
             Ofrecer otro hogar
@@ -107,7 +107,7 @@ export function FosterPage() {
     <div className="animate-fade">
       <PageHeading
         title="Puedo ser hogar temporal"
-        subtitle="Un hogar temporal le da a una mascota un lugar seguro mientras encuentra a su familia o un refugio."
+        subtitle="Ofrece un hogar temporal para una mascota mientras aparece su familia o un refugio."
       />
 
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
@@ -162,7 +162,7 @@ export function FosterPage() {
           Ofrecer mi hogar
         </Button>
         <p className="text-center text-[11px] leading-relaxed text-faint">
-          Un coordinador verificará tu oferta por WhatsApp antes de asignar una mascota.
+          Tu oferta aparece públicamente. Las personas te contactarán directamente por WhatsApp.
         </p>
       </form>
 

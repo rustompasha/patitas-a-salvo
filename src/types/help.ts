@@ -52,6 +52,17 @@ export type CenterInsert = {
   notes: string | null;
 };
 
+// Refugios are stored in the centers table; a RefugeRow is a CenterRow.
+export type RefugeInsert = {
+  name: string;
+  type: CenterTypeValue;
+  city: string;
+  address: string | null;
+  whatsapp: string | null;
+  needs: string[];
+  notes: string | null;
+};
+
 export type NeedInsert = {
   city: string;
   reference: string | null;

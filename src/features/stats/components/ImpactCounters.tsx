@@ -26,9 +26,9 @@ export function ImpactCounters() {
       label: plural(data?.needs ?? 0, 'solicitud de ayuda', 'solicitudes de ayuda'),
     },
     {
-      emoji: '🏥',
-      value: data?.vets ?? 0,
-      label: plural(data?.vets ?? 0, 'veterinario disponible', 'veterinarios disponibles'),
+      emoji: '🏘️',
+      value: data?.refugios ?? 0,
+      label: plural(data?.refugios ?? 0, 'refugio publicado', 'refugios publicados'),
     },
   ];
 

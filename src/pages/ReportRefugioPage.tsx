@@ -9,27 +9,25 @@ import { Chip } from '@/components/ui/Chip';
 import { SubmittedNotice } from '@/components/ui/SubmittedNotice';
 import { useToast } from '@/components/ui/Toast';
 import { normalizeVePhone } from '@/lib/utils';
-import { CENTER_TYPE_OPTIONS, NEED_OPTIONS, URGENCY_OPTIONS } from '@/constants/help';
-import { useCreateCenterReport } from '@/features/help/hooks';
-import type { CenterTypeValue, UrgencyLevel } from '@/types/help';
+import { REFUGE_RECEIVE_OPTIONS, REFUGE_TYPE_OPTIONS, refugeTypeToCenterType } from '@/constants/help';
+import { useCreateRefugeReport } from '@/features/help/hooks';
 
-export function ReportCenterPage() {
+export function ReportRefugioPage() {
   const { toast } = useToast();
-  const create = useCreateCenterReport();
+  const create = useCreateRefugeReport();
   const [submitted, setSubmitted] = useState(false);
 
   const [name, setName] = useState('');
-  const [type, setType] = useState<CenterTypeValue | ''>('');
+  const [type, setType] = useState('');
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
-  const [needs, setNeeds] = useState<string[]>([]);
-  const [urgency, setUrgency] = useState<UrgencyLevel>('medio');
+  const [receives, setReceives] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  function toggleNeed(v: string) {
-    setNeeds((p) => (p.includes(v) ? p.filter((x) => x !== v) : [...p, v]));
+  function toggleReceive(v: string) {
+    setReceives((p) => (p.includes(v) ? p.filter((x) => x !== v) : [...p, v]));
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -42,18 +40,17 @@ export function ReportCenterPage() {
     create.mutate(
       {
         name: name.trim(),
-        type,
+        type: refugeTypeToCenterType(type),
         city: city.trim(),
         address: address.trim() || null,
         whatsapp: whatsapp.trim() || null,
-        needs,
-        urgency,
+        needs: receives,
         notes: notes.trim() || null,
       },
       {
         onSuccess: () => {
           setSubmitted(true);
-          toast('Reporte enviado');
+          toast('Refugio registrado');
         },
         onError: () => toast('No se pudo enviar. Inténtalo de nuevo.'),
       },
@@ -63,16 +60,16 @@ export function ReportCenterPage() {
   if (submitted) {
     return (
       <div className="animate-fade">
-        <PageHeading title="Reportar centro o rescatista" />
+        <PageHeading title="Registrar refugio" />
         <SubmittedNotice
-          title="Reporte recibido"
-          message="Recibimos tu reporte. Lo revisaremos antes de publicarlo."
+          title="Refugio recibido"
+          message="Gracias. Publicaremos esta información para que las personas puedan contactarlos directamente por WhatsApp."
         >
-          <Link to="/centros">
-            <Button fullWidth>Volver a centros</Button>
+          <Link to="/refugios">
+            <Button fullWidth>Ver refugios</Button>
           </Link>
           <Button variant="secondary" fullWidth onClick={() => setSubmitted(false)}>
-            Reportar otro
+            Registrar otro
           </Button>
         </SubmittedNotice>
       </div>
@@ -81,43 +78,40 @@ export function ReportCenterPage() {
 
   return (
     <div className="animate-fade">
-      <PageHeading title="Reportar centro o rescatista" subtitle="Ayuda a construir el mapa de ayuda real. Verificamos antes de publicar." />
+      <PageHeading
+        title="Registrar refugio"
+        subtitle="Refugios, rescatistas, veterinarias aliadas y puntos que pueden recibir animales o insumos."
+      />
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input label="Nombre del centro / rescatista" placeholder="Ej: Punto de acopio La Guaira" value={name} onChange={(e) => setName(e.target.value)} />
+        <Input
+          label="Nombre del refugio / organización / responsable"
+          placeholder="Ej: Refugio Patitas, Rescate La Guaira"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <Select
           label="Tipo"
           placeholder="Selecciona…"
-          options={CENTER_TYPE_OPTIONS}
+          options={REFUGE_TYPE_OPTIONS}
           value={type}
-          onChange={(e) => setType(e.target.value as CenterTypeValue)}
+          onChange={(e) => setType(e.target.value)}
         />
-        <Input label="Ciudad / sector" placeholder="Ej: Caraballeda, La Guaira" value={city} onChange={(e) => setCity(e.target.value)} />
+        <Input label="Ciudad / zona" placeholder="Ej: Caraballeda, La Guaira" value={city} onChange={(e) => setCity(e.target.value)} />
         <Input label="Dirección o referencia" placeholder="Ej: Av. La Playa, sector Los Corales" value={address} onChange={(e) => setAddress(e.target.value)} />
         <Input label="WhatsApp" placeholder="0412…" inputMode="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
 
         <div>
-          <div className="mb-2 text-[12.5px] font-bold text-[#3A4650]">¿Qué necesitan?</div>
+          <div className="mb-2 text-[12.5px] font-bold text-[#3A4650]">¿Qué puede recibir?</div>
           <div className="flex flex-wrap gap-2">
-            {NEED_OPTIONS.map((n) => (
-              <Chip key={n} active={needs.includes(n)} onClick={() => toggleNeed(n)}>
-                {n}
+            {REFUGE_RECEIVE_OPTIONS.map((r) => (
+              <Chip key={r} active={receives.includes(r)} onClick={() => toggleReceive(r)}>
+                {r}
               </Chip>
             ))}
           </div>
         </div>
 
-        <div>
-          <div className="mb-2 text-[12.5px] font-bold text-[#3A4650]">Nivel de urgencia</div>
-          <div className="flex gap-2">
-            {URGENCY_OPTIONS.map((u) => (
-              <Chip key={u.value} active={urgency === u.value} onClick={() => setUrgency(u.value)} className="flex-1">
-                {u.label}
-              </Chip>
-            ))}
-          </div>
-        </div>
-
-        <Textarea label="Notas" placeholder="Cualquier detalle útil para quien quiera ayudar" value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <Textarea label="Notas" placeholder="Horarios, condiciones, capacidad…" value={notes} onChange={(e) => setNotes(e.target.value)} />
 
         {error && <p className="text-center text-sm font-medium text-lost">{error}</p>}
         {create.isError && (
@@ -127,10 +121,10 @@ export function ReportCenterPage() {
         )}
 
         <Button type="submit" fullWidth loading={create.isPending}>
-          Enviar reporte
+          Registrar refugio
         </Button>
         <p className="text-center text-[11px] leading-relaxed text-faint">
-          Tu reporte se verifica antes de aparecer públicamente. No se publica automáticamente.
+          Tu refugio aparecerá públicamente para que las personas te contacten por WhatsApp.
         </p>
       </form>
     </div>

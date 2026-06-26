@@ -35,12 +35,12 @@ export function BottomNav() {
         <span className="text-[10px] font-extrabold text-ember-dark">Reportar</span>
       </NavLink>
 
-      <NavLink to="/centros" className={navClass}>
+      <NavLink to="/refugios" className={navClass}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
           <path d="M4 20V8l5-4 5 4v12" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
           <path d="M14 20v-8h6v8M3 20h18" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        <span>Centros</span>
+        <span>Refugios</span>
       </NavLink>
 
       <NavLink to="/ayudar" className={navClass}>

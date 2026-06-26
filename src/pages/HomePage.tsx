@@ -2,8 +2,6 @@ import { Link } from 'react-router-dom';
 import { PetGrid } from '@/features/pets/components/PetGrid';
 import { usePets } from '@/features/pets/hooks/usePets';
 import { UrgentNeeds } from '@/features/centers/components/UrgentNeeds';
-import { VerifiedCenterCard } from '@/features/help/components/VerifiedCenterCard';
-import { useVerifiedCenters } from '@/features/help/hooks';
 import { ImpactCounters } from '@/features/stats/components/ImpactCounters';
 
 function ActionCard({
@@ -51,8 +49,6 @@ function ActionCard({
 
 export function HomePage() {
   const recent = usePets({ status: 'all', search: '' });
-  const centers = useVerifiedCenters();
-  const hasCenters = (centers.data?.length ?? 0) > 0;
 
   return (
     <div className="space-y-6 animate-fade">
@@ -123,6 +119,16 @@ export function HomePage() {
             }
           />
           <ActionCard
+            to="/reportar/refugio"
+            label="Soy refugio / registrar refugio"
+            icon={
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M4 20V8l5-4 5 4v12" stroke="#1F4D3A" strokeWidth="1.7" strokeLinejoin="round" />
+                <path d="M14 20v-8h6v8M3 20h18" stroke="#1F4D3A" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            }
+          />
+          <ActionCard
             to="/reportar/veterinario"
             label="Veterinario disponible"
             icon={
@@ -136,22 +142,6 @@ export function HomePage() {
       </div>
 
       <UrgentNeeds />
-
-      {hasCenters && (
-        <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-[16px] font-extrabold text-forest-dark">Centros activos</h2>
-            <Link to="/centros" className="text-[12.5px] font-bold text-forest">
-              Ver todos
-            </Link>
-          </div>
-          <div className="flex flex-col gap-3">
-            {centers.data!.slice(0, 3).map((c) => (
-              <VerifiedCenterCard key={c.id} center={c} />
-            ))}
-          </div>
-        </section>
-      )}
 
       <section>
         <div className="mb-3 flex items-center justify-between">

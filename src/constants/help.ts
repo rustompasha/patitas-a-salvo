@@ -48,3 +48,40 @@ export const URGENCY_DB_META: Record<UrgencyLevel, { label: string; badge: strin
 export function centerTypeLabel(value: CenterTypeValue): string {
   return CENTER_TYPE_OPTIONS.find((o) => o.value === value)?.label ?? value;
 }
+
+// ---- Refugios (backed by the centers table) --------------------------------
+// Form Tipo options. Values are unique for the <Select>; 'ong' is mapped to the
+// 'refugio' enum on insert (the centers.type CHECK only allows 4 values).
+export const REFUGE_TYPE_OPTIONS: { value: string; label: string }[] = [
+  { value: 'refugio', label: 'Refugio' },
+  { value: 'rescatista', label: 'Rescatista organizado' },
+  { value: 'veterinaria', label: 'Veterinaria aliada' },
+  { value: 'centro_acopio', label: 'Punto de recepción de insumos' },
+  { value: 'ong', label: 'ONG' },
+];
+
+export function refugeTypeToCenterType(value: string): CenterTypeValue {
+  return value === 'ong' ? 'refugio' : (value as CenterTypeValue);
+}
+
+const REFUGE_TYPE_LABEL: Record<CenterTypeValue, string> = {
+  refugio: 'Refugio',
+  rescatista: 'Rescatista',
+  veterinaria: 'Veterinaria aliada',
+  centro_acopio: 'Punto de recepción',
+};
+
+export function refugeTypeLabel(value: CenterTypeValue): string {
+  return REFUGE_TYPE_LABEL[value] ?? 'Refugio';
+}
+
+export const REFUGE_RECEIVE_OPTIONS = [
+  'Perros',
+  'Gatos',
+  'Perrarina',
+  'Gatarina',
+  'Medicinas',
+  'Insumos',
+  'Atención veterinaria',
+  'Hogares temporales',
+];

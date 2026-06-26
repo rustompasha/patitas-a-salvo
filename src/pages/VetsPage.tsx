@@ -42,10 +42,10 @@ export function VetsPage() {
         <EmptyState
           emoji="🏥"
           title="Aún no hay veterinarios publicados"
-          message="Cuando un veterinario o clínica publique su disponibilidad, aparecerá aquí."
+          message="Si eres veterinario o clínica, puedes publicar tu disponibilidad."
           action={
             <Link to="/reportar/veterinario">
-              <Button>Puedo ayudar como veterinario</Button>
+              <Button>Publicarme como veterinario</Button>
             </Link>
           }
         />

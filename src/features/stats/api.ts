@@ -4,7 +4,7 @@ export interface ImpactStats {
   pets: number;
   fosters: number;
   needs: number;
-  vets: number;
+  refugios: number;
 }
 
 /** Exact row count for a table, head-only (no rows fetched). Returns 0 on any error
@@ -20,11 +20,11 @@ async function countRows(table: string): Promise<number> {
 }
 
 export async function getImpactStats(): Promise<ImpactStats> {
-  const [pets, fosters, needs, vets] = await Promise.all([
+  const [pets, fosters, needs, refugios] = await Promise.all([
     countRows('pets'),
     countRows('foster_offers'),
     countRows('needs'),
-    countRows('veterinarians'),
+    countRows('centers'),
   ]);
-  return { pets, fosters, needs, vets };
+  return { pets, fosters, needs, refugios };
 }

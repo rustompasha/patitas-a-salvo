@@ -1,15 +1,14 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell } from '@/components/layout/AppShell';
 import { HomePage } from '@/pages/HomePage';
 import { ReportLostPage } from '@/pages/ReportLostPage';
 import { ReportFoundPage } from '@/pages/ReportFoundPage';
 import { PetsListingPage } from '@/pages/PetsListingPage';
 import { PetDetailPage } from '@/pages/PetDetailPage';
-import { CentersPage } from '@/pages/CentersPage';
-import { CenterDetailPage } from '@/pages/CenterDetailPage';
+import { RefugiosPage } from '@/pages/RefugiosPage';
+import { ReportRefugioPage } from '@/pages/ReportRefugioPage';
 import { FosterPage } from '@/pages/FosterPage';
 import { ReportMenuPage } from '@/pages/ReportMenuPage';
-import { ReportCenterPage } from '@/pages/ReportCenterPage';
 import { ReportNeedPage } from '@/pages/ReportNeedPage';
 import { ReportVetPage } from '@/pages/ReportVetPage';
 import { VetsPage } from '@/pages/VetsPage';
@@ -25,7 +24,8 @@ export default function App() {
         <Route path="reportar" element={<ReportMenuPage />} />
         <Route path="reportar/perdida" element={<ReportLostPage />} />
         <Route path="reportar/encontrada" element={<ReportFoundPage />} />
-        <Route path="reportar/centro" element={<ReportCenterPage />} />
+        <Route path="reportar/refugio" element={<ReportRefugioPage />} />
+        <Route path="reportar/centro" element={<Navigate to="/reportar/refugio" replace />} />
         <Route path="reportar/necesidad" element={<ReportNeedPage />} />
         <Route path="reportar/veterinario" element={<ReportVetPage />} />
         <Route path="veterinarios" element={<VetsPage />} />
@@ -33,8 +33,9 @@ export default function App() {
         <Route path="ayudar" element={<HelpPage />} />
         <Route path="mascotas" element={<PetsListingPage />} />
         <Route path="mascotas/:id" element={<PetDetailPage />} />
-        <Route path="centros" element={<CentersPage />} />
-        <Route path="centros/:id" element={<CenterDetailPage />} />
+        <Route path="refugios" element={<RefugiosPage />} />
+        <Route path="centros" element={<Navigate to="/refugios" replace />} />
+        <Route path="centros/:id" element={<Navigate to="/refugios" replace />} />
         <Route path="puedo-ser-hogar-temporal" element={<FosterPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

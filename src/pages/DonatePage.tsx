@@ -8,23 +8,23 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { ShareButton } from '@/components/contact/ShareButton';
 import { SearchBar } from '@/features/pets/components/SearchBar';
-import { VerifiedCenterCard } from '@/features/help/components/VerifiedCenterCard';
+import { RefugeCard } from '@/features/help/components/RefugeCard';
 import { NeedCard } from '@/features/help/components/NeedCard';
-import { useVerifiedCenters, useVerifiedNeeds } from '@/features/help/hooks';
+import { useRefugios, useVerifiedNeeds } from '@/features/help/hooks';
 
 const CATEGORIES = ['Perrarina', 'Gatarina', 'Transportadoras', 'Medicinas', 'Atención veterinaria'];
 
 export function DonatePage() {
-  const centers = useVerifiedCenters();
+  const refugios = useRefugios();
   const needs = useVerifiedNeeds();
   const [category, setCategory] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
-  const isLoading = centers.isLoading || needs.isLoading;
-  const isError = centers.isError || needs.isError;
+  const isLoading = refugios.isLoading || needs.isLoading;
+  const isError = refugios.isError || needs.isError;
 
-  const filteredCenters = useMemo(() => {
-    let list = centers.data ?? [];
+  const filteredRefugios = useMemo(() => {
+    let list = refugios.data ?? [];
     if (category) {
       const c = category.toLowerCase();
       list = list.filter((x) => x.needs.some((n) => n.toLowerCase().includes(c)));
@@ -32,7 +32,7 @@ export function DonatePage() {
     const q = search.toLowerCase().trim();
     if (q) list = list.filter((x) => `${x.name} ${x.city} ${x.needs.join(' ')}`.toLowerCase().includes(q));
     return list;
-  }, [centers.data, category, search]);
+  }, [refugios.data, category, search]);
 
   const filteredNeeds = useMemo(() => {
     let list = needs.data ?? [];
@@ -45,7 +45,7 @@ export function DonatePage() {
     return list;
   }, [needs.data, category, search]);
 
-  const totalRaw = (centers.data?.length ?? 0) + (needs.data?.length ?? 0);
+  const totalRaw = (refugios.data?.length ?? 0) + (needs.data?.length ?? 0);
 
   return (
     <div className="animate-fade">
@@ -67,16 +67,16 @@ export function DonatePage() {
           <Spinner className="h-7 w-7 text-forest" />
         </div>
       ) : isError ? (
-        <ErrorState onRetry={() => { centers.refetch(); needs.refetch(); }} />
+        <ErrorState onRetry={() => { refugios.refetch(); needs.refetch(); }} />
       ) : totalRaw === 0 ? (
         <EmptyState
           emoji="📦"
-          title="Sin centros con necesidades publicadas"
-          message="Todavía no hay centros con necesidades publicadas. Puedes reportar un centro o compartir la plataforma."
+          title="Aún no hay necesidades publicadas"
+          message="Todavía no hay refugios o necesidades publicadas. Puedes registrar un refugio o compartir la plataforma."
           action={
             <div className="flex w-full max-w-xs flex-col gap-2">
-              <Link to="/reportar/centro">
-                <Button fullWidth>Reportar centro</Button>
+              <Link to="/reportar/refugio">
+                <Button fullWidth>Registrar refugio</Button>
               </Link>
               <Link to="/mascotas">
                 <Button variant="secondary" fullWidth>
@@ -106,18 +106,18 @@ export function DonatePage() {
             </section>
           )}
 
-          {filteredCenters.length > 0 && (
+          {filteredRefugios.length > 0 && (
             <section>
-              <h2 className="mb-3 text-[15px] font-extrabold text-forest-dark">Centros que reciben</h2>
+              <h2 className="mb-3 text-[15px] font-extrabold text-forest-dark">Refugios que reciben</h2>
               <div className="flex flex-col gap-3">
-                {filteredCenters.map((c) => (
-                  <VerifiedCenterCard key={c.id} center={c} />
+                {filteredRefugios.map((r) => (
+                  <RefugeCard key={r.id} refuge={r} />
                 ))}
               </div>
             </section>
           )}
 
-          {filteredCenters.length === 0 && filteredNeeds.length === 0 && (
+          {filteredRefugios.length === 0 && filteredNeeds.length === 0 && (
             <p className="py-4 text-center text-[13px] text-muted">
               Sin resultados para esta búsqueda.
             </p>

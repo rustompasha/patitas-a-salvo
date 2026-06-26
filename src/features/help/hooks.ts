@@ -1,19 +1,19 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
-  createCenterReport,
   createFosterOffer,
   createNeedReport,
+  createRefugeReport,
   createVetReport,
-  getVerifiedCenters,
   getFosterOffers,
   getNeeds,
+  getRefugios,
   getVeterinarians,
 } from './api';
 
 // ---- Public reads ----------------------------------------------------------
-// Centers are moderated (verified-only); needs and foster offers publish immediately.
-export function useVerifiedCenters() {
-  return useQuery({ queryKey: ['centers', 'verified'], queryFn: getVerifiedCenters, staleTime: 30_000 });
+// Refugios, needs, foster offers and veterinarians all publish immediately.
+export function useRefugios() {
+  return useQuery({ queryKey: ['refugios'], queryFn: getRefugios, staleTime: 30_000 });
 }
 
 export function useVerifiedNeeds() {
@@ -33,8 +33,8 @@ export function useVeterinarians() {
 }
 
 // ---- Submissions -----------------------------------------------------------
-export function useCreateCenterReport() {
-  return useMutation({ mutationFn: createCenterReport });
+export function useCreateRefugeReport() {
+  return useMutation({ mutationFn: createRefugeReport });
 }
 
 export function useCreateNeedReport() {

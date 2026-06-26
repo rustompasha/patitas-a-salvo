@@ -61,8 +61,8 @@ export function ReportNeedPage() {
           title="Necesidad publicada"
           message="Tu necesidad ya está publicada y visible para quienes quieran ayudar."
         >
-          <Link to="/centros">
-            <Button fullWidth>Volver a centros</Button>
+          <Link to="/donar-insumos">
+            <Button fullWidth>Ver necesidades</Button>
           </Link>
           <Button variant="secondary" fullWidth onClick={() => setSubmitted(false)}>
             Reportar otra
