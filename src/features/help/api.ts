@@ -91,6 +91,12 @@ export async function getFosterOffers(): Promise<FosterRow[]> {
   return (data ?? []) as FosterRow[];
 }
 
+export async function getFosterOfferById(id: string): Promise<FosterRow | null> {
+  const { data, error } = await supabase.from('foster_offers').select('*').eq('id', id).maybeSingle();
+  if (error) throw error;
+  return (data as FosterRow | null) ?? null;
+}
+
 // Veterinarians publish immediately — returns ALL rows (no verified gate).
 // If the table isn't migrated yet (PGRST205), return [] so the public sees a
 // clean empty state instead of a red error card. Real network errors still throw.

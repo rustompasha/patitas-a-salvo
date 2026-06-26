@@ -32,3 +32,13 @@ export function normalizeVePhone(raw: string | null | undefined): string {
   if (digits.length === 10) return `58${digits}`;
   return digits;
 }
+
+/** Human-readable phone for display/manual calling: "+58 412 555 0142". */
+export function formatVePhoneDisplay(raw: string | null | undefined): string {
+  const d = normalizeVePhone(raw);
+  if (!d) return '';
+  if (d.length === 12 && d.startsWith('58')) {
+    return `+58 ${d.slice(2, 5)} ${d.slice(5, 8)} ${d.slice(8)}`;
+  }
+  return `+${d}`;
+}

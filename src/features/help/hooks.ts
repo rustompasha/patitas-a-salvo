@@ -4,6 +4,7 @@ import {
   createNeedReport,
   createRefugeReport,
   createVetReport,
+  getFosterOfferById,
   getFosterOffers,
   getNeeds,
   getRefugios,
@@ -30,6 +31,15 @@ export function useVerifiedFosterOffers() {
 
 export function useVeterinarians() {
   return useQuery({ queryKey: ['veterinarians'], queryFn: getVeterinarians, staleTime: 30_000 });
+}
+
+export function useFosterOffer(id: string | undefined) {
+  return useQuery({
+    queryKey: ['foster_offers', 'detail', id],
+    queryFn: () => getFosterOfferById(id as string),
+    enabled: !!id,
+    staleTime: 30_000,
+  });
 }
 
 // ---- Submissions -----------------------------------------------------------

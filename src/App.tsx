@@ -8,6 +8,7 @@ import { PetDetailPage } from '@/pages/PetDetailPage';
 import { RefugiosPage } from '@/pages/RefugiosPage';
 import { ReportRefugioPage } from '@/pages/ReportRefugioPage';
 import { FosterPage } from '@/pages/FosterPage';
+import { FosterDetailPage } from '@/pages/FosterDetailPage';
 import { ReportMenuPage } from '@/pages/ReportMenuPage';
 import { ReportNeedPage } from '@/pages/ReportNeedPage';
 import { NeedsListingPage } from '@/pages/NeedsListingPage';
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="centros" element={<Navigate to="/refugios" replace />} />
         <Route path="centros/:id" element={<Navigate to="/refugios" replace />} />
         <Route path="puedo-ser-hogar-temporal" element={<FosterPage />} />
+        <Route path="hogar-temporal/:id" element={<FosterDetailPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
