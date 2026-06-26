@@ -7,6 +7,7 @@ import {
   getFosterOfferById,
   getFosterOffers,
   getNeeds,
+  getRefugioById,
   getRefugios,
   getVeterinarians,
 } from './api';
@@ -37,6 +38,15 @@ export function useFosterOffer(id: string | undefined) {
   return useQuery({
     queryKey: ['foster_offers', 'detail', id],
     queryFn: () => getFosterOfferById(id as string),
+    enabled: !!id,
+    staleTime: 30_000,
+  });
+}
+
+export function useRefugio(id: string | undefined) {
+  return useQuery({
+    queryKey: ['refugios', 'detail', id],
+    queryFn: () => getRefugioById(id as string),
     enabled: !!id,
     staleTime: 30_000,
   });

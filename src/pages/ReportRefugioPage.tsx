@@ -31,6 +31,11 @@ export function ReportRefugioPage() {
   const [status, setStatus] = useState('Activo');
   const [capacity, setCapacity] = useState('');
   const [currentAnimals, setCurrentAnimals] = useState('');
+  const [pmBank, setPmBank] = useState('');
+  const [pmId, setPmId] = useState('');
+  const [pmPhone, setPmPhone] = useState('');
+  const [zelleEmail, setZelleEmail] = useState('');
+  const [paypalEmail, setPaypalEmail] = useState('');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -56,6 +61,11 @@ export function ReportRefugioPage() {
         status: status || null,
         capacity: capacity.trim() || null,
         current_animals: currentAnimals.trim() || null,
+        payment_mobile_bank: pmBank.trim() || null,
+        payment_mobile_id: pmId.trim() || null,
+        payment_mobile_phone: pmPhone.trim() || null,
+        zelle_email: zelleEmail.trim() || null,
+        paypal_email: paypalEmail.trim() || null,
         notes: notes.trim() || null,
       },
       {
@@ -136,6 +146,28 @@ export function ReportRefugioPage() {
         <div className="grid grid-cols-2 gap-4">
           <Input label="Capacidad" placeholder="Ej: 30 animales" value={capacity} onChange={(e) => setCapacity(e.target.value)} />
           <Input label="Animales actuales" placeholder="Ej: 22" value={currentAnimals} onChange={(e) => setCurrentAnimals(e.target.value)} />
+        </div>
+
+        <div className="rounded-2xl border border-sand-200 bg-[#FBF8F1] p-3.5">
+          <div className="text-[13px] font-extrabold text-forest-dark">Recibir donaciones</div>
+          <p className="mt-0.5 text-[11.5px] text-muted">Opcional. Solo se mostrarán los datos que completes.</p>
+
+          <div className="mt-3 text-[12px] font-bold text-[#3A4650]">Pago Móvil</div>
+          <div className="mt-2 space-y-2">
+            <Input label="Banco" placeholder="Ej: Mercantil" value={pmBank} onChange={(e) => setPmBank(e.target.value)} />
+            <Input label="Cédula" placeholder="Ej: V-12345678" value={pmId} onChange={(e) => setPmId(e.target.value)} />
+            <Input label="Teléfono" placeholder="Ej: 0412-1234567" inputMode="tel" value={pmPhone} onChange={(e) => setPmPhone(e.target.value)} />
+          </div>
+
+          <div className="mt-4 text-[12px] font-bold text-[#3A4650]">Zelle</div>
+          <div className="mt-2">
+            <Input label="Email" placeholder="correo@email.com" inputMode="email" value={zelleEmail} onChange={(e) => setZelleEmail(e.target.value)} />
+          </div>
+
+          <div className="mt-4 text-[12px] font-bold text-[#3A4650]">PayPal</div>
+          <div className="mt-2">
+            <Input label="Email" placeholder="correo@email.com" inputMode="email" value={paypalEmail} onChange={(e) => setPaypalEmail(e.target.value)} />
+          </div>
         </div>
 
         <Textarea label="Notas" placeholder="Horarios, condiciones, necesidades específicas…" value={notes} onChange={(e) => setNotes(e.target.value)} />

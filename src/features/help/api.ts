@@ -56,7 +56,16 @@ export async function createVetReport(input: VetInsert): Promise<void> {
 
 // Refugios are stored in the centers table (any type). Inserted unverified by default.
 export async function createRefugeReport(input: RefugeInsert): Promise<void> {
-  await insertResilient('centers', input, ['status', 'capacity', 'current_animals']);
+  await insertResilient('centers', input, [
+    'status',
+    'capacity',
+    'current_animals',
+    'payment_mobile_bank',
+    'payment_mobile_id',
+    'payment_mobile_phone',
+    'zelle_email',
+    'paypal_email',
+  ]);
 }
 
 // ---- Reads -----------------------------------------------------------------
@@ -69,6 +78,12 @@ export async function getRefugios(): Promise<CenterRow[]> {
     .order('created_at', { ascending: false });
   if (error) throw error;
   return (data ?? []) as CenterRow[];
+}
+
+export async function getRefugioById(id: string): Promise<CenterRow | null> {
+  const { data, error } = await supabase.from('centers').select('*').eq('id', id).maybeSingle();
+  if (error) throw error;
+  return (data as CenterRow | null) ?? null;
 }
 
 // Needs publish immediately — this returns ALL rows (no verified gate).

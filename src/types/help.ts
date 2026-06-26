@@ -13,6 +13,11 @@ export interface CenterRow {
   status: string | null;
   capacity: string | null;
   current_animals: string | null;
+  payment_mobile_bank: string | null;
+  payment_mobile_id: string | null;
+  payment_mobile_phone: string | null;
+  zelle_email: string | null;
+  paypal_email: string | null;
   notes: string | null;
   verified: boolean;
   created_at: string;
@@ -71,6 +76,11 @@ export type RefugeInsert = {
   status: string | null;
   capacity: string | null;
   current_animals: string | null;
+  payment_mobile_bank: string | null;
+  payment_mobile_id: string | null;
+  payment_mobile_phone: string | null;
+  zelle_email: string | null;
+  paypal_email: string | null;
   notes: string | null;
 };
 
