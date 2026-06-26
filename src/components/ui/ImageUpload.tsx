@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { IMAGE } from '@/constants/config';
 
 interface ImageUploadProps {
   value: File | null;
@@ -38,8 +37,7 @@ export function ImageUpload({ value, onChange, hint = 'Una foto clara ayuda a re
       <input
         ref={inputRef}
         type="file"
-        accept={IMAGE.accept}
-        capture="environment"
+        accept="image/*"
         className="hidden"
         onChange={(e) => handleFile(e.target.files?.[0])}
       />
