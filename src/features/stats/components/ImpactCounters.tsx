@@ -37,16 +37,16 @@ export function ImpactCounters() {
       {stats.map((s) => (
         <div
           key={s.label}
-          className="flex items-center gap-2.5 rounded-2xl border border-sand-200 bg-white px-3 py-2.5"
+          className="flex items-center gap-2 rounded-xl border border-sand-200 bg-[#FBF8F1] px-2.5 py-2"
         >
-          <span className="text-xl leading-none" aria-hidden>
+          <span className="text-base leading-none" aria-hidden>
             {s.emoji}
           </span>
           <span className="min-w-0">
-            <span className="block text-[18px] font-extrabold leading-none text-forest-dark">
+            <span className="block text-[14px] font-extrabold leading-none text-forest-dark">
               {isLoading ? '·' : s.value}
             </span>
-            <span className="mt-0.5 block text-[11px] font-semibold leading-tight text-muted">{s.label}</span>
+            <span className="mt-0.5 block text-[10.5px] font-medium leading-tight text-muted">{s.label}</span>
           </span>
         </div>
       ))}
