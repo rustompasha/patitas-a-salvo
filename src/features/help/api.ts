@@ -42,7 +42,7 @@ async function insertResilient<T extends Record<string, unknown>>(
 
 // ---- Inserts (public; rows are unverified by default) ----------------------
 export async function createNeedReport(input: NeedInsert): Promise<void> {
-  await insertResilient('needs', input, ['category']);
+  await insertResilient('needs', input, ['category', 'requester_type', 'requester_name']);
 }
 
 export async function createFosterOffer(input: FosterInsert): Promise<void> {
@@ -56,8 +56,7 @@ export async function createVetReport(input: VetInsert): Promise<void> {
 
 // Refugios are stored in the centers table (any type). Inserted unverified by default.
 export async function createRefugeReport(input: RefugeInsert): Promise<void> {
-  const { error } = await supabase.from('centers').insert(input);
-  if (error) throw error;
+  await insertResilient('centers', input, ['status', 'capacity', 'current_animals']);
 }
 
 // ---- Reads -----------------------------------------------------------------

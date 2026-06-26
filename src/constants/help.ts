@@ -57,6 +57,47 @@ export const NEED_CATEGORY_OPTIONS = [
   'Otro',
 ];
 
+// Who is requesting a need (single-select). Drives the card header + contact copy.
+export const REQUESTER_TYPE_OPTIONS: { value: string; label: string }[] = [
+  { value: 'individual', label: 'Persona individual' },
+  { value: 'refugio', label: 'Refugio / Organización de rescate' },
+  { value: 'veterinaria', label: 'Clínica veterinaria' },
+];
+
+export const REQUESTER_META: Record<string, { emoji: string; label: string; badge: string }> = {
+  individual: { emoji: '🧍', label: 'Solicitud individual', badge: 'bg-sand-100 text-[#3A4650]' },
+  refugio: { emoji: '🐾', label: 'Solicitud de refugio', badge: 'bg-[#EAF3EC] text-forest' },
+  veterinaria: { emoji: '🏥', label: 'Solicitud veterinaria', badge: 'bg-[#E7F0FA] text-[#1F5F8B]' },
+};
+
+export function requesterMeta(type: string | null) {
+  return REQUESTER_META[type ?? 'individual'] ?? REQUESTER_META.individual;
+}
+
+/** Contextual prefilled WhatsApp message by requester type (opened via wa.me). */
+export function needContactMessage(type: string | null): string {
+  if (type === 'refugio')
+    return 'Hola, vi tu solicitud en Patitas a Salvo. Me gustaría ayudar con los insumos solicitados.';
+  if (type === 'veterinaria')
+    return 'Hola, vi tu solicitud veterinaria en Patitas a Salvo. ¿Cómo puedo ayudar?';
+  return 'Hola, vi tu solicitud en Patitas a Salvo y me gustaría ayudar.';
+}
+
+// Refuges are permanent entities — operational status (single-select).
+export const REFUGE_STATUS_OPTIONS = [
+  'Activo',
+  'Lleno',
+  'Solo recibe insumos',
+  'Sobrecupo de emergencia',
+];
+
+export const REFUGE_STATUS_BADGE: Record<string, string> = {
+  Activo: 'bg-[#DCF0EC] text-[#1F7A6D]',
+  Lleno: 'bg-[#FCE7D6] text-[#C2410C]',
+  'Solo recibe insumos': 'bg-[#FAEAD0] text-[#9C6B12]',
+  'Sobrecupo de emergencia': 'bg-[#FBE3E1] text-[#C81E1E]',
+};
+
 export const URGENCY_DB_META: Record<UrgencyLevel, { label: string; badge: string }> = {
   bajo: { label: 'Bajo', badge: 'bg-[#FAEAD0] text-[#9C6B12]' },
   medio: { label: 'Medio', badge: 'bg-[#FAEAD0] text-[#9C6B12]' },

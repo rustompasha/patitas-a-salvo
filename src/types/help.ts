@@ -10,10 +10,15 @@ export interface CenterRow {
   whatsapp: string | null;
   needs: string[];
   urgency: UrgencyLevel | null;
+  status: string | null;
+  capacity: string | null;
+  current_animals: string | null;
   notes: string | null;
   verified: boolean;
   created_at: string;
 }
+
+export type RequesterType = 'individual' | 'refugio' | 'veterinaria';
 
 export interface NeedRow {
   id: string;
@@ -23,6 +28,8 @@ export interface NeedRow {
   category: string | null;
   quantity: string | null;
   urgency: UrgencyLevel | null;
+  requester_type: string | null;
+  requester_name: string | null;
   whatsapp: string | null;
   notes: string | null;
   verified: boolean;
@@ -61,6 +68,9 @@ export type RefugeInsert = {
   address: string | null;
   whatsapp: string | null;
   needs: string[];
+  status: string | null;
+  capacity: string | null;
+  current_animals: string | null;
   notes: string | null;
 };
 
@@ -71,6 +81,8 @@ export type NeedInsert = {
   category: string | null;
   quantity: string | null;
   urgency: UrgencyLevel;
+  requester_type: string;
+  requester_name: string | null;
   whatsapp: string | null;
   notes: string | null;
 };

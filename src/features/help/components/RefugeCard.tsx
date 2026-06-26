@@ -1,13 +1,19 @@
 import { WhatsAppButton } from '@/components/contact/WhatsAppButton';
 import { ShareButton } from '@/components/contact/ShareButton';
 import { DirectionsButton } from '@/components/contact/DirectionsButton';
-import { refugeTypeLabel } from '@/constants/help';
+import { REFUGE_STATUS_BADGE, refugeTypeLabel } from '@/constants/help';
 import { formatRelativeTime } from '@/lib/utils';
 import type { CenterRow } from '@/types/help';
 
 export function RefugeCard({ refuge }: { refuge: CenterRow }) {
   const receives = refuge.needs.length ? refuge.needs.join(', ') : 'Sin especificar';
   const shareText = `🏠 ${refuge.name} (${refugeTypeLabel(refuge.type)}, ${refuge.city}) puede recibir: ${receives}. Contacta en Patitas a Salvo:`;
+  const capacityLine = [
+    refuge.current_animals && `${refuge.current_animals} animales`,
+    refuge.capacity && `cap. ${refuge.capacity}`,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <article className="overflow-hidden rounded-2xl border border-sand-200 bg-white p-3.5">
@@ -18,10 +24,22 @@ export function RefugeCard({ refuge }: { refuge: CenterRow }) {
             {refugeTypeLabel(refuge.type)} · {refuge.city}
           </p>
         </div>
-        <span className="shrink-0 text-[11px] font-semibold text-faint">
-          {formatRelativeTime(refuge.created_at)}
-        </span>
+        {refuge.status ? (
+          <span
+            className={`shrink-0 rounded-md px-2 py-1 text-[10px] font-extrabold uppercase ${
+              REFUGE_STATUS_BADGE[refuge.status] ?? 'bg-sand-100 text-[#3A4650]'
+            }`}
+          >
+            {refuge.status}
+          </span>
+        ) : (
+          <span className="shrink-0 text-[11px] font-semibold text-faint">
+            {formatRelativeTime(refuge.created_at)}
+          </span>
+        )}
       </div>
+
+      {capacityLine && <p className="mt-2 text-[12px] text-ink">{capacityLine}</p>}
 
       {refuge.needs.length > 0 && (
         <div className="mt-2.5 flex flex-wrap gap-1.5">

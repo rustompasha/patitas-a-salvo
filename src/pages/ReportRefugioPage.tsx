@@ -9,7 +9,12 @@ import { Chip } from '@/components/ui/Chip';
 import { SubmittedNotice } from '@/components/ui/SubmittedNotice';
 import { useToast } from '@/components/ui/Toast';
 import { normalizeVePhone } from '@/lib/utils';
-import { REFUGE_RECEIVE_OPTIONS, REFUGE_TYPE_OPTIONS, refugeTypeToCenterType } from '@/constants/help';
+import {
+  REFUGE_RECEIVE_OPTIONS,
+  REFUGE_STATUS_OPTIONS,
+  REFUGE_TYPE_OPTIONS,
+  refugeTypeToCenterType,
+} from '@/constants/help';
 import { useCreateRefugeReport } from '@/features/help/hooks';
 
 export function ReportRefugioPage() {
@@ -23,6 +28,9 @@ export function ReportRefugioPage() {
   const [address, setAddress] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [receives, setReceives] = useState<string[]>([]);
+  const [status, setStatus] = useState('Activo');
+  const [capacity, setCapacity] = useState('');
+  const [currentAnimals, setCurrentAnimals] = useState('');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -45,6 +53,9 @@ export function ReportRefugioPage() {
         address: address.trim() || null,
         whatsapp: whatsapp.trim() || null,
         needs: receives,
+        status: status || null,
+        capacity: capacity.trim() || null,
+        current_animals: currentAnimals.trim() || null,
         notes: notes.trim() || null,
       },
       {
@@ -111,7 +122,23 @@ export function ReportRefugioPage() {
           </div>
         </div>
 
-        <Textarea label="Notas" placeholder="Horarios, condiciones, capacidad…" value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <div>
+          <div className="mb-2 text-[12.5px] font-bold text-[#3A4650]">Estado</div>
+          <div className="flex flex-wrap gap-2">
+            {REFUGE_STATUS_OPTIONS.map((s) => (
+              <Chip key={s} active={status === s} onClick={() => setStatus(s)}>
+                {s}
+              </Chip>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Input label="Capacidad" placeholder="Ej: 30 animales" value={capacity} onChange={(e) => setCapacity(e.target.value)} />
+          <Input label="Animales actuales" placeholder="Ej: 22" value={currentAnimals} onChange={(e) => setCurrentAnimals(e.target.value)} />
+        </div>
+
+        <Textarea label="Notas" placeholder="Horarios, condiciones, necesidades específicas…" value={notes} onChange={(e) => setNotes(e.target.value)} />
 
         {error && <p className="text-center text-sm font-medium text-lost">{error}</p>}
         {create.isError && (
