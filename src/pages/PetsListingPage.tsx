@@ -45,7 +45,13 @@ export function PetsListingPage() {
         {isLoading ? 'Buscando…' : `${data?.length ?? 0} resultado${(data?.length ?? 0) === 1 ? '' : 's'}`}
       </p>
 
-      <PetGrid pets={data} isLoading={isLoading} isError={isError} onRetry={refetch} />
+      <PetGrid
+        pets={data}
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={refetch}
+        emptyMessage="No hay resultados todavía. Puedes reportar una necesidad para ayudar a crear el mapa."
+      />
     </div>
   );
 }

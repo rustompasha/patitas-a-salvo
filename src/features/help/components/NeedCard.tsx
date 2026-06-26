@@ -1,0 +1,40 @@
+import { WhatsAppButton } from '@/components/contact/WhatsAppButton';
+import { ShareButton } from '@/components/contact/ShareButton';
+import { URGENCY_DB_META } from '@/constants/help';
+import type { NeedRow } from '@/types/help';
+
+export function NeedCard({ need }: { need: NeedRow }) {
+  const where = need.reference ? `${need.reference}, ${need.city}` : need.city;
+  const shareText = `📦 Necesidad en ${where}: ${need.need}${need.quantity ? ` (${need.quantity})` : ''}. Ayuda en Patitas a Salvo:`;
+
+  return (
+    <article className="rounded-2xl border border-sand-200 bg-white p-3.5">
+      <div className="flex items-start justify-between gap-2.5">
+        <div className="min-w-0">
+          <h3 className="text-[14px] font-bold text-ink">{need.need}</h3>
+          <p className="mt-0.5 text-[12px] text-muted">{where}</p>
+        </div>
+        {need.urgency && (
+          <span
+            className={`shrink-0 rounded-md px-2 py-1 text-[10px] font-extrabold uppercase ${URGENCY_DB_META[need.urgency].badge}`}
+          >
+            {URGENCY_DB_META[need.urgency].label}
+          </span>
+        )}
+      </div>
+      {need.quantity && (
+        <p className="mt-2 text-[12px] text-ink">
+          <span className="font-semibold">Cantidad:</span> {need.quantity}
+        </p>
+      )}
+      {need.notes && <p className="mt-1 text-[12px] leading-snug text-muted">{need.notes}</p>}
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {need.whatsapp && (
+          <WhatsAppButton phone={need.whatsapp} message={shareText} compact className="flex-1" />
+        )}
+        <ShareButton title="Patitas a Salvo" text={shareText} compact />
+      </div>
+    </article>
+  );
+}

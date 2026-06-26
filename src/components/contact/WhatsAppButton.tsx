@@ -6,11 +6,13 @@ export function WhatsAppButton({
   message,
   className,
   compact,
+  label = 'WhatsApp',
 }: {
   phone: string | null;
   message?: string;
   className?: string;
   compact?: boolean;
+  label?: string;
 }) {
   const normalized = normalizeVePhone(phone);
   if (!normalized) return null;
@@ -32,7 +34,7 @@ export function WhatsAppButton({
       <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
         <path d="M12 2a10 10 0 00-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1012 2z" />
       </svg>
-      WhatsApp
+      {label}
     </a>
   );
 }
