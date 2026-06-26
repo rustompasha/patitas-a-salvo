@@ -21,23 +21,44 @@ function isMissingColumn(error: { code?: string } | null): boolean {
   return error?.code === 'PGRST204' || error?.code === '42703';
 }
 
-/** Insert `record`; if a not-yet-migrated optional column makes it fail, retry
- *  once without `optionalKeys` so the submission still succeeds. */
+/** Extract the offending column name from a missing-column error message:
+ *  PGRST204 -> "Could not find the 'X' column of 'centers' in the schema cache"
+ *  42703    -> "column centers.X does not exist" */
+function missingColumnName(message: string | undefined): string | null {
+  if (!message) return null;
+  return message.match(/'([^']+)' column/)?.[1] ?? message.match(/column \w+\.(\w+)/)?.[1] ?? null;
+}
+
+/** Insert `record`; if a not-yet-migrated column makes it fail, drop ONLY that
+ *  column and retry, looping until it succeeds. This preserves every column that
+ *  DOES exist (e.g. status/capacity) instead of nuking the whole optional set.
+ *  `optionalKeys` is the safety net if the column can't be parsed from the error. */
 async function insertResilient<T extends Record<string, unknown>>(
   table: string,
   record: T,
   optionalKeys: (keyof T)[],
 ): Promise<void> {
-  const { error } = await supabase.from(table).insert(record);
-  if (!error) return;
-  if (isMissingColumn(error)) {
-    const stripped: Record<string, unknown> = { ...record };
-    for (const k of optionalKeys) delete stripped[k as string];
-    const retry = await supabase.from(table).insert(stripped);
+  const working: Record<string, unknown> = { ...record };
+  // At most one strip per optional column, plus a final fallback pass.
+  for (let attempt = 0; attempt <= optionalKeys.length; attempt++) {
+    const { error } = await supabase.from(table).insert(working);
+    if (!error) return;
+    if (!isMissingColumn(error)) throw error;
+
+    const col = missingColumnName(error.message);
+    if (col && col in working) {
+      delete working[col];
+      continue;
+    }
+    // Couldn't identify the column -> strip the whole optional set as a fallback.
+    for (const k of optionalKeys) delete working[k as string];
+    const retry = await supabase.from(table).insert(working);
     if (retry.error) throw retry.error;
     return;
   }
-  throw error;
+  // Loop guard exhausted (shouldn't happen): one last attempt, surface any error.
+  const final = await supabase.from(table).insert(working);
+  if (final.error) throw final.error;
 }
 
 // ---- Inserts (public; rows are unverified by default) ----------------------

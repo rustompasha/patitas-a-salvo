@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PageHeading } from './PageHeading';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { Chip } from '@/components/ui/Chip';
-import { SubmittedNotice } from '@/components/ui/SubmittedNotice';
 import { ImageUpload } from '@/components/ui/ImageUpload';
 import { useToast } from '@/components/ui/Toast';
 import { normalizeVePhone } from '@/lib/utils';
@@ -21,8 +20,8 @@ import { uploadImage } from '@/features/pets/api/uploadPetImage';
 
 export function ReportRefugioPage() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const create = useCreateRefugeReport();
-  const [submitted, setSubmitted] = useState(false);
 
   const [name, setName] = useState('');
   const [type, setType] = useState('');
@@ -60,9 +59,11 @@ export function ReportRefugioPage() {
       try {
         setUploading(true);
         imageUrl = await uploadImage(image, 'refuges');
-      } catch {
+      } catch (err) {
         setUploading(false);
-        toast('No se pudo subir la imagen. Inténtalo de nuevo.');
+        // eslint-disable-next-line no-console
+        console.error('[refuge submit] image upload failed:', err);
+        setError('No pudimos subir la imagen. Quita la foto o inténtalo otra vez.');
         return;
       }
       setUploading(false);
@@ -89,30 +90,16 @@ export function ReportRefugioPage() {
       },
       {
         onSuccess: () => {
-          setSubmitted(true);
-          toast('Refugio registrado');
+          toast('Refugio publicado');
+          navigate('/refugios');
         },
-        onError: () => toast('No se pudo enviar. Inténtalo de nuevo.'),
+        onError: (err) => {
+          // Production-safe: log technical detail to the console, show a human message.
+          // eslint-disable-next-line no-console
+          console.error('[refuge submit] insert failed:', err);
+          setError('No pudimos publicar el refugio. Revisa los datos e inténtalo otra vez.');
+        },
       },
-    );
-  }
-
-  if (submitted) {
-    return (
-      <div className="animate-fade">
-        <PageHeading title="Registrar refugio" />
-        <SubmittedNotice
-          title="Refugio recibido"
-          message="Gracias. Publicaremos esta información para que las personas puedan contactarlos directamente por WhatsApp."
-        >
-          <Link to="/refugios">
-            <Button fullWidth>Ver refugios</Button>
-          </Link>
-          <Button variant="secondary" fullWidth onClick={() => setSubmitted(false)}>
-            Registrar otro
-          </Button>
-        </SubmittedNotice>
-      </div>
     );
   }
 
@@ -196,10 +183,9 @@ export function ReportRefugioPage() {
 
         <Textarea label="Notas" placeholder="Horarios, condiciones, necesidades específicas…" value={notes} onChange={(e) => setNotes(e.target.value)} />
 
-        {error && <p className="text-center text-sm font-medium text-lost">{error}</p>}
-        {create.isError && (
-          <p className="text-center text-sm font-medium text-lost">
-            Ocurrió un error al enviar. Revisa tu conexión e inténtalo de nuevo.
+        {error && (
+          <p className="rounded-xl bg-[#FBE3E1] px-3.5 py-2.5 text-center text-sm font-semibold text-[#C81E1E]">
+            {error}
           </p>
         )}
 
