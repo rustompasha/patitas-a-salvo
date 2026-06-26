@@ -52,7 +52,7 @@ function DonationMethod({
 export function RefugioDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: refuge, isLoading, isError, refetch } = useRefugio(id);
-  const refugeNeeds = useRefugeNeeds(refuge?.name);
+  const refugeNeeds = useRefugeNeeds(refuge?.id, refuge?.name);
 
   if (isLoading) {
     return (
@@ -137,6 +137,7 @@ export function RefugioDetailPage() {
             <Field label="Animales actuales" value={refuge.current_animals || 'Sin especificar'} />
           </div>
         )}
+        {refuge.urgency && <Field label="Urgencia" value={URGENCY_DB_META[refuge.urgency].label} />}
         {refuge.address && <Field label="Dirección" value={refuge.address} />}
         {refuge.notes && <Field label="Notas" value={refuge.notes} />}
       </div>
@@ -186,9 +187,10 @@ export function RefugioDetailPage() {
         ) : (
           <div className="space-y-2">
             {activeNeeds.map((n) => (
-              <div
+              <Link
                 key={n.id}
-                className="flex items-center justify-between gap-2 rounded-xl border border-sand-200 bg-white px-3.5 py-2.5"
+                to={`/necesidades/${n.id}`}
+                className="flex items-center justify-between gap-2 rounded-xl border border-sand-200 bg-white px-3.5 py-2.5 transition active:scale-[0.99]"
               >
                 <span className="min-w-0">
                   <span className="block truncate text-[13.5px] font-bold text-ink">{n.need}</span>
@@ -201,7 +203,7 @@ export function RefugioDetailPage() {
                     {URGENCY_DB_META[n.urgency].label}
                   </span>
                 )}
-              </div>
+              </Link>
             ))}
           </div>
         )}

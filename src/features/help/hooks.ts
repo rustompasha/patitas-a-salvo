@@ -6,6 +6,7 @@ import {
   createVetReport,
   getFosterOfferById,
   getFosterOffers,
+  getNeedById,
   getNeeds,
   getRefugeNeeds,
   getRefugioById,
@@ -21,6 +22,15 @@ export function useRefugios() {
 
 export function useVerifiedNeeds() {
   return useQuery({ queryKey: ['needs'], queryFn: getNeeds, staleTime: 30_000 });
+}
+
+export function useNeed(id: string | undefined) {
+  return useQuery({
+    queryKey: ['needs', 'detail', id],
+    queryFn: () => getNeedById(id as string),
+    enabled: !!id,
+    staleTime: 30_000,
+  });
 }
 
 export function useVerifiedFosterOffers() {
@@ -53,11 +63,11 @@ export function useRefugio(id: string | undefined) {
   });
 }
 
-export function useRefugeNeeds(name: string | undefined) {
+export function useRefugeNeeds(id: string | undefined, name: string | undefined) {
   return useQuery({
-    queryKey: ['needs', 'refuge', name],
-    queryFn: () => getRefugeNeeds(name as string),
-    enabled: !!name,
+    queryKey: ['needs', 'refuge', id, name],
+    queryFn: () => getRefugeNeeds(id as string, name as string),
+    enabled: !!id && !!name,
     staleTime: 30_000,
   });
 }

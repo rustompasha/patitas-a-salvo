@@ -97,16 +97,47 @@ export async function getNeeds(): Promise<NeedRow[]> {
   return (data ?? []) as NeedRow[];
 }
 
-// Active needs for a refuge — matched by requester_name (works for legacy rows too).
-export async function getRefugeNeeds(name: string): Promise<NeedRow[]> {
-  const { data, error } = await supabase
+export async function getNeedById(id: string): Promise<NeedRow | null> {
+  const { data, error } = await supabase.from('needs').select('*').eq('id', id).maybeSingle();
+  if (error) throw error;
+  return (data as NeedRow | null) ?? null;
+}
+
+// Active needs for a refuge — match by refuge_id first (when migrated), then fall
+// back to requester_type='refugio' + requester_name (legacy/compat). Results merged
+// and de-duped. Tolerates the refuge_id column not existing yet.
+export async function getRefugeNeeds(id: string, name: string): Promise<NeedRow[]> {
+  let byId: NeedRow[] = [];
+  const idRes = await supabase
+    .from('needs')
+    .select('*')
+    .eq('refuge_id', id)
+    .order('created_at', { ascending: false });
+  if (idRes.error) {
+    if (!isMissingColumn(idRes.error)) throw idRes.error;
+  } else {
+    byId = (idRes.data ?? []) as NeedRow[];
+  }
+
+  const nameRes = await supabase
     .from('needs')
     .select('*')
     .eq('requester_type', 'refugio')
     .eq('requester_name', name)
     .order('created_at', { ascending: false });
-  if (error) throw error;
-  return (data ?? []) as NeedRow[];
+  if (nameRes.error) throw nameRes.error;
+
+  const merged = [...byId, ...((nameRes.data ?? []) as NeedRow[])];
+  const seen = new Set<string>();
+  const out: NeedRow[] = [];
+  for (const n of merged) {
+    if (!seen.has(n.id)) {
+      seen.add(n.id);
+      out.push(n);
+    }
+  }
+  out.sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+  return out;
 }
 
 // Foster offers publish immediately — this returns ALL rows (no verified gate).
