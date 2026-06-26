@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -9,6 +9,7 @@ import { RefugeCard } from '@/features/help/components/RefugeCard';
 import { useRefugios } from '@/features/help/hooks';
 
 export function RefugiosPage() {
+  const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = useRefugios();
   const [search, setSearch] = useState('');
 
@@ -24,6 +25,16 @@ export function RefugiosPage() {
   return (
     <div className="space-y-5 animate-fade">
       <header>
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          aria-label="Volver"
+          className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-sand-300 bg-white"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M15 6l-6 6 6 6" stroke="#1F2933" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
         <h1 className="text-[21px] font-extrabold text-forest-dark">Refugios y puntos de ayuda</h1>
         <p className="mt-1 text-[13px] text-muted">
           Lugares y personas organizadas que pueden recibir animales o insumos.
