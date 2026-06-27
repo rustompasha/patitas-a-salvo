@@ -8,6 +8,7 @@ import type { NeedRow } from '@/types/help';
 export function NeedCard({ need }: { need: NeedRow }) {
   const where = need.reference ? `${need.reference}, ${need.city}` : need.city;
   const meta = requesterMeta(need.requester_type);
+  const isFinder = need.requester_type === 'finder';
   const isOrg = need.requester_type === 'refugio' || need.requester_type === 'veterinaria';
   const orgName = isOrg ? need.requester_name : null;
   const contactMsg = needContactMessage(need.requester_type);
@@ -33,7 +34,14 @@ export function NeedCard({ need }: { need: NeedRow }) {
               </p>
             )}
             <p className="mt-0.5 text-[12px] text-muted">
-              {where} · {formatRelativeTime(need.created_at)}
+              {isFinder ? (
+                <>
+                  <span className="font-semibold text-[#3A4650]">📍 Ubicación actual:</span> {where}
+                </>
+              ) : (
+                where
+              )}{' '}
+              · {formatRelativeTime(need.created_at)}
             </p>
           </div>
           {need.urgency && (

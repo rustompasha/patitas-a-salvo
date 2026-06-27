@@ -62,6 +62,7 @@ export function NeedDetailPage() {
 
   const meta = requesterMeta(need.requester_type);
   const isOrg = need.requester_type === 'refugio' || need.requester_type === 'veterinaria';
+  const isFinder = need.requester_type === 'finder';
   const where = need.reference ? `${need.reference}, ${need.city}` : need.city;
   const contactMsg = needContactMessage(need.requester_type);
   const phoneDisplay = formatVePhoneDisplay(need.whatsapp);
@@ -85,10 +86,17 @@ export function NeedDetailPage() {
         {need.category && <Field label="Tipo de ayuda" value={need.category} />}
         {need.quantity && <Field label="Cantidad" value={need.quantity} />}
         {need.urgency && <Field label="Urgencia" value={URGENCY_DB_META[need.urgency].label} />}
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Ciudad" value={need.city} />
-          {need.reference && <Field label="Referencia" value={need.reference} />}
-        </div>
+        {isFinder ? (
+          <>
+            <Field label="Ubicación actual del animal" value={need.city} />
+            {need.reference && <Field label="Referencia / punto de entrega" value={need.reference} />}
+          </>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Ciudad" value={need.city} />
+            {need.reference && <Field label="Referencia" value={need.reference} />}
+          </div>
+        )}
         {need.notes && <Field label="Notas" value={need.notes} />}
       </div>
 
