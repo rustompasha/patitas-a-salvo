@@ -63,7 +63,13 @@ async function insertResilient<T extends Record<string, unknown>>(
 
 // ---- Inserts (public; rows are unverified by default) ----------------------
 export async function createNeedReport(input: NeedInsert): Promise<void> {
-  await insertResilient('needs', input, ['category', 'requester_type', 'requester_name', 'refuge_id']);
+  await insertResilient('needs', input, [
+    'category',
+    'requester_type',
+    'requester_name',
+    'refuge_id',
+    'pet_id',
+  ]);
 }
 
 export async function createFosterOffer(input: FosterInsert): Promise<void> {

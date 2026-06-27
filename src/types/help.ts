@@ -37,6 +37,7 @@ export interface NeedRow {
   requester_type: string | null;
   requester_name: string | null;
   refuge_id: string | null;
+  pet_id: string | null;
   whatsapp: string | null;
   notes: string | null;
   verified: boolean;
@@ -97,6 +98,8 @@ export type NeedInsert = {
   requester_type: string;
   requester_name: string | null;
   refuge_id: string | null;
+  /** Optional link to the found-pet report this need came from (Found Pet flow). */
+  pet_id?: string | null;
   whatsapp: string | null;
   notes: string | null;
 };

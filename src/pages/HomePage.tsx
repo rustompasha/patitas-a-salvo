@@ -111,6 +111,33 @@ export function HomePage() {
         />
       </div>
 
+      {/* Donate CTA — important but secondary to lost/found. Sends donors straight
+          to the people & refuges asking for help. */}
+      <Link
+        to="/necesidades"
+        className="flex items-center gap-3 rounded-2xl border border-[#F4D2C0] bg-[#FFF6F1] p-4 text-ink"
+      >
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FBE0D4]">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 21s-7-4.3-9.3-8.5C1.3 9.9 2.7 7 5.6 7c1.7 0 2.8.9 3.5 1.8.3.4.6.5.9.5s.6-.1.9-.5C11.6 7.9 12.7 7 14.4 7c2.9 0 4.3 2.9 2.9 5.5C15 16.7 12 21 12 21z"
+              stroke="#D9531E"
+              strokeWidth="1.7"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[15.5px] font-extrabold leading-tight text-ink">Quiero donar</span>
+          <span className="mt-0.5 block text-[12.5px] font-medium leading-snug text-muted">
+            Ver necesidades cercanas
+          </span>
+        </span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
+          <path d="M9 6l6 6-6 6" stroke="#C7937A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </Link>
+
       {/* Pedir ayuda (request help) */}
       <div className="space-y-2.5">
         <h2 className="text-[12px] font-bold uppercase tracking-wide text-faint">Pedir ayuda</h2>

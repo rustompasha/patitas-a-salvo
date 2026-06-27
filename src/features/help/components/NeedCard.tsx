@@ -66,6 +66,21 @@ export function NeedCard({ need }: { need: NeedRow }) {
         {need.notes && <p className="mt-1 text-[12px] leading-snug text-muted">{need.notes}</p>}
       </Link>
 
+      {/* Link to the originating found-pet report, when this need came from one. */}
+      {isFinder && need.pet_id && (
+        <div className="px-3.5 pb-1.5">
+          <Link
+            to={`/mascotas/${need.pet_id}`}
+            className="inline-flex items-center gap-1 text-[12px] font-bold text-forest"
+          >
+            🐾 Ver mascota
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M9 6l6 6-6 6" stroke="#1F4D3A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
+        </div>
+      )}
+
       <div className="flex flex-wrap gap-2 px-3.5 pb-3.5">
         {need.whatsapp && (
           <WhatsAppButton

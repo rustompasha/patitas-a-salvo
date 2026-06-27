@@ -107,6 +107,7 @@ export function FoundPetWizard() {
           requester_type: 'finder',
           requester_name: null,
           refuge_id: null,
+          pet_id: pet.id,
           whatsapp: pet.phone,
           notes: needNotes.trim() || null,
         });

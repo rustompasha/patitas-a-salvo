@@ -69,7 +69,7 @@ export const REQUESTER_META: Record<string, { emoji: string; label: string; badg
   refugio: { emoji: '🐾', label: 'Solicitud de refugio', badge: 'bg-[#EAF3EC] text-forest' },
   veterinaria: { emoji: '🏥', label: 'Solicitud veterinaria', badge: 'bg-[#E7F0FA] text-[#1F5F8B]' },
   // Created automatically from the "encontré una mascota" guided flow.
-  finder: { emoji: '🆘', label: 'Animal rescatado · necesita apoyo', badge: 'bg-[#FCE7D6] text-[#C2410C]' },
+  finder: { emoji: '🆘', label: 'Animal rescatado temporalmente', badge: 'bg-[#FCE7D6] text-[#C2410C]' },
 };
 
 // Help a finder can request from the guided found-pet flow. `category` maps the

@@ -122,6 +122,15 @@ export function NeedDetailPage() {
         </div>
       )}
 
+      {/* Open the originating found-pet report, when this need is linked to one. */}
+      {isFinder && need.pet_id && (
+        <Link to={`/mascotas/${need.pet_id}`} className="mt-3 block">
+          <Button variant="secondary" fullWidth>
+            🐾 Ver mascota
+          </Button>
+        </Link>
+      )}
+
       <div className="mt-3">
         <ShareButton title="Patitas a Salvo" text={shareText} className="w-full" />
       </div>
