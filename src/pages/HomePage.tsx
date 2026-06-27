@@ -5,28 +5,28 @@ import { UrgentNeeds } from '@/features/centers/components/UrgentNeeds';
 import { ImpactCounters } from '@/features/stats/components/ImpactCounters';
 import { HomeRescueBoard } from '@/features/rescue/components/HomeRescueBoard';
 
-/** Large, top-of-page decision card. */
+/** Large, top-of-page decision card. Solid, high-contrast white-on-color so the
+ *  three primary actions dominate the page for stressed, scanning users. */
 function BigCard({
   to,
   label,
   sublabel,
   icon,
   cardClass,
-  chipClass,
 }: {
   to: string;
   label: string;
   sublabel: string;
   icon: React.ReactNode;
+  /** Solid background color class (e.g. "bg-lost"). White text/icon assumed. */
   cardClass: string;
-  chipClass: string;
 }) {
   return (
-    <Link to={to} className={`flex flex-col gap-2.5 rounded-2xl border p-4 ${cardClass}`}>
-      <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${chipClass}`}>{icon}</span>
+    <Link to={to} className={`flex flex-col gap-2.5 rounded-2xl p-4 ${cardClass}`}>
+      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20">{icon}</span>
       <span>
-        <span className="block text-[15.5px] font-extrabold leading-tight text-ink">{label}</span>
-        <span className="mt-1 block text-[12px] font-medium leading-snug text-muted">{sublabel}</span>
+        <span className="block text-[15.5px] font-extrabold leading-tight text-white">{label}</span>
+        <span className="mt-1 block text-[12px] font-medium leading-snug text-white/85">{sublabel}</span>
       </span>
     </Link>
   );
@@ -77,20 +77,19 @@ export function HomePage() {
         </p>
       </section>
 
-      {/* First decision: lost or found */}
+      {/* Primary actions — the three dominant decisions. Solid, high-contrast. */}
       <div className="grid grid-cols-2 gap-2.5">
         <BigCard
           to="/reportar/perdida"
           label="Perdí mi mascota"
           sublabel="Publica una alerta de búsqueda"
-          cardClass="border-[#F4D2C0] bg-[#FFF6F1]"
-          chipClass="bg-[#FBE0D4]"
+          cardClass="bg-lost"
           icon={
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path
                 d="M12 21s-7-4.3-9.3-8.5C1.3 9.9 2.7 7 5.6 7c1.7 0 2.8.9 3.5 1.8.3.4.6.5.9.5s.6-.1.9-.5C11.6 7.9 12.7 7 14.4 7c2.9 0 4.3 2.9 2.9 5.5C15 16.7 12 21 12 21z"
-                stroke="#D9531E"
-                strokeWidth="1.7"
+                stroke="#fff"
+                strokeWidth="1.8"
                 strokeLinejoin="round"
               />
             </svg>
@@ -100,41 +99,40 @@ export function HomePage() {
           to="/reportar/encontrada"
           label="Encontré una mascota"
           sublabel="Te guiamos para conseguirle apoyo"
-          cardClass="border-[#CFE6D6] bg-[#F1F8F3]"
-          chipClass="bg-[#E0EFE4]"
+          cardClass="bg-forest"
           icon={
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <circle cx="11" cy="11" r="7" stroke="#1F4D3A" strokeWidth="1.7" />
-              <path d="M16 16l5 5" stroke="#1F4D3A" strokeWidth="1.7" strokeLinecap="round" />
+              <circle cx="11" cy="11" r="7" stroke="#fff" strokeWidth="1.8" />
+              <path d="M16 16l5 5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
             </svg>
           }
         />
       </div>
 
-      {/* Donate CTA — important but secondary to lost/found. Sends donors straight
-          to the people & refuges asking for help. */}
+      {/* Donate CTA — third primary action. Solid action orange, white on color.
+          Sends donors straight to the people & refuges asking for help. */}
       <Link
         to="/necesidades"
-        className="flex items-center gap-3 rounded-2xl border border-[#F4D2C0] bg-[#FFF6F1] p-4 text-ink"
+        className="flex items-center gap-3 rounded-2xl bg-ember-dark p-4"
       >
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FBE0D4]">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/20">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
               d="M12 21s-7-4.3-9.3-8.5C1.3 9.9 2.7 7 5.6 7c1.7 0 2.8.9 3.5 1.8.3.4.6.5.9.5s.6-.1.9-.5C11.6 7.9 12.7 7 14.4 7c2.9 0 4.3 2.9 2.9 5.5C15 16.7 12 21 12 21z"
-              stroke="#D9531E"
-              strokeWidth="1.7"
+              stroke="#fff"
+              strokeWidth="1.8"
               strokeLinejoin="round"
             />
           </svg>
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[15.5px] font-extrabold leading-tight text-ink">Quiero donar</span>
-          <span className="mt-0.5 block text-[12.5px] font-medium leading-snug text-muted">
+          <span className="block text-[15.5px] font-extrabold leading-tight text-white">Quiero donar</span>
+          <span className="mt-0.5 block text-[12.5px] font-medium leading-snug text-white/85">
             Ver necesidades cercanas
           </span>
         </span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="shrink-0">
-          <path d="M9 6l6 6-6 6" stroke="#C7937A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M9 6l6 6-6 6" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </Link>
 
