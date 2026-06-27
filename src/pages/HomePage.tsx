@@ -136,7 +136,63 @@ export function HomePage() {
         </svg>
       </Link>
 
-      {/* Pedir ayuda (request help) */}
+      {/* Where help is needed most — surfaced right under the primary actions so
+          anyone wanting to help sees it first. */}
+      <UrgentNeeds />
+
+      {/* Explore the network — clickable navigation shortcuts (not statistics). */}
+      <section>
+        <h2 className="mb-2.5 text-[12px] font-bold uppercase tracking-wide text-faint">Red de apoyo</h2>
+        <ImpactCounters />
+      </section>
+
+      {/* Animales que buscan lugar + Refugios con cupo disponible */}
+      <HomeRescueBoard />
+
+      <section>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-[16px] font-extrabold text-forest-dark">Perdidas y encontradas</h2>
+          <Link to="/mascotas" className="text-[12.5px] font-bold text-forest">
+            Ver todas
+          </Link>
+        </div>
+        <PetGrid
+          pets={recent.data?.slice(0, 4)}
+          isLoading={recent.isLoading}
+          isError={recent.isError}
+          onRetry={recent.refetch}
+          emptyMessage="Todavía no hay reportes. Sé el primero en publicar uno."
+        />
+      </section>
+
+      {/* Join the support network — single consolidated entry. /ayudar already lists
+          hogar temporal, registrar refugio and veterinario (plus more). */}
+      <Link
+        to="/ayudar"
+        className="flex items-center gap-3 rounded-2xl border border-[#CFE6D6] bg-[#F1F8F3] p-4 text-ink"
+      >
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E0EFE4]">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="9" cy="8" r="3" stroke="#1F4D3A" strokeWidth="1.7" />
+            <path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="#1F4D3A" strokeWidth="1.7" strokeLinecap="round" />
+            <path d="M16 11a3 3 0 100-6M17.5 14c2.3.5 3.5 2.3 3.5 5" stroke="#1F4D3A" strokeWidth="1.7" strokeLinecap="round" />
+          </svg>
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[15px] font-extrabold leading-tight text-forest-dark">
+            Únete a la red de apoyo
+          </span>
+          <span className="mt-0.5 block text-[12.5px] font-medium leading-snug text-muted">
+            Regístrate como hogar temporal, refugio o veterinario.
+          </span>
+        </span>
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" className="shrink-0">
+          <path d="M9 6l6 6-6 6" stroke="#1F4D3A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </Link>
+
+      {/* Reportar una necesidad — important, but kept near the bottom so it doesn't
+          compete with the primary emergency actions. */}
       <div className="space-y-2.5">
         <h2 className="text-[12px] font-bold uppercase tracking-wide text-faint">Pedir ayuda</h2>
         <RowCard
@@ -156,83 +212,6 @@ export function HomePage() {
           }
         />
       </div>
-
-      {/* Ofrecer ayuda (offer help) */}
-      <div className="space-y-2.5">
-        <h2 className="text-[12px] font-bold uppercase tracking-wide text-faint">Ofrecer ayuda</h2>
-        <RowCard
-          to="/necesidades"
-          label="Ver necesidades"
-          sublabel="Mira quién necesita ayuda ahora"
-          icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M9 4h6v3H9zM9 5H7a1 1 0 00-1 1v13a1 1 0 001 1h10a1 1 0 001-1V6a1 1 0 00-1-1h-2"
-                stroke="#1F4D3A"
-                strokeWidth="1.7"
-                strokeLinejoin="round"
-              />
-              <path d="M9 12h6M9 16h4" stroke="#1F4D3A" strokeWidth="1.7" strokeLinecap="round" />
-            </svg>
-          }
-        />
-        <RowCard
-          to="/puedo-ser-hogar-temporal"
-          label="Puedo ser hogar temporal"
-          icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path d="M3 11l9-7 9 7" stroke="#1F4D3A" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M5 10v9h14v-9" stroke="#1F4D3A" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          }
-        />
-        <RowCard
-          to="/reportar/refugio"
-          label="Soy refugio / registrar refugio"
-          icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path d="M4 20V8l5-4 5 4v12" stroke="#1F4D3A" strokeWidth="1.7" strokeLinejoin="round" />
-              <path d="M14 20v-8h6v8M3 20h18" stroke="#1F4D3A" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          }
-        />
-        <RowCard
-          to="/reportar/veterinario"
-          label="Veterinario disponible"
-          icon={
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <rect x="3.5" y="3.5" width="17" height="17" rx="3" stroke="#1F7A6D" strokeWidth="1.7" />
-              <path d="M12 8v8M8 12h8" stroke="#1F7A6D" strokeWidth="1.7" strokeLinecap="round" />
-            </svg>
-          }
-        />
-      </div>
-
-      {/* Network status (stats — below actions, lighter) */}
-      <section>
-        <h2 className="mb-2.5 text-[12px] font-bold uppercase tracking-wide text-faint">Estado de la red</h2>
-        <ImpactCounters />
-      </section>
-
-      <UrgentNeeds />
-
-      <HomeRescueBoard />
-
-      <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-[16px] font-extrabold text-forest-dark">Perdidas y encontradas</h2>
-          <Link to="/mascotas" className="text-[12.5px] font-bold text-forest">
-            Ver todas
-          </Link>
-        </div>
-        <PetGrid
-          pets={recent.data?.slice(0, 4)}
-          isLoading={recent.isLoading}
-          isError={recent.isError}
-          onRetry={recent.refetch}
-          emptyMessage="Todavía no hay reportes. Sé el primero en publicar uno."
-        />
-      </section>
     </div>
   );
 }
