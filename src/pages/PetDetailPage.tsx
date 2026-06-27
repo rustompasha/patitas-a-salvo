@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { usePet } from '@/features/pets/hooks/usePet';
 import { StatusBadge } from '@/components/ui/Badge';
+import { ImageLightbox } from '@/components/ui/ImageLightbox';
 import { Spinner } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -27,6 +29,7 @@ function Field({ label, value }: { label: string; value: string }) {
 export function PetDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: pet, isLoading, isError, refetch } = usePet(id);
+  const [zoom, setZoom] = useState(false);
 
   if (isLoading) {
     return (
@@ -73,18 +76,40 @@ export function PetDetailPage() {
       <PageHeading title={title} />
 
       <div className="overflow-hidden rounded-2xl border border-sand-200 bg-white">
-        <div className="relative flex h-56 items-center justify-center bg-sand-100">
-          {pet.image_url ? (
-            <img src={pet.image_url} alt={title} className="h-full w-full object-cover" />
-          ) : (
+        {pet.image_url ? (
+          // Full image, never cropped: object-contain on a neutral background so the
+          // whole animal/poster is visible. Tap to open the fullscreen viewer.
+          <button
+            type="button"
+            onClick={() => setZoom(true)}
+            aria-label="Ampliar imagen"
+            className="relative block w-full bg-sand-100"
+          >
+            <img
+              src={pet.image_url}
+              alt={title}
+              className="mx-auto max-h-[75vh] w-full object-contain"
+            />
+            <span className="absolute left-3 top-3">
+              <StatusBadge status={pet.status} />
+            </span>
+            <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-bold text-white">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Ampliar
+            </span>
+          </button>
+        ) : (
+          <div className="relative flex h-56 items-center justify-center bg-sand-100">
             <span className="text-6xl" aria-hidden>
               {petEmoji(pet)}
             </span>
-          )}
-          <span className="absolute left-3 top-3">
-            <StatusBadge status={pet.status} />
-          </span>
-        </div>
+            <span className="absolute left-3 top-3">
+              <StatusBadge status={pet.status} />
+            </span>
+          </div>
+        )}
 
         <div className="space-y-3 p-4">
           <div className="flex items-center justify-between gap-2">
@@ -154,6 +179,10 @@ export function PetDetailPage() {
           ← Ver todas las mascotas
         </Link>
       </div>
+
+      {zoom && pet.image_url && (
+        <ImageLightbox src={pet.image_url} alt={title} onClose={() => setZoom(false)} />
+      )}
     </div>
   );
 }
