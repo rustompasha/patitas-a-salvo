@@ -5,6 +5,8 @@ import { ErrorState } from '@/components/ui/ErrorState';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { WhatsAppButton } from '@/components/contact/WhatsAppButton';
+import { MatchSection } from '@/features/rescue/components/MatchSection';
+import { AnimalsNeedingSupport } from '@/features/rescue/components/AnimalsNeedingSupport';
 import { useFosterOffer } from '@/features/help/hooks';
 import { formatRelativeTime, formatVePhoneDisplay, normalizeVePhone } from '@/lib/utils';
 
@@ -98,7 +100,16 @@ export function FosterDetailPage() {
         </div>
       )}
 
-      <p className="mt-4 text-center text-[11.5px] text-faint">
+      {/* Matching: found animals near this home that need temporary care */}
+      <MatchSection
+        title="Animales que necesitan cuidado temporal"
+        subtitle={`Encontrados cerca de ${offer.city}`}
+        seeAllTo="/mascotas"
+      >
+        <AnimalsNeedingSupport city={offer.city} limit={4} />
+      </MatchSection>
+
+      <p className="mt-6 text-center text-[11.5px] text-faint">
         Publicado {formatRelativeTime(offer.created_at)}
       </p>
 

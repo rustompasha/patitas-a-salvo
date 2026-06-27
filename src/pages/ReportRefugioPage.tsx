@@ -1,6 +1,10 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { PageHeading } from './PageHeading';
+import { NetworkPulse } from '@/features/rescue/components/NetworkPulse';
+import { AnimalsNeedingSupport } from '@/features/rescue/components/AnimalsNeedingSupport';
+import { NeedsNearby } from '@/features/rescue/components/NeedsNearby';
+import { MatchSection } from '@/features/rescue/components/MatchSection';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
@@ -20,8 +24,10 @@ import { uploadImage } from '@/features/pets/api/uploadPetImage';
 
 export function ReportRefugioPage() {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const create = useCreateRefugeReport();
+
+  // When set, the form is replaced by the network-onboarding screen for this refuge.
+  const [joined, setJoined] = useState<{ name: string; city: string } | null>(null);
 
   const [name, setName] = useState('');
   const [type, setType] = useState('');
@@ -91,7 +97,8 @@ export function ReportRefugioPage() {
       {
         onSuccess: () => {
           toast('Refugio publicado');
-          navigate('/refugios');
+          setJoined({ name: name.trim(), city: city.trim() });
+          if (typeof window !== 'undefined') window.scrollTo({ top: 0 });
         },
         onError: (err) => {
           // Production-safe: log technical detail to the console, show a human message.
@@ -100,6 +107,60 @@ export function ReportRefugioPage() {
           setError('No pudimos publicar el refugio. Revisa los datos e inténtalo otra vez.');
         },
       },
+    );
+  }
+
+  // ---- Onboarding: immediately activate the new refuge inside the network ----
+  if (joined) {
+    return (
+      <div className="animate-fade">
+        <div className="rounded-2xl border border-[#CFE6D6] bg-[#F1F8F3] p-5 text-center">
+          <div className="text-4xl" aria-hidden>
+            🏠
+          </div>
+          <h1 className="mt-2 text-[20px] font-extrabold text-forest-dark">
+            Gracias por unirte a la red de rescate
+          </h1>
+          <p className="mt-1.5 text-[13px] leading-snug text-[#3A4650]">
+            {joined.name} ya está publicado. Aquí tienes animales y necesidades en las que puedes
+            ayudar ahora mismo.
+          </p>
+        </div>
+
+        <section className="mt-5">
+          <h2 className="mb-2.5 text-[12px] font-bold uppercase tracking-wide text-faint">
+            La red en este momento
+          </h2>
+          <NetworkPulse />
+        </section>
+
+        <MatchSection
+          title="Animales que necesitan apoyo"
+          subtitle={joined.city ? `Más cerca de ${joined.city} primero` : undefined}
+          seeAllTo="/mascotas"
+        >
+          <AnimalsNeedingSupport city={joined.city} limit={4} />
+        </MatchSection>
+
+        <MatchSection
+          title="Necesidades cerca de ti"
+          subtitle="Alimento, medicinas, transporte y voluntarios"
+          seeAllTo="/necesidades"
+        >
+          <NeedsNearby city={joined.city} limit={4} />
+        </MatchSection>
+
+        <div className="mt-6 grid grid-cols-2 gap-2.5">
+          <Link to="/refugios">
+            <Button variant="secondary" fullWidth>
+              Ver refugios
+            </Button>
+          </Link>
+          <Link to="/">
+            <Button fullWidth>Ir al inicio</Button>
+          </Link>
+        </div>
+      </div>
     );
   }
 

@@ -8,6 +8,8 @@ import { CopyButton } from '@/components/ui/CopyButton';
 import { WhatsAppButton } from '@/components/contact/WhatsAppButton';
 import { DirectionsButton } from '@/components/contact/DirectionsButton';
 import { ShareButton } from '@/components/contact/ShareButton';
+import { MatchSection } from '@/features/rescue/components/MatchSection';
+import { AnimalsNeedingSupport } from '@/features/rescue/components/AnimalsNeedingSupport';
 import { useRefugeNeeds, useRefugio } from '@/features/help/hooks';
 import { REFUGE_STATUS_BADGE, URGENCY_DB_META, refugeTypeLabel } from '@/constants/help';
 import { formatRelativeTime } from '@/lib/utils';
@@ -208,6 +210,15 @@ export function RefugioDetailPage() {
           </div>
         )}
       </section>
+
+      {/* Matching: found animals near this refuge that still need placement */}
+      <MatchSection
+        title="Animales que puedes ayudar"
+        subtitle={`Encontrados cerca de ${refuge.city}`}
+        seeAllTo="/mascotas"
+      >
+        <AnimalsNeedingSupport city={refuge.city} limit={4} />
+      </MatchSection>
 
       <div className="mt-6 flex flex-wrap gap-2">
         <WhatsAppButton

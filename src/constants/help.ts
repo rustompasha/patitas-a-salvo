@@ -68,7 +68,21 @@ export const REQUESTER_META: Record<string, { emoji: string; label: string; badg
   individual: { emoji: '🧍', label: 'Solicitud individual', badge: 'bg-sand-100 text-[#3A4650]' },
   refugio: { emoji: '🐾', label: 'Solicitud de refugio', badge: 'bg-[#EAF3EC] text-forest' },
   veterinaria: { emoji: '🏥', label: 'Solicitud veterinaria', badge: 'bg-[#E7F0FA] text-[#1F5F8B]' },
+  // Created automatically from the "encontré una mascota" guided flow.
+  finder: { emoji: '🆘', label: 'Animal rescatado · necesita apoyo', badge: 'bg-[#FCE7D6] text-[#C2410C]' },
 };
+
+// Help a finder can request from the guided found-pet flow. `category` maps the
+// selection onto the existing NEED_CATEGORY_OPTIONS so cards/filters stay consistent.
+export const FINDER_HELP_OPTIONS: { key: string; label: string; category: string }[] = [
+  { key: 'food', label: 'Alimento', category: 'Perrarina' },
+  { key: 'vet', label: 'Atención veterinaria', category: 'Atención veterinaria' },
+  { key: 'home', label: 'Hogar temporal', category: 'Hogar temporal' },
+  { key: 'transport', label: 'Transporte', category: 'Transporte' },
+  { key: 'supplies', label: 'Insumos', category: 'Otro' },
+  { key: 'volunteers', label: 'Voluntarios', category: 'Rescate' },
+  { key: 'other', label: 'Otro', category: 'Otro' },
+];
 
 export function requesterMeta(type: string | null) {
   return REQUESTER_META[type ?? 'individual'] ?? REQUESTER_META.individual;
@@ -80,6 +94,8 @@ export function needContactMessage(type: string | null): string {
     return 'Hola, vi tu solicitud en Patitas a Salvo. Me gustaría ayudar con los insumos solicitados.';
   if (type === 'veterinaria')
     return 'Hola, vi tu solicitud veterinaria en Patitas a Salvo. ¿Cómo puedo ayudar?';
+  if (type === 'finder')
+    return 'Hola, vi que rescataste un animal y necesitas apoyo en Patitas a Salvo. Quiero ayudar.';
   return 'Hola, vi tu solicitud en Patitas a Salvo y me gustaría ayudar.';
 }
 

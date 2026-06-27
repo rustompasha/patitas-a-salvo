@@ -11,7 +11,7 @@ import { ImageUpload } from '@/components/ui/ImageUpload';
 import { useToast } from '@/components/ui/Toast';
 import { SPECIES_OPTIONS } from '@/constants/design';
 import { useCreatePet } from '../hooks/useCreatePet';
-import type { PetStatus } from '@/types/pet';
+import type { Pet, PetStatus } from '@/types/pet';
 
 const schema = z.object({
   species: z.string().min(1, 'Selecciona el tipo de animal'),
@@ -32,6 +32,13 @@ type FormValues = z.infer<typeof schema>;
 
 interface PetFormProps {
   status: PetStatus;
+  /** Override the submit button label (e.g. rescue-flow wording). */
+  submitLabel?: string;
+  /** Prefill the location field (e.g. the zone gathered earlier in a guided flow). */
+  defaultLocation?: string;
+  /** When provided, called with the created pet instead of the default toast+redirect.
+   *  Lets a guided flow chain follow-up actions (e.g. create a need, show next steps). */
+  onPublished?: (pet: Pet) => void;
 }
 
 const COPY: Record<PetStatus, { submit: string; variant: 'danger' | 'primary'; namePlaceholder: string; descPlaceholder: string; locPlaceholder: string; notice?: string }> = {
@@ -53,7 +60,7 @@ const COPY: Record<PetStatus, { submit: string; variant: 'danger' | 'primary'; n
   },
 };
 
-export function PetForm({ status }: PetFormProps) {
+export function PetForm({ status, submitLabel, onPublished, defaultLocation }: PetFormProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
   const createPet = useCreatePet();
@@ -67,7 +74,7 @@ export function PetForm({ status }: PetFormProps) {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { species: '', name: '', description: '', location: '', phone: '' },
+    defaultValues: { species: '', name: '', description: '', location: defaultLocation ?? '', phone: '' },
   });
 
   function onSubmit(values: FormValues) {
@@ -82,7 +89,11 @@ export function PetForm({ status }: PetFormProps) {
         image,
       },
       {
-        onSuccess: () => {
+        onSuccess: (pet) => {
+          if (onPublished) {
+            onPublished(pet);
+            return;
+          }
           toast(status === 'lost' ? 'Búsqueda publicada' : 'Mascota reportada');
           navigate('/mascotas');
         },
@@ -142,7 +153,7 @@ export function PetForm({ status }: PetFormProps) {
       />
 
       <Button type="submit" variant={copy.variant} fullWidth loading={createPet.isPending}>
-        {copy.submit}
+        {submitLabel ?? copy.submit}
       </Button>
 
       {createPet.isError && (

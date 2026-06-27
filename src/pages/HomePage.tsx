@@ -3,6 +3,7 @@ import { PetGrid } from '@/features/pets/components/PetGrid';
 import { usePets } from '@/features/pets/hooks/usePets';
 import { UrgentNeeds } from '@/features/centers/components/UrgentNeeds';
 import { ImpactCounters } from '@/features/stats/components/ImpactCounters';
+import { HomeRescueBoard } from '@/features/rescue/components/HomeRescueBoard';
 
 /** Large, top-of-page decision card. */
 function BigCard({
@@ -98,7 +99,7 @@ export function HomePage() {
         <BigCard
           to="/reportar/encontrada"
           label="Encontré una mascota"
-          sublabel="Avisa dónde la viste o rescataste"
+          sublabel="Te guiamos para conseguirle apoyo"
           cardClass="border-[#CFE6D6] bg-[#F1F8F3]"
           chipClass="bg-[#E0EFE4]"
           icon={
@@ -189,6 +190,8 @@ export function HomePage() {
       </section>
 
       <UrgentNeeds />
+
+      <HomeRescueBoard />
 
       <section>
         <div className="mb-3 flex items-center justify-between">

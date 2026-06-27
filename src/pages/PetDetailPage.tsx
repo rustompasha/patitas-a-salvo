@@ -9,6 +9,8 @@ import { WhatsAppButton } from '@/components/contact/WhatsAppButton';
 import { CallButton } from '@/components/contact/CallButton';
 import { ShareButton } from '@/components/contact/ShareButton';
 import { PageHeading } from './PageHeading';
+import { MatchSection } from '@/features/rescue/components/MatchSection';
+import { ShelterMatchList } from '@/features/rescue/components/ShelterMatchList';
 import { formatRelativeTime, normalizeVePhone } from '@/lib/utils';
 import { petTitle, petEmoji, petShareText, petSightedText } from '@/features/pets/petHelpers';
 import { STATUS_META } from '@/constants/design';
@@ -135,6 +137,17 @@ export function PetDetailPage() {
         <CallButton phone={pet.phone} className="w-full" />
         <ShareButton title="Patitas a Salvo" text={shareText} className="w-full" />
       </div>
+
+      {/* Matching: a found animal needs placement -> suggest shelters & temporary homes */}
+      {pet.status === 'found' && (
+        <MatchSection
+          title="Lugares que pueden recibirla"
+          subtitle={pet.location ? `Cerca de ${pet.location}` : 'Refugios y hogares temporales'}
+          seeAllTo="/refugios"
+        >
+          <ShelterMatchList city={pet.location} />
+        </MatchSection>
+      )}
 
       <div className="mt-6 text-center">
         <Link to="/mascotas" className="text-[12.5px] font-bold text-forest">

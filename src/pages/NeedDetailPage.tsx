@@ -6,6 +6,8 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { WhatsAppButton } from '@/components/contact/WhatsAppButton';
 import { ShareButton } from '@/components/contact/ShareButton';
+import { MatchSection } from '@/features/rescue/components/MatchSection';
+import { ShelterMatchList } from '@/features/rescue/components/ShelterMatchList';
 import { useNeed } from '@/features/help/hooks';
 import { URGENCY_DB_META, needContactMessage, requesterMeta } from '@/constants/help';
 import { formatRelativeTime, formatVePhoneDisplay, normalizeVePhone } from '@/lib/utils';
@@ -116,7 +118,16 @@ export function NeedDetailPage() {
         <ShareButton title="Patitas a Salvo" text={shareText} className="w-full" />
       </div>
 
-      <p className="mt-4 text-center text-[11.5px] text-faint">Publicado {formatRelativeTime(need.created_at)}</p>
+      {/* Matching: shelters/homes near this need that may be able to help */}
+      <MatchSection
+        title="Refugios que pueden ayudar"
+        subtitle={`Cerca de ${need.city}`}
+        seeAllTo="/refugios"
+      >
+        <ShelterMatchList city={need.city} />
+      </MatchSection>
+
+      <p className="mt-6 text-center text-[11.5px] text-faint">Publicado {formatRelativeTime(need.created_at)}</p>
 
       <div className="mt-4 text-center">
         <Link to="/necesidades" className="text-[12.5px] font-bold text-forest">
