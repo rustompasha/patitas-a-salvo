@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import type {
   CenterRow,
+  CentroInsert,
   FosterInsert,
   FosterRow,
   NeedInsert,
@@ -81,6 +82,13 @@ export async function createVetReport(input: VetInsert): Promise<void> {
   await insertResilient('veterinarians', input, ['mobility']);
 }
 
+// Centros de acopio are stored in the centers table (type='centro_acopio').
+// Inserted unverified by default. contact_name/maps_url are optional columns
+// (see supabase/centros_acopio.sql) and degrade gracefully if not migrated yet.
+export async function createCentroAcopio(input: CentroInsert): Promise<void> {
+  await insertResilient('centers', input, ['contact_name', 'maps_url', 'notes', 'address']);
+}
+
 // Refugios are stored in the centers table (any type). Inserted unverified by default.
 export async function createRefugeReport(input: RefugeInsert): Promise<void> {
   await insertResilient('centers', input, [
@@ -103,6 +111,19 @@ export async function getRefugios(): Promise<CenterRow[]> {
   const { data, error } = await supabase
     .from('centers')
     .select('*')
+    // Centros de acopio live in this table too but have their own section/list.
+    .neq('type', 'centro_acopio')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as CenterRow[];
+}
+
+// Centros de acopio — backed by the centers table, filtered to type='centro_acopio'.
+export async function getCentrosAcopio(): Promise<CenterRow[]> {
+  const { data, error } = await supabase
+    .from('centers')
+    .select('*')
+    .eq('type', 'centro_acopio')
     .order('created_at', { ascending: false });
   if (error) throw error;
   return (data ?? []) as CenterRow[];

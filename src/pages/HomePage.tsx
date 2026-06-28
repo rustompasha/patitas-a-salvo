@@ -4,6 +4,7 @@ import { usePets } from '@/features/pets/hooks/usePets';
 import { UrgentNeeds } from '@/features/centers/components/UrgentNeeds';
 import { ImpactCounters } from '@/features/stats/components/ImpactCounters';
 import { HomeRescueBoard } from '@/features/rescue/components/HomeRescueBoard';
+import { HomeCentros } from '@/features/help/components/HomeCentros';
 
 /** Large, top-of-page decision card. Solid, high-contrast white-on-color so the
  *  three primary actions dominate the page for stressed, scanning users. */
@@ -148,6 +149,9 @@ export function HomePage() {
 
       {/* Animales que buscan lugar + Refugios con cupo disponible */}
       <HomeRescueBoard />
+
+      {/* Centros de acopio activos — directly below "Refugios con cupo disponible". */}
+      <HomeCentros />
 
       <section>
         <div className="mb-3 flex items-center justify-between">

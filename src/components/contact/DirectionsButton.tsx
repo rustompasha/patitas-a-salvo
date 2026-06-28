@@ -2,15 +2,18 @@ import { cn } from '@/lib/utils';
 
 export function DirectionsButton({
   query,
+  href: directHref,
   className,
   compact,
 }: {
   query: string;
+  /** Optional explicit Maps link (e.g. a pasted Google Maps URL). Overrides `query`. */
+  href?: string | null;
   className?: string;
   compact?: boolean;
 }) {
-  if (!query) return null;
-  const href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  if (!directHref && !query) return null;
+  const href = directHref || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 
   return (
     <a

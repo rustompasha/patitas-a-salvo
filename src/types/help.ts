@@ -20,9 +20,26 @@ export interface CenterRow {
   paypal_email: string | null;
   image_url: string | null;
   notes: string | null;
+  /** Centros de acopio only: responsable + Google Maps link (optional columns). */
+  contact_name?: string | null;
+  maps_url?: string | null;
   verified: boolean;
   created_at: string;
 }
+
+/** Centro de acopio insert (stored in `centers`, type='centro_acopio'). Description
+ *  maps to `notes`, "qué reciben" to `needs`. */
+export type CentroInsert = {
+  name: string;
+  type: 'centro_acopio';
+  city: string;
+  address: string | null;
+  whatsapp: string | null;
+  needs: string[];
+  notes: string | null;
+  contact_name: string | null;
+  maps_url: string | null;
+};
 
 export type RequesterType = 'individual' | 'refugio' | 'veterinaria';
 

@@ -4,6 +4,8 @@ const CARDS = [
   { to: '/donar-insumos', emoji: '📦', title: 'Donar insumos', sub: 'Lleva alimento, medicinas o transportadoras.' },
   { to: '/refugios', emoji: '🏘️', title: 'Refugios y puntos de ayuda', sub: 'Lugares y personas que pueden recibir animales o insumos.' },
   { to: '/reportar/refugio', emoji: '🏠', title: 'Registrar refugio', sub: 'Refugios, rescatistas, veterinarias aliadas o puntos de recepción.' },
+  { to: '/reportar/centro-acopio', emoji: '📦', title: 'Registrar centro de acopio', sub: 'Un punto que recibe y distribuye alimento, medicinas e insumos.' },
+  { to: '/centros-acopio', emoji: '📦', title: 'Centros de acopio', sub: 'Encuentra dónde llevar donaciones de alimento e insumos.' },
   { to: '/puedo-ser-hogar-temporal', emoji: '🛏️', title: 'Ser hogar temporal', sub: 'Da refugio seguro mientras aparece su familia o un refugio.' },
   { to: '/veterinarios', emoji: '🏥', title: 'Veterinarios disponibles', sub: 'Encuentra atención veterinaria en la emergencia.' },
   { to: '/reportar/veterinario', emoji: '🩺', title: 'Puedo ayudar como veterinario', sub: 'Publica tu disponibilidad para atender mascotas.' },

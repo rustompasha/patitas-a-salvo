@@ -1,9 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
+  createCentroAcopio,
   createFosterOffer,
   createNeedReport,
   createRefugeReport,
   createVetReport,
+  getCentrosAcopio,
   getFosterOfferById,
   getFosterOffers,
   getNeedById,
@@ -18,6 +20,10 @@ import {
 // Refugios, needs, foster offers and veterinarians all publish immediately.
 export function useRefugios() {
   return useQuery({ queryKey: ['refugios'], queryFn: getRefugios, staleTime: 30_000 });
+}
+
+export function useCentrosAcopio() {
+  return useQuery({ queryKey: ['centros_acopio'], queryFn: getCentrosAcopio, staleTime: 30_000 });
 }
 
 export function useVerifiedNeeds() {
@@ -75,6 +81,10 @@ export function useRefugeNeeds(id: string | undefined, name: string | undefined)
 // ---- Submissions -----------------------------------------------------------
 export function useCreateRefugeReport() {
   return useMutation({ mutationFn: createRefugeReport });
+}
+
+export function useCreateCentroAcopio() {
+  return useMutation({ mutationFn: createCentroAcopio });
 }
 
 export function useCreateNeedReport() {

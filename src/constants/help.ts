@@ -1,4 +1,4 @@
-import type { CenterTypeValue, UrgencyLevel } from '@/types/help';
+import type { CenterRow, CenterTypeValue, UrgencyLevel } from '@/types/help';
 
 export const CENTER_TYPE_OPTIONS: { value: CenterTypeValue; label: string }[] = [
   { value: 'centro_acopio', label: 'Centro de acopio' },
@@ -161,3 +161,41 @@ export const REFUGE_RECEIVE_OPTIONS = [
   'Atención veterinaria',
   'Hogares temporales',
 ];
+
+// ---- Centros de acopio (stored in centers, type='centro_acopio') -----------
+export const CENTRO_RECEIVE_OPTIONS = [
+  'Perrarina',
+  'Gatarina',
+  'Medicinas',
+  'Insumos',
+  'Cobijas',
+  'Transportadoras',
+  'Otros',
+];
+
+/** Client-side seed example (clearly DEMO). Always shown so the section/list never
+ *  looks empty; not stored in the database. */
+export const DEMO_CENTRO: CenterRow = {
+  id: 'demo-patitas',
+  name: 'Patitas a Salvo Venezuela',
+  type: 'centro_acopio',
+  city: 'Caracas',
+  address: 'Punto de recepción central (DEMO)',
+  whatsapp: '0412-0000000',
+  needs: ['Perrarina', 'Gatarina', 'Medicinas', 'Insumos'],
+  urgency: null,
+  status: null,
+  capacity: null,
+  current_animals: null,
+  payment_mobile_bank: null,
+  payment_mobile_id: null,
+  payment_mobile_phone: null,
+  zelle_email: null,
+  paypal_email: null,
+  image_url: null,
+  notes: 'Centro de recepción y distribución de ayuda animal.',
+  contact_name: 'Equipo Patitas a Salvo (DEMO)',
+  maps_url: null,
+  verified: false,
+  created_at: '2026-06-01T12:00:00.000Z',
+};
