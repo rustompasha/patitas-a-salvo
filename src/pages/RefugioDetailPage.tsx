@@ -10,8 +10,9 @@ import { DirectionsButton } from '@/components/contact/DirectionsButton';
 import { ShareButton } from '@/components/contact/ShareButton';
 import { MatchSection } from '@/features/rescue/components/MatchSection';
 import { AnimalsNeedingSupport } from '@/features/rescue/components/AnimalsNeedingSupport';
+import { VolunteerMatchList } from '@/features/rescue/components/VolunteerMatchList';
 import { useRefugeNeeds, useRefugio } from '@/features/help/hooks';
-import { REFUGE_STATUS_BADGE, URGENCY_DB_META, refugeTypeLabel } from '@/constants/help';
+import { REFUGE_STATUS_BADGE, URGENCY_DB_META, VOLUNTEER_REFUGE_HELP, refugeTypeLabel } from '@/constants/help';
 import { formatRelativeTime } from '@/lib/utils';
 
 function Field({ label, value }: { label: string; value: string }) {
@@ -219,6 +220,13 @@ export function RefugioDetailPage() {
       >
         <AnimalsNeedingSupport city={refuge.city} limit={4} />
       </MatchSection>
+
+      {/* Matching: volunteers near this refuge who can support it directly */}
+      <VolunteerMatchList
+        city={refuge.city}
+        title="Voluntarios que pueden ayudar"
+        preferredHelpTypes={VOLUNTEER_REFUGE_HELP}
+      />
 
       <div className="mt-6 flex flex-wrap gap-2">
         <WhatsAppButton

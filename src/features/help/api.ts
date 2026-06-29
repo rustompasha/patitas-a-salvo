@@ -9,6 +9,8 @@ import type {
   RefugeInsert,
   VetInsert,
   VetRow,
+  VolunteerInsert,
+  VolunteerRow,
 } from '@/types/help';
 
 /** PostgREST code when a table isn't in the schema cache (missing/not migrated).
@@ -217,4 +219,29 @@ export async function getVeterinarians(): Promise<VetRow[]> {
     throw error;
   }
   return (data ?? []) as VetRow[];
+}
+
+// ---- Volunteers ------------------------------------------------------------
+// Public reads only active volunteers (RLS). Sort: verified first, then newest.
+// If the table isn't migrated yet (PGRST205), return [] so the page/home/match
+// blocks render cleanly instead of erroring.
+export async function getVolunteers(): Promise<VolunteerRow[]> {
+  const { data, error } = await supabase
+    .from('volunteers')
+    .select('*')
+    .eq('status', 'active')
+    .order('verified', { ascending: false })
+    .order('created_at', { ascending: false });
+  if (error) {
+    if (error.code === TABLE_MISSING) return [];
+    throw error;
+  }
+  return (data ?? []) as VolunteerRow[];
+}
+
+// Registration: status/verified use DB defaults (active/false). Throws until the
+// volunteers table is migrated.
+export async function createVolunteer(input: VolunteerInsert): Promise<void> {
+  const { error } = await supabase.from('volunteers').insert(input);
+  if (error) throw error;
 }

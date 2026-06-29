@@ -8,8 +8,14 @@ import { WhatsAppButton } from '@/components/contact/WhatsAppButton';
 import { ShareButton } from '@/components/contact/ShareButton';
 import { MatchSection } from '@/features/rescue/components/MatchSection';
 import { ShelterMatchList } from '@/features/rescue/components/ShelterMatchList';
+import { VolunteerMatchList } from '@/features/rescue/components/VolunteerMatchList';
 import { useNeed } from '@/features/help/hooks';
-import { URGENCY_DB_META, needContactMessage, requesterMeta } from '@/constants/help';
+import {
+  URGENCY_DB_META,
+  needContactMessage,
+  requesterMeta,
+  volunteerHelpForNeedCategory,
+} from '@/constants/help';
 import { formatRelativeTime, formatVePhoneDisplay, normalizeVePhone } from '@/lib/utils';
 
 function Field({ label, value }: { label: string; value: string }) {
@@ -143,6 +149,13 @@ export function NeedDetailPage() {
       >
         <ShelterMatchList city={need.city} />
       </MatchSection>
+
+      {/* Matching: volunteers near this need, prioritized by the need category */}
+      <VolunteerMatchList
+        city={need.city}
+        title="Voluntarios que pueden ayudar"
+        preferredHelpTypes={volunteerHelpForNeedCategory(need.category)}
+      />
 
       <p className="mt-6 text-center text-[11.5px] text-faint">Publicado {formatRelativeTime(need.created_at)}</p>
 

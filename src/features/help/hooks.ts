@@ -5,6 +5,7 @@ import {
   createNeedReport,
   createRefugeReport,
   createVetReport,
+  createVolunteer,
   getCentrosAcopio,
   getFosterOfferById,
   getFosterOffers,
@@ -14,6 +15,7 @@ import {
   getRefugioById,
   getRefugios,
   getVeterinarians,
+  getVolunteers,
 } from './api';
 
 // ---- Public reads ----------------------------------------------------------
@@ -24,6 +26,10 @@ export function useRefugios() {
 
 export function useCentrosAcopio() {
   return useQuery({ queryKey: ['centros_acopio'], queryFn: getCentrosAcopio, staleTime: 30_000 });
+}
+
+export function useVolunteers() {
+  return useQuery({ queryKey: ['volunteers'], queryFn: getVolunteers, staleTime: 30_000 });
 }
 
 export function useVerifiedNeeds() {
@@ -85,6 +91,10 @@ export function useCreateRefugeReport() {
 
 export function useCreateCentroAcopio() {
   return useMutation({ mutationFn: createCentroAcopio });
+}
+
+export function useCreateVolunteer() {
+  return useMutation({ mutationFn: createVolunteer });
 }
 
 export function useCreateNeedReport() {

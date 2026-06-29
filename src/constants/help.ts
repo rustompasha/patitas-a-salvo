@@ -162,6 +162,61 @@ export const REFUGE_RECEIVE_OPTIONS = [
   'Hogares temporales',
 ];
 
+// ---- Volunteers ------------------------------------------------------------
+export const VOLUNTEER_HELP_OPTIONS = [
+  'Difusión en redes',
+  'Verificación de casos',
+  'Transporte',
+  'Coordinación por WhatsApp',
+  'Apoyo en centros de acopio',
+  'Apoyo a refugios',
+  'Apoyo veterinario',
+  'Traslados',
+  'Logística',
+  'Otro',
+];
+
+export const VOLUNTEER_AVAILABILITY_OPTIONS = [
+  'Hoy',
+  'Esta semana',
+  'Fines de semana',
+  'Remoto',
+  'Según disponibilidad',
+];
+
+/** Prefilled WhatsApp message when contacting a volunteer. */
+export const VOLUNTEER_CONTACT_MESSAGE =
+  'Hola, te contacto desde Patitas a Salvo Venezuela. Vi que estás disponible como voluntario/a y quería coordinar apoyo.';
+
+/** Help types worth prioritizing for a given need category (matching blocks). */
+export function volunteerHelpForNeedCategory(category: string | null): string[] {
+  switch (category) {
+    case 'Transporte':
+      return ['Transporte', 'Traslados'];
+    case 'Perrarina':
+    case 'Gatarina':
+    case 'Medicamentos':
+    case 'Insumos':
+      return ['Apoyo en centros de acopio', 'Logística'];
+    case 'Rescate':
+      return ['Verificación de casos', 'Coordinación por WhatsApp'];
+    case 'Atención veterinaria':
+      return ['Apoyo veterinario'];
+    case 'Refugio':
+      return ['Apoyo a refugios', 'Logística'];
+    default:
+      return [];
+  }
+}
+
+/** Help types a volunteer can offer that are useful to a refuge. */
+export const VOLUNTEER_REFUGE_HELP = [
+  'Apoyo a refugios',
+  'Logística',
+  'Coordinación por WhatsApp',
+  'Transporte',
+];
+
 // ---- Centros de acopio (stored in centers, type='centro_acopio') -----------
 export const CENTRO_RECEIVE_OPTIONS = [
   'Perrarina',

@@ -155,3 +155,37 @@ export type VetInsert = {
   mobility: string | null;
   notes: string | null;
 };
+
+export interface VolunteerRow {
+  id: string;
+  name: string;
+  whatsapp: string;
+  city: string;
+  state: string | null;
+  area: string | null;
+  availability: string | null;
+  help_types: string[];
+  can_help_remote: boolean;
+  can_help_in_person: boolean;
+  has_transport: boolean;
+  has_experience: boolean;
+  notes: string | null;
+  status: string;
+  verified: boolean;
+  created_at: string;
+}
+
+export type VolunteerInsert = {
+  name: string;
+  whatsapp: string;
+  city: string;
+  state: string | null;
+  area: string | null;
+  availability: string | null;
+  help_types: string[];
+  can_help_remote: boolean;
+  can_help_in_person: boolean;
+  has_transport: boolean;
+  has_experience: boolean;
+  notes: string | null;
+};

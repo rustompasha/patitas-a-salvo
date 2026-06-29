@@ -187,7 +187,7 @@ export function HomePage() {
             Únete a la red de apoyo
           </span>
           <span className="mt-0.5 block text-[12.5px] font-medium leading-snug text-muted">
-            Regístrate como hogar temporal, refugio o veterinario.
+            Regístrate como hogar temporal, refugio, veterinario o voluntario.
           </span>
         </span>
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" className="shrink-0">

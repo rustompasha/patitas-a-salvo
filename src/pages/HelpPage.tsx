@@ -9,6 +9,8 @@ const CARDS = [
   { to: '/puedo-ser-hogar-temporal', emoji: '🛏️', title: 'Ser hogar temporal', sub: 'Da refugio seguro mientras aparece su familia o un refugio.' },
   { to: '/veterinarios', emoji: '🏥', title: 'Veterinarios disponibles', sub: 'Encuentra atención veterinaria en la emergencia.' },
   { to: '/reportar/veterinario', emoji: '🩺', title: 'Puedo ayudar como veterinario', sub: 'Publica tu disponibilidad para atender mascotas.' },
+  { to: '/voluntarios', emoji: '🙌', title: 'Voluntarios activos', sub: 'Personas disponibles para difusión, traslados y coordinación.' },
+  { to: '/reportar/voluntario', emoji: '🤝', title: 'Quiero ser voluntario', sub: 'Súmate para apoyar con difusión, verificación, traslados y más.' },
   { to: '/mascotas', emoji: '🐾', title: 'Ver mascotas perdidas/encontradas', sub: 'Comparte información que ayude a reunirlas.' },
 ];
 

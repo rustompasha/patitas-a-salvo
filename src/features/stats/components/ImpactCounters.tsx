@@ -61,6 +61,14 @@ export function ImpactCounters() {
       cardClass: 'border-[#F2D7A8] bg-[#FFF9EF] hover:border-[#E0A93F]',
       valueClass: 'text-[#8A5A14]',
     },
+    {
+      emoji: '🙌',
+      value: data?.volunteers ?? 0,
+      label: plural(data?.volunteers ?? 0, 'voluntario activo', 'voluntarios activos'),
+      to: '/voluntarios',
+      cardClass: 'border-[#DDD2F2] bg-[#F5F1FC] hover:border-[#8B6FC0]',
+      valueClass: 'text-[#5B3B8B]',
+    },
   ];
 
   return (

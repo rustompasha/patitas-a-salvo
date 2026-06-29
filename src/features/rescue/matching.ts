@@ -3,7 +3,7 @@
 // We only have free-text `city`, so token containment is our proxy for "same state".
 //
 // Matching priority (per spec): 1) same city  2) same state/area  3) newest  4) urgency.
-import type { CenterRow, FosterRow, NeedRow } from '@/types/help';
+import type { CenterRow, FosterRow, NeedRow, VolunteerRow } from '@/types/help';
 import type { Pet } from '@/types/pet';
 
 export function normalizeCity(s: string | null | undefined): string {
@@ -87,4 +87,28 @@ export function rankFoundPets(pets: Pet[], city: string | null | undefined): Pet
     pets.filter((p) => p.status === 'found'),
     [(p) => cityScore(city, p.location), (p) => ms(p.created_at)],
   );
+}
+
+/** Active volunteers near `city`/state: same area first, then (optionally) those whose
+ *  help_types match `preferred`, then verified, then newest. `preferred` may include
+ *  'Transporte'/'Traslados' to also surface volunteers with has_transport. */
+export function rankVolunteers(
+  vols: VolunteerRow[],
+  city: string | null | undefined,
+  preferred: string[] = [],
+): VolunteerRow[] {
+  const pref = new Set(preferred);
+  const wantsTransport = pref.has('Transporte') || pref.has('Traslados');
+  const matches = (v: VolunteerRow): number => {
+    if (!pref.size) return 0;
+    if (v.help_types?.some((h) => pref.has(h))) return 1;
+    if (wantsTransport && v.has_transport) return 1;
+    return 0;
+  };
+  return rankBy(vols, [
+    (v) => cityScore(city, [v.city, v.state].filter(Boolean).join(' ')),
+    (v) => matches(v),
+    (v) => (v.verified ? 1 : 0),
+    (v) => ms(v.created_at),
+  ]);
 }
