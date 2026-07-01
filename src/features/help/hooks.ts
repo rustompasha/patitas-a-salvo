@@ -15,6 +15,7 @@ import {
   getRefugioById,
   getRefugios,
   getVeterinarians,
+  getVolunteerById,
   getVolunteers,
 } from './api';
 
@@ -30,6 +31,15 @@ export function useCentrosAcopio() {
 
 export function useVolunteers() {
   return useQuery({ queryKey: ['volunteers'], queryFn: getVolunteers, staleTime: 30_000 });
+}
+
+export function useVolunteer(id: string | undefined) {
+  return useQuery({
+    queryKey: ['volunteers', 'detail', id],
+    queryFn: () => getVolunteerById(id as string),
+    enabled: !!id,
+    staleTime: 30_000,
+  });
 }
 
 export function useVerifiedNeeds() {

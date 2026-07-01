@@ -8,41 +8,86 @@ import { ErrorState } from '@/components/ui/ErrorState';
 import { SearchBar } from '@/features/pets/components/SearchBar';
 import { VolunteerCard } from '@/features/help/components/VolunteerCard';
 import { useVolunteers } from '@/features/help/hooks';
+import { isPresencial, isRemoto, resolveModality } from '@/constants/help';
 import type { VolunteerRow } from '@/types/help';
 
-const FILTERS: { key: string; label: string; test: (v: VolunteerRow) => boolean }[] = [
-  { key: 'all', label: 'Todos', test: () => true },
-  { key: 'remote', label: 'Remoto', test: (v) => v.can_help_remote },
-  { key: 'inperson', label: 'Presencial', test: (v) => v.can_help_in_person },
-  {
-    key: 'transport',
-    label: 'Transporte',
-    test: (v) => v.has_transport || v.help_types.some((h) => h === 'Transporte' || h === 'Traslados'),
-  },
-  { key: 'verify', label: 'Verificación', test: (v) => v.help_types.includes('Verificación de casos') },
-  { key: 'centros', label: 'Centros de acopio', test: (v) => v.help_types.includes('Apoyo en centros de acopio') },
-  { key: 'refugios', label: 'Refugios', test: (v) => v.help_types.includes('Apoyo a refugios') },
-];
+type Section = 'presencial' | 'remoto';
+
+/** Push a value into a Map-of-arrays keyed by `key`. */
+function push<T>(map: Map<string, T[]>, key: string, value: T) {
+  const arr = map.get(key);
+  if (arr) arr.push(value);
+  else map.set(key, [value]);
+}
+
+/** Venezuela first, then countries alphabetically. */
+function countryOrder(a: string, b: string) {
+  const rank = (c: string) => (c === 'Venezuela' ? 0 : 1);
+  return rank(a) - rank(b) || a.localeCompare(b);
+}
+
+interface Group {
+  country: string;
+  /** Presenciales: state. Remotos: city. */
+  subgroups: { label: string; volunteers: VolunteerRow[] }[];
+}
+
+/** Presenciales -> country > state (cards sorted by city). Remotos -> country > city. */
+function buildGroups(list: VolunteerRow[], section: Section): Group[] {
+  const byCountry = new Map<string, VolunteerRow[]>();
+  for (const v of list) push(byCountry, v.country?.trim() || 'Venezuela', v);
+
+  return [...byCountry.keys()].sort(countryOrder).map((country) => {
+    const vols = byCountry.get(country)!;
+    const sub = new Map<string, VolunteerRow[]>();
+    if (section === 'presencial') {
+      for (const v of vols) push(sub, v.state?.trim() || 'Otras zonas', v);
+    } else {
+      for (const v of vols) push(sub, v.city?.trim() || 'Sin ciudad', v);
+    }
+    const subgroups = [...sub.keys()].sort((a, b) => a.localeCompare(b)).map((label) => {
+      const volunteers = sub.get(label)!;
+      volunteers.sort((a, b) => (a.city || '').localeCompare(b.city || ''));
+      return { label, volunteers };
+    });
+    return { country, subgroups };
+  });
+}
+
+function CountPill({ n, label }: { n: number; label: string }) {
+  return (
+    <div className="rounded-xl border border-sand-200 bg-white px-2 py-2 text-center">
+      <div className="text-[17px] font-extrabold leading-none text-forest-dark">{n}</div>
+      <div className="mt-1 text-[10.5px] font-medium leading-tight text-muted">{label}</div>
+    </div>
+  );
+}
 
 export function VoluntariosPage() {
   const navigate = useNavigate();
   const { data, isLoading, isError, refetch } = useVolunteers();
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [section, setSection] = useState<Section>('presencial');
 
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase().trim();
-    const test = FILTERS.find((f) => f.key === filter)?.test ?? (() => true);
-    return (data ?? []).filter((v) => {
-      if (!test(v)) return false;
-      if (!q) return true;
-      return `${v.name} ${v.city} ${v.state ?? ''} ${v.area ?? ''} ${v.help_types.join(' ')}`
-        .toLowerCase()
-        .includes(q);
-    });
-  }, [data, search, filter]);
+  const all = data ?? [];
+  const presenciales = useMemo(() => all.filter((v) => isPresencial(resolveModality(v))), [all]);
+  const remotos = useMemo(() => all.filter((v) => isRemoto(resolveModality(v))), [all]);
 
-  const hasData = (data?.length ?? 0) > 0;
+  const q = search.toLowerCase().trim();
+  const groups = useMemo(() => {
+    const base = section === 'presencial' ? presenciales : remotos;
+    const filtered = q
+      ? base.filter((v) =>
+          `${v.name} ${v.city} ${v.state ?? ''} ${v.area ?? ''} ${v.country ?? ''} ${v.help_types.join(' ')}`
+            .toLowerCase()
+            .includes(q),
+        )
+      : base;
+    return buildGroups(filtered, section);
+  }, [presenciales, remotos, section, q]);
+
+  const hasData = all.length > 0;
+  const shownCount = groups.reduce((n, g) => n + g.subgroups.reduce((m, s) => m + s.volunteers.length, 0), 0);
 
   return (
     <div className="space-y-5 animate-fade">
@@ -57,9 +102,10 @@ export function VoluntariosPage() {
             <path d="M15 6l-6 6 6 6" stroke="#1F2933" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <h1 className="text-[21px] font-extrabold text-forest-dark">Voluntarios activos</h1>
-        <p className="mt-1 text-[13px] text-muted">
-          Personas disponibles para apoyar con difusión, coordinación, traslados y verificación de casos.
+        <h1 className="text-[21px] font-extrabold text-forest-dark">Conoce nuestra red de voluntarios</h1>
+        <p className="mt-1 text-[13px] leading-snug text-muted">
+          Personas reales, en Venezuela y fuera del país, ayudando a coordinar, verificar, difundir y
+          mover recursos para los animales que lo necesitan.
         </p>
         <Link
           to="/reportar/voluntario"
@@ -91,25 +137,48 @@ export function VoluntariosPage() {
         />
       ) : (
         <>
-          <SearchBar value={search} onChange={setSearch} placeholder="Buscar por ciudad, zona o tipo de apoyo…" />
-          <div className="flex flex-wrap gap-2">
-            {FILTERS.map((f) => (
-              <Chip key={f.key} active={filter === f.key} onClick={() => setFilter(f.key)}>
-                {f.label}
-              </Chip>
-            ))}
+          <div className="grid grid-cols-3 gap-2">
+            <CountPill n={presenciales.length} label="Presenciales" />
+            <CountPill n={remotos.length} label="Remotos" />
+            <CountPill n={all.length} label="Total" />
           </div>
-          <p className="text-[13px] font-medium text-muted">
-            {filtered.length} voluntario{filtered.length === 1 ? '' : 's'}
-          </p>
-          <div className="flex flex-col gap-3">
-            {filtered.map((v) => (
-              <VolunteerCard key={v.id} volunteer={v} />
-            ))}
-            {filtered.length === 0 && (
-              <p className="py-4 text-center text-[13px] text-muted">Sin resultados para tu búsqueda.</p>
-            )}
+
+          <div className="flex gap-2">
+            <Chip active={section === 'presencial'} onClick={() => setSection('presencial')}>
+              Presenciales ({presenciales.length})
+            </Chip>
+            <Chip active={section === 'remoto'} onClick={() => setSection('remoto')}>
+              Remotos ({remotos.length})
+            </Chip>
           </div>
+
+          <SearchBar value={search} onChange={setSearch} placeholder="Buscar por nombre, ciudad, país o tipo de apoyo…" />
+
+          {shownCount === 0 ? (
+            <p className="py-6 text-center text-[13px] text-muted">
+              {q ? 'Sin resultados para tu búsqueda.' : 'Aún no hay voluntarios en esta modalidad.'}
+            </p>
+          ) : (
+            <div className="space-y-6">
+              {groups.map((g) => (
+                <section key={g.country} className="space-y-3">
+                  <h2 className="text-[15px] font-extrabold text-forest-dark">{g.country}</h2>
+                  {g.subgroups.map((sg) => (
+                    <div key={sg.label} className="space-y-2.5">
+                      <h3 className="text-[11.5px] font-bold uppercase tracking-wide text-faint">
+                        {sg.label}
+                      </h3>
+                      <div className="flex flex-col gap-3">
+                        {sg.volunteers.map((v) => (
+                          <VolunteerCard key={v.id} volunteer={v} />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </section>
+              ))}
+            </div>
+          )}
         </>
       )}
     </div>

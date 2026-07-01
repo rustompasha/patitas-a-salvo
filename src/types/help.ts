@@ -160,16 +160,23 @@ export interface VolunteerRow {
   id: string;
   name: string;
   whatsapp: string;
+  country: string | null;
   city: string;
   state: string | null;
   area: string | null;
   availability: string | null;
   help_types: string[];
+  /** 'remote' | 'in_person' | 'both'. Legacy rows are null — derive from the
+   *  can_help_* booleans via resolveModality() in @/constants/help. */
+  modality: string | null;
   can_help_remote: boolean;
   can_help_in_person: boolean;
   has_transport: boolean;
   has_experience: boolean;
   notes: string | null;
+  photo_url: string | null;
+  photo_path: string | null;
+  photo_uploaded_at: string | null;
   status: string;
   verified: boolean;
   created_at: string;
@@ -178,14 +185,19 @@ export interface VolunteerRow {
 export type VolunteerInsert = {
   name: string;
   whatsapp: string;
+  country: string;
   city: string;
   state: string | null;
   area: string | null;
   availability: string | null;
   help_types: string[];
+  modality: string;
   can_help_remote: boolean;
   can_help_in_person: boolean;
   has_transport: boolean;
   has_experience: boolean;
   notes: string | null;
+  photo_url: string | null;
+  photo_path: string | null;
+  photo_uploaded_at: string | null;
 };

@@ -1,4 +1,6 @@
+import imageCompression from 'browser-image-compression';
 import { supabase } from '@/lib/supabase';
+import { IMAGE } from '@/constants/config';
 import type {
   CenterRow,
   CentroInsert,
@@ -239,9 +241,55 @@ export async function getVolunteers(): Promise<VolunteerRow[]> {
   return (data ?? []) as VolunteerRow[];
 }
 
-// Registration: status/verified use DB defaults (active/false). Throws until the
-// volunteers table is migrated.
+// Registration: status/verified use DB defaults (active/false). Uses the
+// resilient insert so a not-yet-migrated column (country/modality/photo_*) is
+// dropped and retried instead of breaking the form.
 export async function createVolunteer(input: VolunteerInsert): Promise<void> {
-  const { error } = await supabase.from('volunteers').insert(input);
+  await insertResilient('volunteers', input, [
+    'country',
+    'modality',
+    'photo_url',
+    'photo_path',
+    'photo_uploaded_at',
+  ]);
+}
+
+// Single volunteer for the detail page. RLS only exposes ACTIVE rows, so a
+// non-active/unknown id resolves to null (renders a clean "not found").
+export async function getVolunteerById(id: string): Promise<VolunteerRow | null> {
+  const { data, error } = await supabase.from('volunteers').select('*').eq('id', id).maybeSingle();
+  if (error) {
+    if (error.code === TABLE_MISSING) return null;
+    throw error;
+  }
+  return (data as VolunteerRow | null) ?? null;
+}
+
+// Upload a volunteer selfie to the public `volunteer-photos` bucket. Compressed
+// to WebP client-side (reuses the pet IMAGE settings). Unique path + upsert:false
+// means an upload can never overwrite an existing volunteer's photo. Returns the
+// public URL and the storage path (both stored on the row).
+export async function uploadVolunteerPhoto(file: File): Promise<{ url: string; path: string }> {
+  const compressed = await imageCompression(file, {
+    maxSizeMB: IMAGE.maxSizeMB,
+    maxWidthOrHeight: IMAGE.maxWidthOrHeight,
+    initialQuality: IMAGE.quality,
+    useWebWorker: true,
+    fileType: 'image/webp',
+  });
+  const uuid =
+    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+  const path = `volunteers/${uuid}/${Date.now()}.webp`;
+
+  const { error } = await supabase.storage.from('volunteer-photos').upload(path, compressed, {
+    contentType: 'image/webp',
+    cacheControl: '3600',
+    upsert: false,
+  });
   if (error) throw error;
+
+  const { data } = supabase.storage.from('volunteer-photos').getPublicUrl(path);
+  return { url: data.publicUrl, path };
 }

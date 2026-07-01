@@ -166,13 +166,13 @@ export const REFUGE_RECEIVE_OPTIONS = [
 export const VOLUNTEER_HELP_OPTIONS = [
   'Difusión en redes',
   'Verificación de casos',
-  'Transporte',
   'Coordinación por WhatsApp',
   'Apoyo en centros de acopio',
   'Apoyo a refugios',
-  'Apoyo veterinario',
-  'Traslados',
-  'Logística',
+  'Transporte / logística',
+  'Llamadas',
+  'Diseño / contenido',
+  'Donaciones / recaudación',
   'Otro',
 ];
 
@@ -184,6 +184,39 @@ export const VOLUNTEER_AVAILABILITY_OPTIONS = [
   'Según disponibilidad',
 ];
 
+// Volunteer modality — how they can help. Drives the directory's Presencial /
+// Remoto sections. Legacy rows have modality=null and derive it from the
+// can_help_remote / can_help_in_person booleans (see resolveModality).
+export type VolunteerModality = 'remote' | 'in_person' | 'both';
+
+export const VOLUNTEER_MODALITY_OPTIONS: { value: VolunteerModality; label: string }[] = [
+  { value: 'remote', label: 'Puedo ayudar remoto' },
+  { value: 'in_person', label: 'Puedo ayudar presencial' },
+  { value: 'both', label: 'Ambos' },
+];
+
+export const MODALITY_LABEL: Record<VolunteerModality, string> = {
+  remote: 'Remoto',
+  in_person: 'Presencial',
+  both: 'Ambos',
+};
+
+/** Resolve a volunteer's modality: the explicit column wins; otherwise derive it
+ *  from the legacy can_help_remote / can_help_in_person booleans. */
+export function resolveModality(v: {
+  modality?: string | null;
+  can_help_remote: boolean;
+  can_help_in_person: boolean;
+}): VolunteerModality {
+  if (v.modality === 'remote' || v.modality === 'in_person' || v.modality === 'both') return v.modality;
+  if (v.can_help_remote && v.can_help_in_person) return 'both';
+  if (v.can_help_in_person) return 'in_person';
+  return 'remote';
+}
+
+export const isPresencial = (m: VolunteerModality) => m === 'in_person' || m === 'both';
+export const isRemoto = (m: VolunteerModality) => m === 'remote' || m === 'both';
+
 /** Prefilled WhatsApp message when contacting a volunteer. */
 export const VOLUNTEER_CONTACT_MESSAGE =
   'Hola, te contacto desde Patitas a Salvo Venezuela. Vi que estás disponible como voluntario/a y quería coordinar apoyo.';
@@ -192,18 +225,18 @@ export const VOLUNTEER_CONTACT_MESSAGE =
 export function volunteerHelpForNeedCategory(category: string | null): string[] {
   switch (category) {
     case 'Transporte':
-      return ['Transporte', 'Traslados'];
+      return ['Transporte / logística'];
     case 'Perrarina':
     case 'Gatarina':
     case 'Medicamentos':
     case 'Insumos':
-      return ['Apoyo en centros de acopio', 'Logística'];
+      return ['Apoyo en centros de acopio', 'Donaciones / recaudación'];
     case 'Rescate':
       return ['Verificación de casos', 'Coordinación por WhatsApp'];
     case 'Atención veterinaria':
-      return ['Apoyo veterinario'];
+      return ['Verificación de casos'];
     case 'Refugio':
-      return ['Apoyo a refugios', 'Logística'];
+      return ['Apoyo a refugios', 'Transporte / logística'];
     default:
       return [];
   }
@@ -212,9 +245,9 @@ export function volunteerHelpForNeedCategory(category: string | null): string[] 
 /** Help types a volunteer can offer that are useful to a refuge. */
 export const VOLUNTEER_REFUGE_HELP = [
   'Apoyo a refugios',
-  'Logística',
+  'Transporte / logística',
   'Coordinación por WhatsApp',
-  'Transporte',
+  'Donaciones / recaudación',
 ];
 
 // ---- Centros de acopio (stored in centers, type='centro_acopio') -----------
