@@ -198,7 +198,8 @@ export const VOLUNTEER_MODALITY_OPTIONS: { value: VolunteerModality; label: stri
 export const MODALITY_LABEL: Record<VolunteerModality, string> = {
   remote: 'Remoto',
   in_person: 'Presencial',
-  both: 'Ambos',
+  // Shown on cards/profiles for volunteers who help both ways. Clearer than "Ambos".
+  both: 'Presencial + Remoto',
 };
 
 /** Resolve a volunteer's modality: the explicit column wins; otherwise derive it

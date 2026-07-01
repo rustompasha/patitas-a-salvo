@@ -8,7 +8,7 @@ import { VolunteerAvatar } from './VolunteerAvatar';
 const MODALITY_BADGE: Record<string, string> = {
   Remoto: 'bg-[#EFE7FA] text-[#5B3B8B]',
   Presencial: 'bg-[#E7F0FA] text-[#1F5F8B]',
-  Ambos: 'bg-[#EAF3EC] text-forest',
+  'Presencial + Remoto': 'bg-[#EAF3EC] text-forest',
 };
 
 export function VolunteerCard({ volunteer: v }: { volunteer: VolunteerRow }) {
