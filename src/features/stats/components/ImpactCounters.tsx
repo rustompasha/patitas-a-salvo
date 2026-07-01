@@ -70,7 +70,9 @@ export function ImpactCounters() {
       valueClass: 'text-[#5B3B8B]',
     },
     {
-      // Ember/safety accent — signals the operational field-response team.
+      // Network-capacity indicator. Also surfaced (for recruitment) on the
+      // homepage Brigada card — intentionally shown in both places: the card
+      // recruits, this tile signals operational capacity within the support network.
       emoji: '🦺',
       value: data?.brigadistas ?? 0,
       label: plural(data?.brigadistas ?? 0, 'brigadista activo', 'brigadistas activos'),

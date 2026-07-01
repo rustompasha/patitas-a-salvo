@@ -3,6 +3,7 @@ import { PetGrid } from '@/features/pets/components/PetGrid';
 import { usePets } from '@/features/pets/hooks/usePets';
 import { UrgentNeeds } from '@/features/centers/components/UrgentNeeds';
 import { ImpactCounters } from '@/features/stats/components/ImpactCounters';
+import { useImpactStats } from '@/features/stats/hooks';
 import { HomeRescueBoard } from '@/features/rescue/components/HomeRescueBoard';
 import { HomeCentros } from '@/features/help/components/HomeCentros';
 
@@ -66,6 +67,8 @@ function RowCard({
 
 export function HomePage() {
   const recent = usePets({ status: 'all', search: '' });
+  // Shares the ['impact_stats'] query with ImpactCounters — no extra request.
+  const { data: stats, isLoading: statsLoading } = useImpactStats();
 
   return (
     <div className="space-y-6 animate-fade">
@@ -137,6 +140,50 @@ export function HomePage() {
         </svg>
       </Link>
 
+      {/* Brigada de Respuesta Animal — high-prominence recruitment card. Framed as
+          an operational emergency-response unit, with the LIVE active count wired in.
+          Sits directly under "Quiero donar" and above "Más urgente ahora". */}
+      <Link
+        to="/brigada"
+        className="block overflow-hidden rounded-2xl border border-ember/40 bg-forest-dark p-4 shadow-[0_12px_30px_-12px_rgba(0,0,0,.55)] transition active:scale-[0.99]"
+      >
+        <div className="flex items-center gap-2">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ember/20 text-lg" aria-hidden>
+            🦺
+          </span>
+          <span className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-ember">
+            Brigada de Respuesta Animal
+          </span>
+        </div>
+
+        <div className="mt-3 flex items-baseline gap-2">
+          <span className="text-[27px] font-extrabold leading-none text-white">
+            {statsLoading ? '·' : stats?.brigadistas ?? 0}
+          </span>
+          <span className="flex items-center gap-1.5 text-[13px] font-bold text-white/90">
+            <span className="relative flex h-2 w-2" aria-hidden>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/70" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+            </span>
+            Brigadistas activos
+          </span>
+        </div>
+
+        <p className="mt-2.5 text-[12.5px] leading-snug text-white/80">
+          Equipo de campo para rescate, traslado, apoyo veterinario y logística animal coordinada.
+        </p>
+        <p className="mt-1 text-[13px] font-semibold leading-snug text-white">
+          Buscamos personas en Caracas y La Guaira.
+        </p>
+
+        <span className="mt-3.5 flex items-center justify-center gap-2 rounded-xl bg-ember px-4 py-3 text-[14.5px] font-extrabold text-white shadow-[0_8px_18px_-8px_rgba(255,107,44,.7)]">
+          Postularme
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+            <path d="M9 6l6 6-6 6" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      </Link>
+
       {/* Where help is needed most — surfaced right under the primary actions so
           anyone wanting to help sees it first. */}
       <UrgentNeeds />
@@ -145,28 +192,6 @@ export function HomePage() {
       <section>
         <h2 className="mb-2.5 text-[12px] font-bold uppercase tracking-wide text-faint">Red de apoyo</h2>
         <ImpactCounters />
-
-        {/* Brigada de Respuesta Animal — prominent recruitment card. Operational,
-            serious, safety-first: a field-response team, not general volunteering. */}
-        <Link to="/brigada" className="mt-3 flex items-center gap-3 rounded-2xl bg-forest-dark p-4">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ember/20 text-xl" aria-hidden>
-            🦺
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-[15px] font-extrabold leading-tight text-white">
-              Postularme a la brigada
-            </span>
-            <span className="mt-0.5 block text-[12.5px] font-medium leading-snug text-white/80">
-              Equipo de campo en Caracas para apoyo animal coordinado en La Guaira.
-            </span>
-            <span className="mt-1.5 inline-flex items-center gap-1 text-[10.5px] font-bold uppercase tracking-wide text-ember">
-              Brigada de Respuesta Animal · aprobación requerida
-            </span>
-          </span>
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" className="shrink-0">
-            <path d="M9 6l6 6-6 6" stroke="#FF6B2C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </Link>
       </section>
 
       {/* Animales que buscan lugar + Refugios con cupo disponible */}
