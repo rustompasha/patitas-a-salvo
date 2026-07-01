@@ -8,6 +8,7 @@ export interface ImpactStats {
   vets: number;
   centros: number;
   volunteers: number;
+  brigadistas: number;
 }
 
 type CountQuery = ReturnType<ReturnType<typeof supabase.from>['select']>;
@@ -28,7 +29,7 @@ async function countRows(table: string, apply?: (q: CountQuery) => CountQuery): 
 }
 
 export async function getImpactStats(): Promise<ImpactStats> {
-  const [pets, fosters, needs, refugios, vets, centros, volunteers] = await Promise.all([
+  const [pets, fosters, needs, refugios, vets, centros, volunteers, brigadistas] = await Promise.all([
     countRows('pets'),
     countRows('foster_offers'),
     countRows('needs'),
@@ -38,6 +39,8 @@ export async function getImpactStats(): Promise<ImpactStats> {
     countRows('centers', (q) => q.eq('type', 'centro_acopio')),
     // Active volunteers; resilient if the table isn't migrated yet (returns 0).
     countRows('volunteers', (q) => q.eq('status', 'active')),
+    // Active brigadistas (Brigada de Respuesta Animal); resilient until migrated.
+    countRows('brigade_members', (q) => q.eq('status', 'active')),
   ]);
-  return { pets, fosters, needs, refugios, vets, centros, volunteers };
+  return { pets, fosters, needs, refugios, vets, centros, volunteers, brigadistas };
 }

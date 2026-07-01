@@ -145,6 +145,28 @@ export function HomePage() {
       <section>
         <h2 className="mb-2.5 text-[12px] font-bold uppercase tracking-wide text-faint">Red de apoyo</h2>
         <ImpactCounters />
+
+        {/* Brigada de Respuesta Animal — prominent recruitment card. Operational,
+            serious, safety-first: a field-response team, not general volunteering. */}
+        <Link to="/brigada" className="mt-3 flex items-center gap-3 rounded-2xl bg-forest-dark p-4">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ember/20 text-xl" aria-hidden>
+            🦺
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[15px] font-extrabold leading-tight text-white">
+              Postularme a la brigada
+            </span>
+            <span className="mt-0.5 block text-[12.5px] font-medium leading-snug text-white/80">
+              Equipo de campo en Caracas para apoyo animal coordinado en La Guaira.
+            </span>
+            <span className="mt-1.5 inline-flex items-center gap-1 text-[10.5px] font-bold uppercase tracking-wide text-ember">
+              Brigada de Respuesta Animal · aprobación requerida
+            </span>
+          </span>
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" className="shrink-0">
+            <path d="M9 6l6 6-6 6" stroke="#FF6B2C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </Link>
       </section>
 
       {/* Animales que buscan lugar + Refugios con cupo disponible */}

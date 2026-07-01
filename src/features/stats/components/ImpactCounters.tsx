@@ -69,6 +69,15 @@ export function ImpactCounters() {
       cardClass: 'border-[#DDD2F2] bg-[#F5F1FC] hover:border-[#8B6FC0]',
       valueClass: 'text-[#5B3B8B]',
     },
+    {
+      // Ember/safety accent — signals the operational field-response team.
+      emoji: '🦺',
+      value: data?.brigadistas ?? 0,
+      label: plural(data?.brigadistas ?? 0, 'brigadista activo', 'brigadistas activos'),
+      to: '/brigada/directorio',
+      cardClass: 'border-[#F2C9B8] bg-[#FDF3EE] hover:border-ember',
+      valueClass: 'text-ember-dark',
+    },
   ];
 
   return (

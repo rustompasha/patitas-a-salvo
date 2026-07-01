@@ -12,6 +12,8 @@ import { CentrosAcopioPage } from '@/pages/CentrosAcopioPage';
 import { ReportCentroAcopioPage } from '@/pages/ReportCentroAcopioPage';
 import { VoluntariosPage } from '@/pages/VoluntariosPage';
 import { ReportVoluntarioPage } from '@/pages/ReportVoluntarioPage';
+import { BrigadaPage } from '@/pages/BrigadaPage';
+import { BrigadaDirectorioPage } from '@/pages/BrigadaDirectorioPage';
 import { FosterPage } from '@/pages/FosterPage';
 import { FosterDetailPage } from '@/pages/FosterDetailPage';
 import { ReportMenuPage } from '@/pages/ReportMenuPage';
@@ -49,6 +51,8 @@ export default function App() {
         <Route path="reportar/centro-acopio" element={<ReportCentroAcopioPage />} />
         <Route path="voluntarios" element={<VoluntariosPage />} />
         <Route path="reportar/voluntario" element={<ReportVoluntarioPage />} />
+        <Route path="brigada" element={<BrigadaPage />} />
+        <Route path="brigada/directorio" element={<BrigadaDirectorioPage />} />
         <Route path="centros" element={<Navigate to="/refugios" replace />} />
         <Route path="centros/:id" element={<Navigate to="/refugios" replace />} />
         <Route path="puedo-ser-hogar-temporal" element={<FosterPage />} />
